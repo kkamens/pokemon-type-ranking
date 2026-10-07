@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>宝可梦属性相克 · 纯数值理论排名</title>
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+  :root {
+    --bg: #F5F6F8;
+    --panel: #FFFFFF;
+    --ink: #20242C;
+    --ink-2: #5A6472;
+    --ink-3: #8A93A1;
+    --line: #E3E7EC;
+    --blue: #2F6DB5;
+    --blue-soft: #E8F0F9;
+    --red: #C2554E;
+    --red-soft: #F9ECEA;
+    --amber: #E8A33D;
+    --amber-soft: #FBF3E4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 28px 18px 64px; }
+  /* ===== Hero ===== */
+  .hero { text-align: center; padding: 8px 0 4px; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; letter-spacing: 0.12em; color: var(--ink-2); border: 1px solid var(--line); border-radius: 999px; padding: 4px 14px; background: var(--panel); }
+  .eyebrow svg { width: 14px; height: 14px; }
+  h1 { font-size: 30px; font-weight: 900; letter-spacing: 0.02em; margin: 14px 0 8px; }
+  .lead { font-size: 15px; color: var(--ink-2); max-width: 640px; margin: 0 auto; }
+  /* ===== 通用 section ===== */
+  .section { margin-top: 44px; }
+  .section-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .section-head h2 { font-size: 21px; font-weight: 900; letter-spacing: 0.01em; }
+  .section-head .note { font-size: 13px; color: var(--ink-3); }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+  .chart-box { width: min(100%, 660px); aspect-ratio: 66 / 47; min-height: 0; margin: 0 auto; }
+  .insight { font-size: 13.5px; color: var(--ink-2); border-top: 1px solid var(--line); margin-top: 14px; padding-top: 12px; }
+  .insight b { color: var(--ink); }
+  /* 速览表格 */
+  .quick-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--line); border-radius: 10px; }
+  .quick-table { width: auto; margin: 0 auto; border-collapse: collapse; font-size: 13px; }
+  .quick-table th { background: #F0F3F7; color: var(--ink-2); font-size: 12px; font-weight: 700; padding: 8px 10px; text-align: center; white-space: nowrap; border-bottom: 1px solid var(--line); }
+  .quick-table td { padding: 7px 10px; border-bottom: 1px solid #EDF0F4; white-space: nowrap; vertical-align: middle; line-height: 1.9; text-align: center; }
+  .quick-table tbody tr:nth-child(even) { background: #FAFBFC; }
+  .quick-table .range { font-weight: 700; color: var(--ink); }
+  .quick-table .weak { color: var(--ink-3); font-weight: 600; font-size: 12px; }
+  .quick-table .pick { color: #E8590C; font-weight: 800; margin-right: 2px; }
+  .quick-table td.qcol { border-left: 1px solid #E3E7EC; }
+  /* 属性固定对齐（所有表通用）：图标固定列 + 名字右对齐到 /；单属性对齐第二属性；单字前空格填充 */
+  .entry { display: flex; align-items: center; width: 100%; }
+  .ai { display: flex; align-items: center; flex: 1; min-width: 0; }
+  .a1 { display: flex; align-items: center; flex: none; width: 60px; justify-content: flex-end; }
+  .a1 .qi { flex: none; margin-right: 0; }
+  .a1 .nm { flex: none; white-space: nowrap; }
+  .sep { flex: none; width: 16px; color: #9AA3AD; }
+  .a2 { display: flex; align-items: center; flex: 1; min-width: 0; }
+  .a2 .qi { flex: none; }
+  .a2 .nm { flex: none; white-space: nowrap; }
+  /* 速览表：条目以内容宽度内联排布，由 td 文本居中使其在单元格内居中；决胜条目（按排序键决出）在条目下加下划线，替代 ★ */
+  .quick-table .entry { display: inline-flex; width: auto; justify-content: center; }
+  .quick-table .ai { flex: none; }
+  .quick-table .pickline .ai { border-bottom: 2px solid #E8590C; padding-bottom: 1px; }
+  /* 速览表：所有单元格（含第一列）强制居中——防止被全局 td:first-child{text-align:left} 覆盖 */
+  .quick-table td, .quick-table th, .quick-table td:first-child, .quick-table th:first-child { text-align: center; }
+  /* 全量表：属性列条目同样居中（与其他列对齐方式一致） */
+  .table-scroll .ai { justify-content: center; }
+  .table-scroll .a2 { flex: none; }
+  .qi { width: 20px; height: 20px; border-radius: 5px; background: #fff; vertical-align: -5px; margin-right: 0; }
+  /* ===== 表格 ===== */
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { padding: 7px 10px; text-align: right; white-space: nowrap; }
+  th { color: var(--ink-2); font-weight: 700; font-size: 12.5px; border-bottom: 1px solid var(--line); }
+  td:first-child, th:first-child { text-align: left; }
+  tbody tr:nth-child(even) { background: #FAFBFC; }
+  td.name { font-weight: 500; width: 150px; }
+  .pos { color: var(--blue); font-weight: 700; }
+  .neg { color: var(--red); font-weight: 700; }
+  .rk { color: var(--ink-2); font-weight: 700; }
+  td.poke { text-align: left; width: 210px; }
+  .poke-cell { display: inline-flex; align-items: center; gap: 8px; }
+  .pokebadge { width: 40px; height: 40px; border-radius: 8px; background: #fff; object-fit: contain; flex: none; }
+  .nopoke { color: var(--ink-3); font-size: 12.5px; }
+  /* ===== 全量表 ===== */
+  .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .seg .sortbtn { border: none; border-radius: 0; }
+  .search { flex: 1 1 180px; min-height: 44px; border: 1px solid var(--line); border-radius: 10px; padding: 0 14px; font-size: 14.5px; background: #fff; color: var(--ink); font-family: inherit; }
+  .sortbtn { min-height: 44px; border: 1px solid var(--line); border-radius: 10px; padding: 0 14px; background: #fff; font-size: 13.5px; color: var(--ink-2); cursor: pointer; font-family: inherit; }
+  .sortbtn.on { background: var(--blue-soft); border-color: var(--blue); color: var(--blue); font-weight: 700; }
+  .count { font-size: 12.5px; color: var(--ink-3); margin-left: auto; }
+  .table-scroll { max-height: 620px; overflow: auto; border: 1px solid var(--line); border-radius: 10px; }
+  .table-scroll table th, .table-scroll table td { text-align: center; }
+  .table-scroll table th { position: sticky; top: 0; background: #F0F3F7; padding: 0; }
+  .thbtn { display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%; min-height: 44px; border: none; background: none; font: inherit; font-size: 12.5px; font-weight: 700; color: var(--ink-2); cursor: pointer; user-select: none; padding: 6px 10px; }
+  .thbtn .arrow { color: var(--blue); font-size: 10px; }
+  .foot { margin-top: 40px; font-size: 12.5px; color: var(--ink-3); border-top: 1px solid var(--line); padding-top: 14px; }
+  .foot h3 { font-size: 14px; color: var(--ink-2); font-weight: 900; margin-bottom: 6px; }
+  .foot ol { margin: 6px 0 0; padding-left: 22px; line-height: 1.75; }
+  .foot li { margin: 5px 0; }
+  .foot b { color: var(--ink-2); font-weight: 700; }
+  .foot .rate { border-collapse: collapse; margin: 8px 0 2px; font-size: 12.5px; }
+  .foot .rate th, .foot .rate td { border: 1px solid var(--line); padding: 3px 16px; text-align: center; }
+  .foot .rate th { background: #F0F3F7; color: var(--ink-2); font-weight: 700; }
+  .foot .rate td { color: var(--ink-2); }
+  .foot .src-note { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .foot a { color: var(--ink-3); }
+  @media (max-width: 768px) {
+    h1 { font-size: 24px; }
+    .count { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===== Hero ===== -->
+  <header class="hero">
+    <span class="eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/></svg>
+      纯规则倍率 · 不含实战环境
+    </span>
+    <h1>宝可梦属性相克 · 纯数值理论排名</h1>
+    <p class="lead">18 单属性 + 153 双属性，每项附代表性宝可梦。</p>
+    <div class="panel" style="text-align:left;margin-top:18px;">
+      <div class="section-head"><h2 style="font-size:17px;">单 / 双 / 全部 · 攻防速览</h2></div>
+      <div class="quick"><div class="quick-scroll"><table class="quick-table"><thead><tr><th>类型</th><th>强弱</th><th>全部属性</th><th>双属性</th><th>单属性</th></tr></thead><tbody><tr><td class="range" rowspan="2">综合</td><td class="weak">最强</td><td colspan="2"><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/rbWE5urv3u" alt="幽灵"><span class="nm">幽灵</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/ovVOetZ1de" alt="钢"><span class="nm">　钢</span></span></span></span></td><td class="qcol"><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/ovVOetZ1de" alt="钢"><span class="nm">　钢</span></span></span></span></td></tr><tr><td class="weak">最弱</td><td><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/FL4sH3TE1T" alt="草"><span class="nm">　草</span></span></span></span></td><td class="qcol"><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/FL4sH3TE1T" alt="草"><span class="nm">　草</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/xTvWPgBJ2u" alt="冰"><span class="nm">　冰</span></span></span></span></td><td class="qcol"><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/FL4sH3TE1T" alt="草"><span class="nm">　草</span></span></span></span></td></tr><tr><td class="range" rowspan="2">平衡</td><td class="weak">最强</td><td colspan="2"><span class="entry pickline"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/Z4wE2hHv4z" alt="水"><span class="nm">　水</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/FD6l4zVDX2" alt="妖精"><span class="nm">妖精</span></span></span></span><br><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/NUdr2JcU8J" alt="火"><span class="nm">　火</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/kaJ4ggjxR9" alt="电"><span class="nm">　电</span></span></span></span><br><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/Z4wE2hHv4z" alt="水"><span class="nm">　水</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/VYYnK1t3zf" alt="毒"><span class="nm">　毒</span></span></span></span><br><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/FL4sH3TE1T" alt="草"><span class="nm">　草</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/rbWE5urv3u" alt="幽灵"><span class="nm">幽灵</span></span></span></span><br><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/W1PWF484M1" alt="飞行"><span class="nm">飞行</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/y8IFdV1851" alt="恶"><span class="nm">　恶</span></span></span></span><br><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/kaJ4ggjxR9" alt="电"><span class="nm">　电</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/y8IFdV1851" alt="恶"><span class="nm">　恶</span></span></span></span><br><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/EzkrtPUaM2" alt="普通"><span class="nm">普通</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/7vaTDaxq9c" alt="格斗"><span class="nm">格斗</span></span></span></span><br><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/JjtAxXkqTj" alt="虫"><span class="nm">　虫</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/y8IFdV1851" alt="恶"><span class="nm">　恶</span></span></span></span></td><td class="qcol"><span class="entry pickline"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/Z4wE2hHv4z" alt="水"><span class="nm">　水</span></span></span></span><br><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/Xva2HuinHe" alt="地面"><span class="nm">地面</span></span></span></span><br><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/zzbEs5NgIr" alt="岩石"><span class="nm">岩石</span></span></span></span><br><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/FELRNrk4Ts" alt="超能"><span class="nm">超能</span></span></span></span></td></tr><tr><td class="weak">最弱</td><td colspan="2"><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/xTvWPgBJ2u" alt="冰"><span class="nm">　冰</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/7vaTDaxq9c" alt="格斗"><span class="nm">格斗</span></span></span></span></td><td class="qcol"><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/ovVOetZ1de" alt="钢"><span class="nm">　钢</span></span></span></span></td></tr><tr><td class="range" rowspan="2">攻击</td><td class="weak">最强</td><td colspan="2"><span class="entry pickline"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/xTvWPgBJ2u" alt="冰"><span class="nm">　冰</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/Xva2HuinHe" alt="地面"><span class="nm">地面</span></span></span></span><br><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/xTvWPgBJ2u" alt="冰"><span class="nm">　冰</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/7vaTDaxq9c" alt="格斗"><span class="nm">格斗</span></span></span></span></td><td class="qcol"><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/zzbEs5NgIr" alt="岩石"><span class="nm">岩石</span></span></span></span></td></tr><tr><td class="weak">最弱</td><td><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/VYYnK1t3zf" alt="毒"><span class="nm">　毒</span></span></span></span><br><span class="entry pickline"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/EzkrtPUaM2" alt="普通"><span class="nm">普通</span></span></span></span></td><td class="qcol"><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/EzkrtPUaM2" alt="普通"><span class="nm">普通</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/VYYnK1t3zf" alt="毒"><span class="nm">　毒</span></span></span></span></td><td class="qcol"><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/VYYnK1t3zf" alt="毒"><span class="nm">　毒</span></span></span></span><br><span class="entry pickline"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/EzkrtPUaM2" alt="普通"><span class="nm">普通</span></span></span></span></td></tr><tr><td class="range" rowspan="2">防御</td><td class="weak">最强</td><td colspan="2"><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/rbWE5urv3u" alt="幽灵"><span class="nm">幽灵</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/ovVOetZ1de" alt="钢"><span class="nm">　钢</span></span></span></span></td><td class="qcol"><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/ovVOetZ1de" alt="钢"><span class="nm">　钢</span></span></span></span></td></tr><tr><td class="weak">最弱</td><td colspan="2"><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/xTvWPgBJ2u" alt="冰"><span class="nm">　冰</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/FELRNrk4Ts" alt="超能"><span class="nm">超能</span></span></span></span></td><td class="qcol"><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/xTvWPgBJ2u" alt="冰"><span class="nm">　冰</span></span></span></span></td></tr></tbody></table></div></div>
+    </div>
+    <div class="panel" style="text-align:left;margin-top:26px;">
+      <div class="section-head"><h2 style="font-size:17px;">攻防分布全景 · 171 项</h2></div>
+      <div id="scatter" class="chart-box"></div>
+    </div>
+  </header>
+
+  <!-- ===== 全量数据 ===== -->
+  <section class="section">
+    <div class="section-head"><h2>全量排名数据表</h2><span class="note">171 项 · 点击表头排序，单/双筛选 + 关键字过滤</span></div>
+    <div class="panel">
+      <div class="toolbar">
+        <div class="seg" id="type-seg">
+          <button class="sortbtn on" data-type="all">全部</button>
+          <button class="sortbtn" data-type="single">单属性</button>
+          <button class="sortbtn" data-type="dual">双属性</button>
+        </div>
+        <div class="seg" id="show-seg">
+          <button class="sortbtn on" data-show="score">分值</button>
+          <button class="sortbtn" data-show="rank">名次</button>
+        </div>
+        <input class="search" id="q" type="search" placeholder="筛选属性，如 钢 / 幽灵…">
+        <span class="count" id="row-count"></span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr>
+            <th><button class="thbtn" data-key="name" data-label="属性">属性</button></th>
+            <th><button class="thbtn" data-key="kind" data-label="类型">类型</button></th>
+            <th><button class="thbtn" data-key="total" data-label="综合">综合</button></th>
+            <th><button class="thbtn" data-key="bal" data-label="平衡">平衡</button></th>
+            <th><button class="thbtn" data-key="atk" data-label="攻击">攻击</button></th>
+            <th><button class="thbtn" data-key="def" data-label="防御">防御</button></th>
+            <th><button class="thbtn" data-key="poke" data-label="代表宝可梦">代表宝可梦</button></th>
+          </tr></thead>
+          <tbody id="all-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <h3>计算规则</h3>
+    <ol>
+      <li><b>倍率 → 得分</b>：按 log2 计分，非 0 档取 ±0.5。
+        <table class="rate">
+          <thead><tr><th>倍率</th><th>攻击得分</th><th>防御得分</th></tr></thead>
+          <tbody>
+            <tr><td>4×</td><td>+2.5</td><td>−2.5</td></tr>
+            <tr><td>2×</td><td>+1.5</td><td>−1.5</td></tr>
+            <tr><td>1×</td><td>0</td><td>0</td></tr>
+            <tr><td>½×</td><td>−1.5</td><td>+1.5</td></tr>
+            <tr><td>¼×</td><td>−2.5</td><td>+2.5</td></tr>
+            <tr><td>0×</td><td>−4.5</td><td>+4.5</td></tr>
+          </tbody>
+        </table>
+      </li>
+      <li><b>攻击得分</b>：对 18 种防御属性逐项计分求和；双属性攻击取两属性中更有利者。</li>
+      <li><b>防御得分</b>：对方 18 种属性攻击的倍率计分求和；双属性防御取两属性倍率之积。</li>
+      <li><b>综合</b> = 攻击得分 + 防御得分。</li>
+      <li><b>平衡</b> = −|攻击 − 防御|（越接近 0 越均衡）。</li>
+      <li><b>排名</b>：按 综合 → 平衡 → 攻击 → 防御 依次比较；并列由排序键决出（速览表下划线标注），名次固定 171 项、不受筛选影响。</li>
+      <li><b>数据来源</b>：官方属性相克表（第九世代，第六世代起未变），数值由脚本复算。</li>
+    </ol>
+    <p class="src-note">属性图标裁剪自公开素材合集（第三方来源）；代表宝可梦取该组合所有官方形态（含 mega、地区形态）中种族值最高者，特殊形态标注形态名（如 喷火龙-超级喷火龙Ｘ）；9 个组合无对应宝可梦，显示「无」。图片仅作展示引用。</p>
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js" integrity="sha384-pPi0zxBAoDu6+JXW/C68UZLvBUUtU+7zonhif43rqj7pxsGyqyqzcian2Rj37Rss" crossorigin="anonymous"></script>
+<script>
+(function(){
+  var SINGLES = [{"name":"钢","atk":-1.5,"def":15,"total":13.5,"bal":-16.5},{"name":"妖精","atk":0,"def":6,"total":6,"bal":-6},{"name":"幽灵","atk":-3,"def":9,"total":6,"bal":-12},{"name":"火","atk":0,"def":4.5,"total":4.5,"bal":-4.5},{"name":"飞行","atk":0,"def":4.5,"total":4.5,"bal":-4.5},{"name":"水","atk":0,"def":3,"total":3,"bal":-3},{"name":"地面","atk":0,"def":3,"total":3,"bal":-3},{"name":"恶","atk":-1.5,"def":3,"total":1.5,"bal":-4.5},{"name":"岩石","atk":1.5,"def":-1.5,"total":0,"bal":-3},{"name":"龙","atk":-4.5,"def":1.5,"total":-3,"bal":-6},{"name":"电","atk":-6,"def":3,"total":-3,"bal":-9},{"name":"毒","atk":-7.5,"def":4.5,"total":-3,"bal":-12},{"name":"冰","atk":0,"def":-4.5,"total":-4.5,"bal":-4.5},{"name":"格斗","atk":-4.5,"def":0,"total":-4.5,"bal":-4.5},{"name":"普通","atk":-7.5,"def":3,"total":-4.5,"bal":-10.5},{"name":"超能","atk":-4.5,"def":-1.5,"total":-6,"bal":-3},{"name":"虫","atk":-6,"def":0,"total":-6,"bal":-6},{"name":"草","atk":-6,"def":-1.5,"total":-7.5,"bal":-4.5}];
+  var DUALS = [{"name":"幽灵/钢","atk":7.5,"def":22,"total":29.5,"bal":-14.5},{"name":"地面/钢","atk":10.5,"def":16,"total":26.5,"bal":-5.5},{"name":"钢/妖精","atk":6,"def":20.5,"total":26.5,"bal":-14.5},{"name":"飞行/钢","atk":6,"def":20,"total":26,"bal":-14},{"name":"恶/钢","atk":7.5,"def":17,"total":24.5,"bal":-9.5},{"name":"火/钢","atk":6,"def":17.5,"total":23.5,"bal":-11.5},{"name":"电/钢","atk":6,"def":17.5,"total":23.5,"bal":-11.5},{"name":"格斗/钢","atk":9,"def":14,"total":23,"bal":-5},{"name":"水/钢","atk":6,"def":17,"total":23,"bal":-11},{"name":"地面/幽灵","atk":10.5,"def":11.5,"total":22,"bal":-1},{"name":"火/幽灵","atk":9,"def":13,"total":22,"bal":-4},{"name":"地面/飞行","atk":12,"def":9.5,"total":21.5,"bal":-2.5},{"name":"毒/钢","atk":4.5,"def":17,"total":21.5,"bal":-12.5},{"name":"普通/钢","atk":3,"def":18.5,"total":21.5,"bal":-15.5},{"name":"地面/妖精","atk":12,"def":9,"total":21,"bal":-3},{"name":"虫/钢","atk":6,"def":15,"total":21,"bal":-9},{"name":"幽灵/妖精","atk":7.5,"def":13,"total":20.5,"bal":-5.5},{"name":"龙/钢","atk":4.5,"def":16,"total":20.5,"bal":-11.5},{"name":"火/地面","atk":12,"def":8,"total":20,"bal":-4},{"name":"水/幽灵","atk":7.5,"def":12,"total":19.5,"bal":-4.5},{"name":"岩石/钢","atk":7.5,"def":12,"total":19.5,"bal":-4.5},{"name":"草/钢","atk":4.5,"def":15,"total":19.5,"bal":-10.5},{"name":"格斗/幽灵","atk":10.5,"def":8.5,"total":19,"bal":-2},{"name":"火/妖精","atk":9,"def":10,"total":19,"bal":-1},{"name":"飞行/幽灵","atk":7.5,"def":11.5,"total":19,"bal":-4},{"name":"超能/钢","atk":6,"def":13,"total":19,"bal":-7},{"name":"水/妖精","atk":9,"def":9,"total":18,"bal":0},{"name":"电/幽灵","atk":6,"def":12,"total":18,"bal":-6},{"name":"普通/幽灵","atk":3,"def":15,"total":18,"bal":-12},{"name":"毒/地面","atk":10.5,"def":7,"total":17.5,"bal":-3.5},{"name":"水/飞行","atk":9,"def":8,"total":17,"bal":-1},{"name":"冰/钢","atk":6,"def":11,"total":17,"bal":-5},{"name":"毒/幽灵","atk":6,"def":11,"total":17,"bal":-5},{"name":"地面/恶","atk":10.5,"def":6,"total":16.5,"bal":-4.5},{"name":"火/恶","atk":9,"def":7.5,"total":16.5,"bal":-1.5},{"name":"电/妖精","atk":7.5,"def":9,"total":16.5,"bal":-1.5},{"name":"格斗/飞行","atk":12,"def":4,"total":16,"bal":-8},{"name":"岩石/幽灵","atk":9,"def":7,"total":16,"bal":-2},{"name":"恶/妖精","atk":7.5,"def":8.5,"total":16,"bal":-1},{"name":"火/飞行","atk":6,"def":10,"total":16,"bal":-4},{"name":"水/地面","atk":7.5,"def":8,"total":15.5,"bal":-0.5},{"name":"飞行/妖精","atk":6,"def":9.5,"total":15.5,"bal":-3.5},{"name":"冰/幽灵","atk":9,"def":6,"total":15,"bal":-3},{"name":"火/电","atk":7.5,"def":7.5,"total":15,"bal":0},{"name":"水/毒","atk":7.5,"def":7.5,"total":15,"bal":0},{"name":"草/幽灵","atk":7.5,"def":7.5,"total":15,"bal":0},{"name":"飞行/恶","atk":7.5,"def":7.5,"total":15,"bal":0},{"name":"电/飞行","atk":6,"def":9,"total":15,"bal":-3},{"name":"毒/恶","atk":6,"def":9,"total":15,"bal":-3},{"name":"幽灵/龙","atk":4.5,"def":10.5,"total":15,"bal":-6},{"name":"幽灵/恶","atk":1.5,"def":13.5,"total":15,"bal":-12},{"name":"火/格斗","atk":10.5,"def":4,"total":14.5,"bal":-6.5},{"name":"地面/岩石","atk":12,"def":2,"total":14,"bal":-10},{"name":"格斗/妖精","atk":9,"def":5,"total":14,"bal":-4},{"name":"岩石/妖精","atk":9,"def":5,"total":14,"bal":-4},{"name":"火/毒","atk":6,"def":8,"total":14,"bal":-2},{"name":"毒/妖精","atk":4.5,"def":9.5,"total":14,"bal":-5},{"name":"水/格斗","atk":10.5,"def":3,"total":13.5,"bal":-7.5},{"name":"电/格斗","atk":10.5,"def":3,"total":13.5,"bal":-7.5},{"name":"地面/虫","atk":10.5,"def":3,"total":13.5,"bal":-7.5},{"name":"电/地面","atk":9,"def":4.5,"total":13.5,"bal":-4.5},{"name":"格斗/恶","atk":9,"def":4.5,"total":13.5,"bal":-4.5},{"name":"普通/地面","atk":7.5,"def":6,"total":13.5,"bal":-1.5},{"name":"火/水","atk":7.5,"def":6,"total":13.5,"bal":-1.5},{"name":"水/恶","atk":7.5,"def":6,"total":13.5,"bal":-1.5},{"name":"虫/幽灵","atk":6,"def":7.5,"total":13.5,"bal":-1.5},{"name":"火/岩石","atk":9,"def":3.5,"total":12.5,"bal":-5.5},{"name":"地面/龙","atk":9,"def":3.5,"total":12.5,"bal":-5.5},{"name":"火/龙","atk":7.5,"def":5,"total":12.5,"bal":-2.5},{"name":"电/毒","atk":4.5,"def":8,"total":12.5,"bal":-3.5},{"name":"冰/地面","atk":13.5,"def":-1.5,"total":12,"bal":-15},{"name":"火/超能","atk":9,"def":3,"total":12,"bal":-6},{"name":"水/虫","atk":9,"def":3,"total":12,"bal":-6},{"name":"火/虫","atk":7.5,"def":4.5,"total":12,"bal":-3},{"name":"格斗/毒","atk":7.5,"def":4.5,"total":12,"bal":-3},{"name":"飞行/岩石","atk":7.5,"def":4.5,"total":12,"bal":-3},{"name":"电/恶","atk":6,"def":6,"total":12,"bal":0},{"name":"普通/火","atk":4.5,"def":7.5,"total":12,"bal":-3},{"name":"普通/妖精","atk":3,"def":9,"total":12,"bal":-6},{"name":"毒/飞行","atk":3,"def":9,"total":12,"bal":-6},{"name":"龙/妖精","atk":3,"def":9,"total":12,"bal":-6},{"name":"格斗/地面","atk":9,"def":2.5,"total":11.5,"bal":-6.5},{"name":"超能/幽灵","atk":4.5,"def":7,"total":11.5,"bal":-2.5},{"name":"格斗/岩石","atk":12,"def":-1.5,"total":10.5,"bal":-13.5},{"name":"水/岩石","atk":9,"def":1.5,"total":10.5,"bal":-7.5},{"name":"地面/超能","atk":9,"def":1.5,"total":10.5,"bal":-7.5},{"name":"电/虫","atk":7.5,"def":3,"total":10.5,"bal":-4.5},{"name":"普通/水","atk":4.5,"def":6,"total":10.5,"bal":-1.5},{"name":"飞行/龙","atk":4.5,"def":6,"total":10.5,"bal":-1.5},{"name":"火/草","atk":7.5,"def":2.5,"total":10,"bal":-5},{"name":"水/电","atk":4.5,"def":5.5,"total":10,"bal":-1},{"name":"草/恶","atk":7.5,"def":2,"total":9.5,"bal":-5.5},{"name":"格斗/龙","atk":7.5,"def":2,"total":9.5,"bal":-5.5},{"name":"岩石/恶","atk":7.5,"def":2,"total":9.5,"bal":-5.5},{"name":"水/龙","atk":6,"def":3.5,"total":9.5,"bal":-2.5},{"name":"草/妖精","atk":4.5,"def":5,"total":9.5,"bal":-0.5},{"name":"冰/格斗","atk":13.5,"def":-4.5,"total":9,"bal":-18},{"name":"水/超能","atk":7.5,"def":1.5,"total":9,"bal":-6},{"name":"草/飞行","atk":7.5,"def":1.5,"total":9,"bal":-6},{"name":"毒/岩石","atk":6,"def":3,"total":9,"bal":-3},{"name":"普通/电","atk":3,"def":6,"total":9,"bal":-3},{"name":"普通/飞行","atk":1.5,"def":7.5,"total":9,"bal":-6},{"name":"飞行/虫","atk":6,"def":2.5,"total":8.5,"bal":-3.5},{"name":"电/龙","atk":4.5,"def":4,"total":8.5,"bal":-0.5},{"name":"超能/妖精","atk":4.5,"def":4,"total":8.5,"bal":-0.5},{"name":"毒/龙","atk":3,"def":5.5,"total":8.5,"bal":-2.5},{"name":"虫/妖精","atk":3,"def":5.5,"total":8.5,"bal":-2.5},{"name":"冰/恶","atk":9,"def":-1,"total":8,"bal":-10},{"name":"冰/飞行","atk":7.5,"def":0.5,"total":8,"bal":-7},{"name":"冰/妖精","atk":6,"def":2,"total":8,"bal":-4},{"name":"普通/恶","atk":3,"def":5,"total":8,"bal":-2},{"name":"龙/恶","atk":3,"def":5,"total":8,"bal":-2},{"name":"格斗/超能","atk":9,"def":-1.5,"total":7.5,"bal":-10.5},{"name":"火/冰","atk":7.5,"def":0,"total":7.5,"bal":-7.5},{"name":"电/超能","atk":6,"def":1.5,"total":7.5,"bal":-4.5},{"name":"电/岩石","atk":6,"def":1.5,"total":7.5,"bal":-4.5},{"name":"草/毒","atk":4.5,"def":2.5,"total":7,"bal":-2},{"name":"毒/超能","atk":4.5,"def":2.5,"total":7,"bal":-2},{"name":"飞行/超能","atk":4.5,"def":2.5,"total":7,"bal":-2},{"name":"草/地面","atk":6,"def":0.5,"total":6.5,"bal":-5.5},{"name":"普通/岩石","atk":4.5,"def":2,"total":6.5,"bal":-2.5},{"name":"草/岩石","atk":9,"def":-3,"total":6,"bal":-12},{"name":"电/冰","atk":7.5,"def":-1.5,"total":6,"bal":-9},{"name":"虫/岩石","atk":7.5,"def":-1.5,"total":6,"bal":-9},{"name":"冰/毒","atk":6,"def":0,"total":6,"bal":-6},{"name":"普通/格斗","atk":3,"def":3,"total":6,"bal":0},{"name":"虫/恶","atk":3,"def":3,"total":6,"bal":0},{"name":"普通/毒","atk":-1.5,"def":7.5,"total":6,"bal":-9},{"name":"水/冰","atk":7.5,"def":-2,"total":5.5,"bal":-9.5},{"name":"岩石/龙","atk":6,"def":-0.5,"total":5.5,"bal":-6.5},{"name":"草/格斗","atk":6,"def":-1,"total":5,"bal":-7},{"name":"格斗/虫","atk":4.5,"def":0.5,"total":5,"bal":-4},{"name":"超能/恶","atk":4.5,"def":0.5,"total":5,"bal":-4},{"name":"毒/虫","atk":1.5,"def":3.5,"total":5,"bal":-2},{"name":"超能/岩石","atk":7.5,"def":-3,"total":4.5,"bal":-10.5},{"name":"普通/草","atk":3,"def":1.5,"total":4.5,"bal":-1.5},{"name":"普通/超能","atk":1.5,"def":3,"total":4.5,"bal":-1.5},{"name":"普通/虫","atk":1.5,"def":3,"total":4.5,"bal":-1.5},{"name":"普通/龙","atk":0,"def":4.5,"total":4.5,"bal":-4.5},{"name":"冰/岩石","atk":9,"def":-5,"total":4,"bal":-14},{"name":"超能/虫","atk":6,"def":-2,"total":4,"bal":-8},{"name":"水/草","atk":3,"def":1,"total":4,"bal":-2},{"name":"草/电","atk":3,"def":1,"total":4,"bal":-2},{"name":"虫/龙","atk":3,"def":1,"total":4,"bal":-2},{"name":"草/超能","atk":6,"def":-2.5,"total":3.5,"bal":-8.5},{"name":"普通/冰","atk":4.5,"def":-1,"total":3.5,"bal":-5.5},{"name":"草/龙","atk":4.5,"def":-1,"total":3.5,"bal":-5.5},{"name":"超能/龙","atk":3,"def":0,"total":3,"bal":-3},{"name":"冰/虫","atk":6,"def":-3.5,"total":2.5,"bal":-9.5},{"name":"冰/超能","atk":7.5,"def":-6,"total":1.5,"bal":-13.5},{"name":"冰/龙","atk":4.5,"def":-3,"total":1.5,"bal":-7.5},{"name":"草/虫","atk":3,"def":-1.5,"total":1.5,"bal":-4.5},{"name":"草/冰","atk":6,"def":-5.5,"total":0.5,"bal":-11.5}];
+  var TYPES = {"普通":"https://aka.doubaocdn.com/s/EzkrtPUaM2","火":"https://aka.doubaocdn.com/s/NUdr2JcU8J","水":"https://aka.doubaocdn.com/s/Z4wE2hHv4z","电":"https://aka.doubaocdn.com/s/kaJ4ggjxR9","草":"https://aka.doubaocdn.com/s/FL4sH3TE1T","冰":"https://aka.doubaocdn.com/s/xTvWPgBJ2u","格斗":"https://aka.doubaocdn.com/s/7vaTDaxq9c","毒":"https://aka.doubaocdn.com/s/VYYnK1t3zf","地面":"https://aka.doubaocdn.com/s/Xva2HuinHe","飞行":"https://aka.doubaocdn.com/s/W1PWF484M1","超能":"https://aka.doubaocdn.com/s/FELRNrk4Ts","虫":"https://aka.doubaocdn.com/s/JjtAxXkqTj","岩石":"https://aka.doubaocdn.com/s/zzbEs5NgIr","幽灵":"https://aka.doubaocdn.com/s/rbWE5urv3u","龙":"https://aka.doubaocdn.com/s/czX2r4q20m","恶":"https://aka.doubaocdn.com/s/y8IFdV1851","钢":"https://aka.doubaocdn.com/s/ovVOetZ1de","妖精":"https://aka.doubaocdn.com/s/FD6l4zVDX2"};
+  var POKE_MAP = {"钢":{"id":10053,"name":"波士可多拉 - 超级波士可多拉","bst":630},"妖精":{"id":716,"name":"哲尔尼亚斯","bst":680},"幽灵":{"id":897,"name":"灵幽马","bst":580},"飞行":{"id":641,"name":"龙卷云","bst":580},"火":{"id":244,"name":"炎帝","bst":580},"水":{"id":10077,"name":"盖欧卡 - 原始回归的样子","bst":770},"地面":{"id":383,"name":"固拉多","bst":670},"恶":{"id":491,"name":"达克莱伊","bst":600},"岩石":{"id":377,"name":"雷吉洛克","bst":580},"冰":{"id":378,"name":"雷吉艾斯","bst":580},"龙":{"id":706,"name":"黏美龙","bst":600},"电":{"id":807,"name":"捷拉奥拉","bst":600},"普通":{"id":493,"name":"阿尔宙斯","bst":720},"毒":{"id":89,"name":"臭臭泥","bst":500},"格斗":{"id":889,"name":"藏玛然特","bst":660},"虫":{"id":127,"name":"凯罗斯","bst":500},"草":{"id":492,"name":"谢米","bst":600},"超能":{"id":10044,"name":"超梦 - 超级超梦Ｙ","bst":780},"幽灵/钢":{"id":1000,"name":"赛富豪","bst":550},"地面/钢":{"id":10072,"name":"大钢蛇 - 超级大钢蛇","bst":610},"飞行/钢":{"id":797,"name":"铁火辉夜","bst":570},"钢/妖精":{"id":10188,"name":"苍响 - 剑之王","bst":700},"地面/幽灵":{"id":623,"name":"泥偶巨人","bst":483},"恶/钢":{"id":983,"name":"仆刀将军","bst":550},"火/钢":{"id":485,"name":"席多蓝恩","bst":600},"火/幽灵":{"id":806,"name":"砰头小丑","bst":570},"格斗/钢":{"id":10189,"name":"藏玛然特 - 盾之王","bst":700},"幽灵/妖精":{"id":987,"name":"振翼发","bst":570},"水/钢":{"id":395,"name":"帝王拿波","bst":530},"电/钢":{"id":462,"name":"自爆磁怪","bst":535},"地面/飞行":{"id":645,"name":"土地云","bst":600},"地面/妖精":null,"飞行/幽灵":{"id":426,"name":"随风球","bst":498},"毒/钢":{"id":966,"name":"普隆隆姆","bst":500},"普通/钢":null,"格斗/幽灵":{"id":802,"name":"玛夏多","bst":600},"水/幽灵":{"id":902,"name":"幽尾玄鱼","bst":530},"虫/钢":{"id":649,"name":"盖诺赛克特","bst":600},"龙/钢":{"id":483,"name":"帝牙卢卡","bst":680},"普通/幽灵":{"id":10239,"name":"索罗亚克 - 洗翠的样子","bst":510},"火/地面":{"id":10078,"name":"固拉多 - 原始回归的样子","bst":770},"火/妖精":null,"岩石/钢":{"id":805,"name":"垒磊石","bst":570},"电/幽灵":{"id":479,"name":"洛托姆","bst":440},"毒/幽灵":{"id":1025,"name":"桃歹郎","bst":600},"超能/钢":{"id":10076,"name":"巨金怪 - 超级巨金怪","bst":700},"草/钢":{"id":798,"name":"纸御剑","bst":570},"毒/地面":{"id":31,"name":"尼多后","bst":505},"地面/恶":{"id":1003,"name":"古鼎鹿","bst":570},"水/妖精":{"id":788,"name":"卡璞・鳍鳍","bst":570},"岩石/幽灵":null,"恶/妖精":{"id":861,"name":"长毛巨魔","bst":510},"飞行/妖精":{"id":905,"name":"眷恋云","bst":580},"幽灵/恶":{"id":442,"name":"花岩怪","bst":485},"格斗/飞行":{"id":10170,"name":"闪电鸟 - 伽勒尔的样子","bst":580},"火/恶":{"id":10048,"name":"黑鲁加 - 超级黑鲁加","bst":600},"水/飞行":{"id":130,"name":"暴鲤龙","bst":540},"冰/幽灵":{"id":478,"name":"雪妖女","bst":480},"草/幽灵":{"id":724,"name":"狙射树枭","bst":530},"电/妖精":{"id":785,"name":"卡璞・鸣鸣","bst":570},"飞行/恶":{"id":717,"name":"伊裴尔塔尔","bst":680},"火/飞行":{"id":250,"name":"凤王","bst":680},"冰/钢":{"id":10102,"name":"穿山王 - 阿罗拉的样子","bst":450},"幽灵/龙":{"id":487,"name":"骑拉帝纳","bst":680},"格斗/妖精":{"id":1006,"name":"铁武者","bst":590},"普通/地面":{"id":10272,"name":"月月熊 - 赫月","bst":555},"水/地面":{"id":10064,"name":"巨沼怪 - 超级巨沼怪","bst":635},"电/飞行":{"id":145,"name":"闪电鸟","bst":580},"毒/恶":{"id":904,"name":"万针鱼","bst":510},"虫/幽灵":{"id":292,"name":"脱壳忍者","bst":236},"毒/妖精":{"id":1016,"name":"吉雉鸡","bst":555},"地面/岩石":{"id":464,"name":"超甲狂犀","bst":535},"火/格斗":{"id":10050,"name":"火焰鸡 - 超级火焰鸡","bst":630},"地面/虫":{"id":10004,"name":"结草贵妇 - 砂土蓑衣","bst":424},"电/地面":{"id":989,"name":"沙铁皮","bst":570},"格斗/恶":{"id":892,"name":"武道熊师","bst":550},"岩石/妖精":{"id":10075,"name":"蒂安希 - 超级蒂安希","bst":700},"火/水":{"id":721,"name":"波尔凯尼恩","bst":600},"火/电":{"id":10008,"name":"洛托姆 - 加热洛托姆","bst":520},"水/毒":{"id":73,"name":"毒刺水母","bst":515},"水/恶":{"id":10041,"name":"暴鲤龙 - 超级暴鲤龙","bst":640},"火/毒":{"id":994,"name":"铁毒蛾","bst":570},"普通/妖精":{"id":10069,"name":"差不多娃娃 - 超级差不多娃娃","bst":545},"毒/飞行":{"id":169,"name":"叉字蝠","bst":535},"冰/地面":{"id":473,"name":"象牙猪","bst":530},"水/格斗":{"id":647,"name":"凯路迪欧","bst":580},"电/格斗":{"id":992,"name":"铁臂膀","bst":570},"格斗/地面":{"id":984,"name":"雄伟牙","bst":570},"地面/龙":{"id":10120,"name":"基格尔德 - 完全体形态","bst":708},"火/龙":{"id":643,"name":"莱希拉姆","bst":680},"飞行/岩石":{"id":10042,"name":"化石翼龙 - 超级化石翼龙","bst":615},"电/恶":{"id":877,"name":"莫鲁贝可","bst":436},"普通/火":{"id":668,"name":"火炎狮","bst":507},"超能/幽灵":{"id":792,"name":"露奈雅拉","bst":680},"龙/妖精":{"id":10067,"name":"七夕青鸟 - 超级七夕青鸟","bst":590},"火/超能":{"id":494,"name":"比克提尼","bst":600},"火/岩石":{"id":10230,"name":"风速狗 - 洗翠的样子","bst":555},"水/虫":{"id":768,"name":"具甲武者","bst":530},"地面/超能":{"id":344,"name":"念力土偶","bst":500},"火/虫":{"id":637,"name":"火神蛾","bst":550},"格斗/毒":{"id":1014,"name":"够赞狗","bst":555},"普通/水":{"id":400,"name":"大尾狸","bst":410},"电/毒":{"id":849,"name":"颤弦蝾螈","bst":502},"飞行/龙":{"id":10079,"name":"烈空坐 - 超级烈空坐","bst":780},"普通/飞行":{"id":10073,"name":"大比鸟 - 超级大比鸟","bst":579},"格斗/岩石":{"id":639,"name":"代拉基翁","bst":580},"水/岩石":{"id":689,"name":"龟足巨铠","bst":500},"火/草":{"id":10274,"name":"厄诡椪 - 火灶面具","bst":550},"草/飞行":{"id":10006,"name":"谢米 - 天空形态","bst":600},"草/恶":{"id":893,"name":"萨戮德","bst":600},"电/虫":{"id":738,"name":"锹农炮虫","bst":500},"岩石/恶":{"id":10049,"name":"班基拉斯 - 超级班基拉斯","bst":700},"水/龙":{"id":484,"name":"帕路奇亚","bst":680},"飞行/虫":{"id":10040,"name":"凯罗斯 - 超级凯罗斯","bst":600},"水/电":{"id":10009,"name":"洛托姆 - 清洗洛托姆","bst":520},"草/妖精":{"id":787,"name":"卡璞・哞哞","bst":570},"超能/妖精":{"id":10051,"name":"沙奈朵 - 超级沙奈朵","bst":618},"普通/电":{"id":695,"name":"光电伞蜥","bst":481},"普通/恶":{"id":862,"name":"堵拦熊","bst":520},"虫/妖精":{"id":743,"name":"蝶结萌虻","bst":464},"冰/格斗":{"id":740,"name":"好胜毛蟹","bst":478},"冰/恶":{"id":1002,"name":"古剑豹","bst":570},"水/超能":{"id":10071,"name":"呆壳兽 - 超级呆壳兽","bst":590},"冰/飞行":{"id":144,"name":"急冻鸟","bst":580},"格斗/龙":{"id":1007,"name":"故勒顿","bst":670},"冰/妖精":{"id":10104,"name":"九尾 - 阿罗拉的样子","bst":505},"毒/岩石":{"id":793,"name":"虚吾伊德","bst":570},"电/龙":{"id":644,"name":"捷克罗姆","bst":680},"飞行/超能":{"id":249,"name":"洛奇亚","bst":680},"毒/龙":{"id":10190,"name":"无极汰那 - 无极巨化","bst":1125},"龙/恶":{"id":635,"name":"三首恶龙","bst":600},"格斗/超能":{"id":10043,"name":"超梦 - 超级超梦Ｘ","bst":780},"火/冰":{"id":10178,"name":"达摩狒狒 - 达摩模式","bst":540},"草/地面":{"id":389,"name":"土台龟","bst":525},"电/超能":{"id":10100,"name":"雷丘 - 阿罗拉的样子","bst":485},"电/岩石":{"id":995,"name":"铁荆棘","bst":570},"普通/岩石":null,"草/毒":{"id":10033,"name":"妙蛙花 - 超级妙蛙花","bst":625},"毒/超能":{"id":1015,"name":"愿增猿","bst":555},"虫/恶":{"id":920,"name":"烈腿蝗","bst":450},"普通/毒":{"id":945,"name":"涂标客","bst":485},"草/岩石":{"id":10275,"name":"厄诡椪 - 礎石面具","bst":550},"水/冰":{"id":991,"name":"铁包袱","bst":570},"电/冰":{"id":10010,"name":"洛托姆 - 结冰洛托姆","bst":520},"虫/岩石":{"id":213,"name":"壶壶","bst":505},"冰/毒":null,"岩石/龙":{"id":697,"name":"怪颚龙","bst":521},"超能/恶":{"id":10086,"name":"胡帕 - 解放胡帕","bst":680},"普通/草":{"id":930,"name":"奥利瓦","bst":510},"普通/格斗":{"id":10018,"name":"美洛耶塔 - 舞步形态","bst":600},"普通/超能":{"id":648,"name":"美洛耶塔","bst":600},"普通/虫":null,"毒/虫":{"id":10090,"name":"大针蜂 - 超级大针蜂","bst":495},"普通/龙":{"id":967,"name":"摩托蜥","bst":501},"超能/岩石":{"id":1022,"name":"铁磐岩","bst":590},"草/格斗":{"id":640,"name":"毕力吉翁","bst":580},"超能/虫":{"id":826,"name":"以欧路普","bst":505},"普通/冰":null,"草/龙":{"id":10065,"name":"蜥蜴王 - 超级蜥蜴王","bst":630},"格斗/虫":{"id":10047,"name":"赫拉克罗斯 - 超级赫拉克罗斯","bst":600},"水/草":{"id":10273,"name":"厄诡椪 - 水井面具","bst":550},"草/电":{"id":10012,"name":"洛托姆 - 切割洛托姆","bst":520},"虫/龙":null,"冰/岩石":{"id":699,"name":"冰雪巨龙","bst":521},"草/超能":{"id":251,"name":"时拉比","bst":600},"超能/龙":{"id":10157,"name":"奈克洛兹玛 - 究极奈克洛兹玛","bst":754},"冰/超能":{"id":10193,"name":"蕾冠王 - 骑白马的样子","bst":680},"冰/虫":{"id":873,"name":"雪绒蛾","bst":475},"冰/龙":{"id":10022,"name":"酋雷姆 - 暗黑酋雷姆","bst":700},"草/虫":{"id":542,"name":"保姆虫","bst":500},"草/冰":{"id":10060,"name":"暴雪王 - 超级暴雪王","bst":594}};
+  var ART = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/';
+  var $ = function(id){ return document.getElementById(id); };
+  var esc = function(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+  function prop(t){
+    var s = t.length >= 2 ? t : '\u3000' + t;
+    return '<img class="qi" src="' + TYPES[t] + '" alt="' + esc(t) + '"><span class="nm">' + esc(s) + '</span>';
+  }
+  function badgeCell(name){
+    var parts = String(name).split('/');
+    var inner = parts.length === 2
+      ? '<span class="a1">' + prop(parts[0]) + '</span><span class="sep">/</span><span class="a2">' + prop(parts[1]) + '</span>'
+      : '<span class="a1"></span><span class="sep"></span><span class="a2">' + prop(parts[0]) + '</span>';
+    return '<td class="name"><span class="entry"><span class="ai">' + inner + '</span></span></td>';
+  }
+  function pokeCell(poke){
+    if (!poke) return '<td class="poke"><span class="nopoke">无</span></td>';
+    return '<td class="poke"><span class="poke-cell"><img class="pokebadge" src="' + ART + poke.id + '.png" alt="' + esc(poke.name) + '" width="40" height="40" loading="lazy"><span>' + esc(poke.name) + '</span></span></td>';
+  }
+
+  /* ---------- 全量表（Excel 式筛选 + 排序） ---------- */
+  var ALL = DUALS.concat(SINGLES.map(function(r){
+    var p = POKE_MAP[r.name] || null;
+    return { name: r.name, atk: r.atk, def: r.def, total: r.total, bal: -Math.abs(r.atk - r.def), kind: '单', poke: p };
+  }));
+  for (var ai = 0; ai < DUALS.length; ai++) {
+    DUALS[ai].kind = '双';
+    DUALS[ai].poke = POKE_MAP[DUALS[ai].name] || null;
+  }
+  var SORT = { key: 'total', dir: -1 };
+  var TYPE = 'all';
+  var SHOW = 'score';
+  var Q = '';
+  function cmpRows(a, b){
+    var k = SORT.key, d = SORT.dir;
+    if (k === 'name') return a.name.localeCompare(b.name, 'zh') * d;
+    if (k === 'kind') return a.kind.localeCompare(b.kind, 'zh') * d;
+    if (k === 'poke') {
+      var na = a.poke ? a.poke.name : '\uFFFF';
+      var nb = b.poke ? b.poke.name : '\uFFFF';
+      return na.localeCompare(nb, 'zh') * d;
+    }
+    /* 数值列：主键 + 按 综合、平衡、攻击、防御 依次补次级键 */
+    var r = a[k] - b[k];
+    if (r !== 0) return r * d;
+    var order = ['total', 'bal', 'atk', 'def'];
+    for (var i = 0; i < order.length; i++) {
+      var k2 = order[i];
+      if (k2 === k) continue;
+      r = a[k2] - b[k2];
+      if (r !== 0) return r * d;
+    }
+    return 0;
+  }
+  function updateHead(){
+    var btns = document.querySelectorAll('.thbtn');
+    for (var i = 0; i < btns.length; i++) {
+      var b = btns[i];
+      var arrow = (b.getAttribute('data-key') === SORT.key) ? '<span class="arrow">' + (SORT.dir === -1 ? '&#9660;' : '&#9650;') + '</span>' : '';
+      b.innerHTML = b.getAttribute('data-label') + arrow;
+    }
+  }
+  /* 各数值维度的名次（当前筛选集合内降序，并列同分同名次） */
+  function ranksFor(rows, key){
+    var sorted = rows.slice().sort(function(a, b){ return b[key] - a[key]; });
+    var map = {}, prev = null, r = 0;
+    for (var i = 0; i < sorted.length; i++) {
+      var v = sorted[i][key];
+      if (prev !== null && v !== prev) r = i;
+      map[sorted[i].name] = r + 1;
+      prev = v;
+    }
+    return map;
+  }
+  function renderAll(){
+    var rows = ALL.slice();
+    if (TYPE === 'single') rows = rows.filter(function(r){ return r.kind === '单'; });
+    else if (TYPE === 'dual') rows = rows.filter(function(r){ return r.kind === '双'; });
+    if (Q) rows = rows.filter(function(r){ return r.name.indexOf(Q) >= 0; });
+    rows.sort(cmpRows);
+    var atkR = null, defR = null, balR = null, totR = null;
+    if (SHOW === 'rank') {
+      /* 名次固定基于全量 171 项计算，不受筛选影响 */
+      atkR = ranksFor(ALL, 'atk');
+      defR = ranksFor(ALL, 'def');
+      balR = ranksFor(ALL, 'bal');
+      totR = ranksFor(ALL, 'total');
+    }
+    var html = '';
+    var rankMode = (SHOW === 'rank');
+    var cls = function(v){ return rankMode ? 'rk' : (v >= 0 ? 'pos' : 'neg'); };
+    for (var i = 0; i < rows.length; i++) {
+      var r = rows[i];
+      var av = rankMode ? atkR[r.name] : r.atk;
+      var dv = rankMode ? defR[r.name] : r.def;
+      var bv = rankMode ? balR[r.name] : r.bal;
+      var tv = rankMode ? totR[r.name] : r.total;
+      html += '<tr>' + badgeCell(r.name) + '<td>' + (r.kind === '双' ? '双属性' : '单属性') + '</td>'
+        + '<td class="' + cls(tv) + '">' + tv + '</td>'
+        + '<td class="' + (rankMode ? 'rk' : '') + '">' + bv + '</td>'
+        + '<td class="' + cls(av) + '">' + av + '</td>'
+        + '<td class="' + cls(dv) + '">' + dv + '</td>'
+        + pokeCell(r.poke) + '</tr>';
+    }
+    $('all-tbody').innerHTML = html;
+    $('row-count').textContent = rows.length + ' / ' + ALL.length + ' 项';
+  }
+  /* 表头排序：同列再点切换升/降 */
+  var thbtns = document.querySelectorAll('.thbtn');
+  for (var ti = 0; ti < thbtns.length; ti++) {
+    (function(btn){
+      btn.addEventListener('click', function(){
+        var key = btn.getAttribute('data-key');
+        if (SORT.key === key) { SORT.dir = -SORT.dir; }
+        else { SORT = { key: key, dir: (key === 'name' || key === 'kind' || key === 'poke') ? 1 : -1 }; }
+        updateHead();
+        renderAll();
+      });
+    })(thbtns[ti]);
+  }
+  /* 单/双筛选 */
+  var seg = document.querySelectorAll('#type-seg .sortbtn');
+  for (var si = 0; si < seg.length; si++) {
+    (function(btn){
+      btn.addEventListener('click', function(){
+        for (var j = 0; j < seg.length; j++) seg[j].className = 'sortbtn';
+        btn.className = 'sortbtn on';
+        TYPE = btn.getAttribute('data-type');
+        renderAll();
+      });
+    })(seg[si]);
+  }
+  /* 关键字筛选 */
+  $('q').addEventListener('input', function(){ Q = this.value.trim(); renderAll(); });
+  /* 分值/名次切换 */
+  var seg2 = document.querySelectorAll('#show-seg .sortbtn');
+  for (var s2 = 0; s2 < seg2.length; s2++) {
+    (function(btn){
+      btn.addEventListener('click', function(){
+        for (var j = 0; j < seg2.length; j++) seg2[j].className = 'sortbtn';
+        btn.className = 'sortbtn on';
+        SHOW = btn.getAttribute('data-show');
+        renderAll();
+      });
+    })(seg2[s2]);
+  }
+  updateHead();
+  renderAll();
+
+  /* ---------- ECharts：攻防分布散点 ---------- */
+  if (typeof echarts === 'undefined') {
+    var el = $('scatter');
+    if (el) el.innerHTML = '<div style="padding:14px;color:#5A6472;font-size:13px;">图表库加载失败，已回退为文字说明。</div>';
+    return;
+  }
+  (function(){
+    var el = $('scatter');
+    var chart = echarts.init(el);
+    new ResizeObserver(function(){ chart.resize(); }).observe(el);
+    var singlePts = [], dualPts = [];
+    for (var i = 0; i < ALL.length; i++) {
+      var r = ALL[i];
+      var pt = {
+        value: [r.def, r.atk, r.total],
+        name: r.name,
+        kind: r.kind,
+        symbolSize: 7
+      };
+      if (r.kind === '单') singlePts.push(pt);
+      else dualPts.push(pt);
+    }
+    chart.setOption({
+      backgroundColor: 'transparent',
+      legend: {
+        top: 2, right: 2,
+        itemWidth: 12, itemHeight: 12, itemGap: 16,
+        textStyle: { color: '#5A6472', fontSize: 12 },
+        data: ['单属性', '双属性']
+      },
+      tooltip: {
+        trigger: 'item', triggerOn: 'click', renderMode: 'richText', confine: true,
+        backgroundColor: '#FFFFFF', borderColor: '#E3E7EC', textStyle: { color: '#20242C', fontSize: 12 },
+        formatter: function(p){
+          if (!p || !p.data) return '';
+          var kind = (p.data.kind === '单') ? '单属性' : '双属性';
+          var poke = POKE_MAP[p.data.name];
+          var extra = poke ? poke.name : '该组合暂无宝可梦';
+          return p.data.name + '（' + kind + '）' + String.fromCharCode(10)
+            + '防御 ' + p.value[0] + ' · 攻击 ' + p.value[1] + ' · 综合 ' + p.value[2] + String.fromCharCode(10)
+            + '代表宝可梦：' + extra;
+        }
+      },
+      grid: { left: '6.364%', right: '6.364%', top: '7.872%', bottom: '7.872%', containLabel: false },
+      xAxis: {
+        type: 'value', name: '防御得分', min: -8, max: 24, interval: 5,
+        nameTextStyle: { color: '#5A6472', fontSize: 12, padding: [8, 0, 0, 0] },
+        axisLine: { lineStyle: { color: '#C9D2DD' } },
+        axisLabel: { color: '#5A6472', fontSize: 11, margin: 10 },
+        splitLine: { lineStyle: { color: '#EDF1F6', type: 'dashed' } }
+      },
+      yAxis: {
+        type: 'value', name: '攻击得分', min: -8, max: 14, interval: 5,
+        nameTextStyle: { color: '#5A6472', fontSize: 12, padding: [0, 0, 0, 12] },
+        axisLine: { lineStyle: { color: '#C9D2DD' } },
+        axisLabel: { color: '#5A6472', fontSize: 11, margin: 10 },
+        splitLine: { lineStyle: { color: '#EDF1F6', type: 'dashed' } }
+      },
+      series: [
+        {
+          name: '单属性', type: 'scatter', data: singlePts,
+          itemStyle: { color: '#D63B3B', opacity: 0.82 },
+          emphasis: { itemStyle: { opacity: 1 } },
+          markLine: {
+            silent: true, symbol: 'none',
+            lineStyle: { color: '#B4BECB', type: 'dashed' },
+            label: { show: false },
+            data: [ { xAxis: 0 }, { yAxis: 0 } ]
+          }
+        },
+        {
+          name: '双属性', type: 'scatter', data: dualPts,
+          itemStyle: { color: '#2F6DB5', opacity: 0.78 },
+          emphasis: { itemStyle: { opacity: 1 } },
+          markArea: {
+            silent: true,
+            label: { show: false },
+            data: [
+              [{ coord: [0, 0], itemStyle: { color: 'rgba(63,124,88,0.05)' } }, { coord: [24, 14] }],
+              [{ coord: [-8, -8], itemStyle: { color: 'rgba(194,85,78,0.05)' } }, { coord: [0, 0] }]
+            ]
+          }
+        }
+      ]
+    });
+  })();
+})();
+</script>
+</body>
+</html>
