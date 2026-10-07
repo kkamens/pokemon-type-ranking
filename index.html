@@ -58,16 +58,30 @@
   .a2 { display: flex; align-items: center; flex: 1; min-width: 0; }
   .a2 .qi { flex: none; }
   .a2 .nm { flex: none; white-space: nowrap; }
-  /* 速览表：条目以内容宽度内联排布，由 td 文本居中使其在单元格内居中；决胜条目（按排序键决出）在条目下加下划线，替代 ★ */
-  .quick-table .entry { display: inline-flex; width: auto; justify-content: center; }
-  .quick-table .ai { flex: none; }
+  /* 速览表：每个属性组合固定为 136px 三列（60 / 16 / 60），组合整体在单元格内居中 */
+  .quick-table .entry { display: inline-flex; width: 136px; justify-content: center; vertical-align: middle; }
+  .quick-table .ai { display: grid; grid-template-columns: 60px 16px 60px; width: 136px; flex: none; align-items: center; }
+  .quick-table .a1, .quick-table .a2 { width: 60px; min-width: 60px; }
+  .quick-table .a1 { justify-content: flex-end; }
+  .quick-table .a2 { justify-content: flex-start; }
+  .quick-table .sep { width: 16px; text-align: center; }
+  /* 单属性不再占用空白的第一属性与分隔符列，确保可见内容处于单元格几何中心 */
+  .quick-table .entry.single { width: 60px; }
+  .quick-table .entry.single .ai { grid-template-columns: 0 0 60px; width: 60px; }
+  .quick-table .entry.single .a1,
+  .quick-table .entry.single .sep { width: 0; min-width: 0; overflow: hidden; }
+  .quick-table .entry.single .a2 { justify-content: center; }
   .quick-table .pickline .ai { border-bottom: 2px solid #E8590C; padding-bottom: 1px; }
   /* 速览表：所有单元格（含第一列）强制居中——防止被全局 td:first-child{text-align:left} 覆盖 */
   .quick-table td, .quick-table th, .quick-table td:first-child, .quick-table th:first-child { text-align: center; }
+  .quick-table td > .entry { margin-left: auto; margin-right: auto; }
   /* 全量表：属性列条目同样居中（与其他列对齐方式一致） */
   .table-scroll .ai { justify-content: center; }
   .table-scroll .a2 { flex: none; }
   .qi { width: 20px; height: 20px; border-radius: 5px; background: #fff; vertical-align: -5px; margin-right: 0; }
+  .wiki-link { color: inherit; text-decoration: none; display: inline-flex; align-items: center; }
+  .wiki-link:hover .nm, .wiki-link:hover .poke-name { text-decoration: underline; text-underline-offset: 3px; }
+  .wiki-link:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 4px; }
   /* ===== 表格 ===== */
   table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
   th, td { padding: 7px 10px; text-align: right; white-space: nowrap; }
@@ -80,7 +94,7 @@
   .rk { color: var(--ink-2); font-weight: 700; }
   td.poke { text-align: left; width: 210px; }
   .poke-cell { display: inline-flex; align-items: center; gap: 8px; }
-  .pokebadge { width: 40px; height: 40px; border-radius: 8px; background: #fff; object-fit: contain; flex: none; }
+  .pokebadge { width: 40px; height: 40px; border-radius: 0; background: transparent; object-fit: contain; flex: none; }
   .nopoke { color: var(--ink-3); font-size: 12.5px; }
   /* ===== 全量表 ===== */
   .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
@@ -204,20 +218,52 @@
   var ART = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/';
   var $ = function(id){ return document.getElementById(id); };
   var esc = function(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
-  function prop(t){
-    var s = t.length >= 2 ? t : '\u3000' + t;
-    return '<img class="qi" src="' + TYPES[t] + '" alt="' + esc(t) + '"><span class="nm">' + esc(s) + '</span>';
+  var WIKI = 'https://wiki.52poke.com/wiki/';
+  var TYPE_WIKI_TITLE = { '普通': '一般属性', '超能': '超能力属性' };
+  function wikiUrl(title){ return WIKI + encodeURIComponent(title); }
+  function typeWikiTitle(t){ return TYPE_WIKI_TITLE[t] || (t + '属性'); }
+  function basePokeName(name){ return String(name).split(/\s+-\s+/)[0].trim(); }
+  function prop(t, padSingle){
+    var s = (padSingle && t.length < 2) ? '\u3000' + t : t;
+    return '<a class="wiki-link" href="' + wikiUrl(typeWikiTitle(t)) + '" target="_blank" rel="noopener noreferrer" title="在 52Poké 百科查看' + esc(typeWikiTitle(t)) + '"><img class="qi" src="' + TYPES[t] + '" alt="' + esc(t) + '"><span class="nm">' + esc(s) + '</span></a>';
   }
+  function linkStaticProps(){
+    var slots = document.querySelectorAll('.quick-table .a1, .quick-table .a2');
+    for (var i = 0; i < slots.length; i++) {
+      var slot = slots[i];
+      if (slot.querySelector('a.wiki-link')) continue;
+      var img = slot.querySelector('img.qi');
+      if (!img) continue;
+      var t = img.getAttribute('alt');
+      var a = document.createElement('a');
+      a.className = 'wiki-link';
+      a.href = wikiUrl(typeWikiTitle(t));
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.title = '在 52Poké 百科查看' + typeWikiTitle(t);
+      while (slot.firstChild) a.appendChild(slot.firstChild);
+      slot.appendChild(a);
+      var ai = slot.closest('.ai');
+      var entry = slot.closest('.entry');
+      if (ai && entry && !ai.querySelector('.a1 img.qi') && !ai.querySelector('.sep').textContent.trim()) {
+        entry.classList.add('single');
+        var nm = slot.querySelector('.nm');
+        if (nm) nm.textContent = nm.textContent.replace(/^\u3000+/, '');
+      }
+    }
+  }
+  linkStaticProps();
   function badgeCell(name){
     var parts = String(name).split('/');
     var inner = parts.length === 2
-      ? '<span class="a1">' + prop(parts[0]) + '</span><span class="sep">/</span><span class="a2">' + prop(parts[1]) + '</span>'
-      : '<span class="a1"></span><span class="sep"></span><span class="a2">' + prop(parts[0]) + '</span>';
-    return '<td class="name"><span class="entry"><span class="ai">' + inner + '</span></span></td>';
+      ? '<span class="a1">' + prop(parts[0], true) + '</span><span class="sep">/</span><span class="a2">' + prop(parts[1], true) + '</span>'
+      : '<span class="a1"></span><span class="sep"></span><span class="a2">' + prop(parts[0], true) + '</span>';
+    return '<td class="name"><span class="entry' + (parts.length === 1 ? ' single' : '') + '"><span class="ai">' + inner + '</span></span></td>';
   }
   function pokeCell(poke){
     if (!poke) return '<td class="poke"><span class="nopoke">无</span></td>';
-    return '<td class="poke"><span class="poke-cell"><img class="pokebadge" src="' + ART + poke.id + '.png" alt="' + esc(poke.name) + '" width="40" height="40" loading="lazy"><span>' + esc(poke.name) + '</span></span></td>';
+    var href = wikiUrl(basePokeName(poke.name));
+    return '<td class="poke"><a class="poke-cell wiki-link" href="' + href + '" target="_blank" rel="noopener noreferrer" title="在 52Poké 百科查看' + esc(basePokeName(poke.name)) + '"><img class="pokebadge" src="' + ART + poke.id + '.png" alt="' + esc(poke.name) + '" width="40" height="40" loading="lazy"><span class="poke-name">' + esc(poke.name) + '</span></a></td>';
   }
 
   /* ---------- 全量表（Excel 式筛选 + 排序） ---------- */
@@ -433,6 +479,12 @@
           }
         }
       ]
+    });
+    chart.on('click', function(p){
+      if (!p || !p.data || !p.data.name) return;
+      var poke = POKE_MAP[p.data.name];
+      var title = poke ? basePokeName(poke.name) : typeWikiTitle(String(p.data.name).split('/')[0]);
+      window.open(wikiUrl(title), '_blank', 'noopener,noreferrer');
     });
   })();
 })();
