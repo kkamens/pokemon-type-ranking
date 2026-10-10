@@ -113,7 +113,7 @@
   .sortbtn { min-height: 44px; border: 1px solid var(--line); border-radius: 10px; padding: 0 14px; background: #fff; font-size: 13.5px; color: var(--ink-2); cursor: pointer; font-family: inherit; }
   .sortbtn.on { background: var(--blue-soft); border-color: var(--blue); color: var(--blue); font-weight: 700; }
   .count { font-size: 12.5px; color: var(--ink-3); margin-left: auto; }
-  .table-scroll { max-height: 620px; overflow: auto; border: 1px solid var(--line); border-radius: 10px; overscroll-behavior: contain; touch-action: pan-x pan-y; -webkit-overflow-scrolling: touch; }
+  .table-scroll { max-height: 620px; overflow: auto; border: 1px solid var(--line); border-radius: 10px; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
   .table-scroll table th, .table-scroll table td { text-align: center; }
   .table-scroll table th { position: sticky; top: 0; background: #F0F3F7; padding: 0; }
   .thbtn { display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%; min-height: 44px; border: none; background: none; font: inherit; font-size: 12.5px; font-weight: 700; color: var(--ink-2); cursor: pointer; user-select: none; padding: 6px 10px; }
@@ -132,6 +132,12 @@
   @media (max-width: 768px) {
     h1 { font-size: 24px; }
     .count { display: none; }
+    .table-scroll { max-height: 68dvh; }
+  }
+  @supports not (height: 1dvh) {
+    @media (max-width: 768px) {
+      .table-scroll { max-height: 68vh; }
+    }
   }
 </style>
 </head>
@@ -434,22 +440,6 @@
     $('all-tbody').innerHTML = html;
     $('row-count').textContent = rows.length + ' / ' + ALL.length + ' 项';
   }
-  /* 手机端表格滚动边界：在表格顶部/底部继续滑动时阻止滚动链传给外层页面 */
-  (function(){
-    var scroller = document.querySelector('.table-scroll');
-    if (!scroller) return;
-    var startY = 0;
-    scroller.addEventListener('touchstart', function(e){
-      if (e.touches && e.touches.length) startY = e.touches[0].clientY;
-    }, { passive: true });
-    scroller.addEventListener('touchmove', function(e){
-      if (!e.touches || !e.touches.length) return;
-      var dy = e.touches[0].clientY - startY;
-      var atTop = scroller.scrollTop <= 0;
-      var atBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 1;
-      if ((atTop && dy > 0) || (atBottom && dy < 0)) e.preventDefault();
-    }, { passive: false });
-  })();
   /* 表头排序：同列再点切换升/降 */
   var thbtns = document.querySelectorAll('.thbtn');
   for (var ti = 0; ti < thbtns.length; ti++) {
