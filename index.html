@@ -197,7 +197,7 @@
         </table>
       </li>
       <li><b>打击得分</b>：对全部 171 种防守属性组合逐项计分；双属性作为打击组合时，对每个目标取两种属性中更有利的倍率。所得原始总分除以 9.5，折算为与 18 项抗击端相同的尺度。</li>
-      <li><b>抗击得分</b>：面对 18 种单属性来袭逐项计分后求和；双属性组合承受来袭时，倍率为两个属性对应倍率的乘积。</li>
+      <li><b>抗击得分</b>：面对 18 种单属性来袭逐项计分后求和。</li>
       <li><b>综合</b> = 等效打击得分 + 抗击得分，两端权重相等。</li>
       <li><b>平衡</b> = −|等效打击得分 − 抗击得分|（越接近 0 越均衡）。</li>
       <li><b>排名</b>：按 综合 → 平衡 → 打击 → 抗击 依次比较；并列由排序键决出，名次固定 171 项、不受筛选影响。</li>
@@ -458,7 +458,7 @@
       },
       series: [
         {
-          name: '单属性', type: 'scatter', data: singlePts,
+          name: '单属性', type: 'scatter', data: singlePts, cursor: 'default',
           itemStyle: { color: '#D63B3B', opacity: 0.82 },
           emphasis: { itemStyle: { opacity: 1 } },
           markLine: {
@@ -469,25 +469,20 @@
           }
         },
         {
-          name: '双属性', type: 'scatter', data: dualPts,
+          name: '双属性', type: 'scatter', data: dualPts, cursor: 'default',
           itemStyle: { color: '#2F6DB5', opacity: 0.78 },
           emphasis: { itemStyle: { opacity: 1 } },
           markArea: {
             silent: true,
-            label: { show: false },
             data: [
-              [{ coord: [0, 0], itemStyle: { color: 'rgba(63,124,88,0.05)' } }, { coord: [24, 14] }],
-              [{ coord: [-8, -8], itemStyle: { color: 'rgba(194,85,78,0.05)' } }, { coord: [0, 0] }]
+              [{ name: '双强区', coord: [0, 0], itemStyle: { color: 'rgba(63,124,88,0.07)' }, label: { show: true, position: 'insideTopRight', color: '#537965', fontSize: 11 } }, { coord: [24, 20] }],
+              [{ name: '打击优势区', coord: [-8, 0], itemStyle: { color: 'rgba(47,109,181,0.055)' }, label: { show: true, position: 'insideTopLeft', color: '#587596', fontSize: 11 } }, { coord: [0, 20] }],
+              [{ name: '抗击优势区', coord: [0, -15], itemStyle: { color: 'rgba(232,163,61,0.06)' }, label: { show: true, position: 'insideBottomRight', color: '#8A6B3E', fontSize: 11 } }, { coord: [24, 0] }],
+              [{ name: '双弱区', coord: [-8, -15], itemStyle: { color: 'rgba(194,85,78,0.065)' }, label: { show: true, position: 'insideBottomLeft', color: '#95605C', fontSize: 11 } }, { coord: [0, 0] }]
             ]
           }
         }
       ]
-    });
-    chart.on('click', function(p){
-      if (!p || !p.data || !p.data.name) return;
-      var poke = POKE_MAP[p.data.name];
-      var title = poke ? basePokeName(poke.name) : typeWikiTitle(String(p.data.name).split('/')[0]);
-      window.open(wikiUrl(title), '_blank', 'noopener,noreferrer');
     });
   })();
 })();
