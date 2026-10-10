@@ -158,6 +158,7 @@
         </div>
         <div class="seg" id="show-seg">
           <button class="sortbtn on" data-show="score">分值</button>
+          <button class="sortbtn" data-show="percent">分值（百分制）</button>
           <button class="sortbtn" data-show="rank">名次</button>
         </div>
         <input class="search" id="q" type="search" placeholder="筛选属性，如 钢 / 幽灵…">
@@ -200,6 +201,7 @@
       <li><b>抗击得分</b>：面对 18 种单属性来袭逐项计分后求和。</li>
       <li><b>综合</b> = 等效打击得分 + 抗击得分，两端权重相等。</li>
       <li><b>平衡</b> = −|等效打击得分 − 抗击得分|（越接近 0 越均衡）。</li>
+      <li><b>百分制</b>：综合、平衡、打击、抗击分别按全量 171 项线性归一化，最低值记为 0，最高值记为 100；筛选不会改变百分制，排序仍按原始分值进行。</li>
       <li><b>排名</b>：按 综合 → 平衡 → 打击 → 抗击 依次比较；并列由排序键决出，名次固定 171 项、不受筛选影响。</li>
       <li><b>数据来源</b>：官方属性相克表（第九世代，第六世代起未变），数值由脚本复算。</li>
     </ol>
@@ -323,6 +325,25 @@
     }
     return map;
   }
+  function scoreRange(rows, key){
+    var min = Infinity, max = -Infinity;
+    for (var i = 0; i < rows.length; i++) {
+      if (rows[i][key] < min) min = rows[i][key];
+      if (rows[i][key] > max) max = rows[i][key];
+    }
+    return { min: min, max: max };
+  }
+  var PERCENT_RANGE = {
+    atk: scoreRange(ALL, 'atk'),
+    def: scoreRange(ALL, 'def'),
+    bal: scoreRange(ALL, 'bal'),
+    total: scoreRange(ALL, 'total')
+  };
+  function percentScore(v, key){
+    var range = PERCENT_RANGE[key];
+    if (!range || range.max === range.min) return '100';
+    return scoreFmt((v - range.min) * 100 / (range.max - range.min));
+  }
   function renderAll(){
     var rows = ALL.slice();
     if (TYPE === 'single') rows = rows.filter(function(r){ return r.kind === '单'; });
@@ -339,13 +360,14 @@
     }
     var html = '';
     var rankMode = (SHOW === 'rank');
-    var cls = function(v){ return rankMode ? 'rk' : (Number(v) >= 0 ? 'pos' : 'neg'); };
+    var percentMode = (SHOW === 'percent');
+    var cls = function(v){ return rankMode ? 'rk' : (percentMode || Number(v) >= 0 ? 'pos' : 'neg'); };
     for (var i = 0; i < rows.length; i++) {
       var r = rows[i];
-      var av = rankMode ? atkR[r.name] : scoreFmt(r.atk);
-      var dv = rankMode ? defR[r.name] : scoreFmt(r.def);
-      var bv = rankMode ? balR[r.name] : scoreFmt(r.bal);
-      var tv = rankMode ? totR[r.name] : scoreFmt(r.total);
+      var av = rankMode ? atkR[r.name] : (percentMode ? percentScore(r.atk, 'atk') : scoreFmt(r.atk));
+      var dv = rankMode ? defR[r.name] : (percentMode ? percentScore(r.def, 'def') : scoreFmt(r.def));
+      var bv = rankMode ? balR[r.name] : (percentMode ? percentScore(r.bal, 'bal') : scoreFmt(r.bal));
+      var tv = rankMode ? totR[r.name] : (percentMode ? percentScore(r.total, 'total') : scoreFmt(r.total));
       html += '<tr>' + badgeCell(r.name) + '<td>' + (r.kind === '双' ? '双属性' : '单属性') + '</td>'
         + '<td class="' + cls(tv) + '">' + tv + '</td>'
         + '<td class="' + (rankMode ? 'rk' : '') + '">' + bv + '</td>'
@@ -383,7 +405,7 @@
   }
   /* 关键字筛选 */
   $('q').addEventListener('input', function(){ Q = this.value.trim(); renderAll(); });
-  /* 分值/名次切换 */
+  /* 原分值/百分制/名次切换 */
   var seg2 = document.querySelectorAll('#show-seg .sortbtn');
   for (var s2 = 0; s2 < seg2.length; s2++) {
     (function(btn){
