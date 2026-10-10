@@ -111,7 +111,7 @@
   .sortbtn { min-height: 44px; border: 1px solid var(--line); border-radius: 10px; padding: 0 14px; background: #fff; font-size: 13.5px; color: var(--ink-2); cursor: pointer; font-family: inherit; }
   .sortbtn.on { background: var(--blue-soft); border-color: var(--blue); color: var(--blue); font-weight: 700; }
   .count { font-size: 12.5px; color: var(--ink-3); margin-left: auto; }
-  .table-scroll { max-height: 620px; overflow: auto; border: 1px solid var(--line); border-radius: 10px; }
+  .table-scroll { max-height: 620px; overflow: auto; border: 1px solid var(--line); border-radius: 10px; overscroll-behavior: contain; touch-action: pan-x pan-y; -webkit-overflow-scrolling: touch; }
   .table-scroll table th, .table-scroll table td { text-align: center; }
   .table-scroll table th { position: sticky; top: 0; background: #F0F3F7; padding: 0; }
   .thbtn { display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%; min-height: 44px; border: none; background: none; font: inherit; font-size: 12.5px; font-weight: 700; color: var(--ink-2); cursor: pointer; user-select: none; padding: 6px 10px; }
@@ -230,7 +230,7 @@
   <footer class="foot">
     <h3>计算规则</h3>
     <ol>
-      <li><b>倍率 → 得分</b>：以 log₂(倍率) 为基础，并对非中性倍率作方向性修正，以放大覆盖范围的差异：奖励更广的有效打击面与抗击面，惩罚更窄的有效打击面与抗击面。具体对应关系见下表。
+      <li><b>倍率 → 得分</b>：以 log₂(倍率) 为基础，并对非中性倍率沿正负方向额外修正 ±0.5，以放大覆盖范围的差异：奖励更广的有效打击面与抗击面，惩罚更窄的有效打击面与抗击面。具体对应关系见下表。
         <table class="rate">
           <thead><tr><th>倍率</th><th>打击得分</th><th>抗击得分</th></tr></thead>
           <tbody>
@@ -249,7 +249,7 @@
       <li><b>平衡</b> = −|等效打击得分 − 抗击得分|（越接近 0 越均衡）。</li>
       <li><b>百分制</b>：综合、平衡、打击、抗击分别按全量 171 项线性归一化，最低值记为 0，最高值记为 100；筛选不会改变百分制，排序仍按原始分值进行。</li>
       <li><b>排名</b>：按 综合 → 平衡 → 打击 → 抗击 依次比较；并列由排序键决出，名次固定 171 项、不受筛选影响。</li>
-      <li><b>数据来源</b>：官方属性相克表（第九世代，第六世代起未变），数值由脚本复算。</li>
+      <li><b>数据来源</b>：属性、形态、种族值与官方图片对应关系基于 PokeAPI v2；属性相克倍率由本页固定矩阵计算，数值由脚本复算。</li>
     </ol>
     <p class="src-note">属性图标裁剪自公开素材合集（第三方来源）；代表宝可梦取该组合所有官方形态（含 mega、地区形态）中种族值最高者，特殊形态标注形态名（如 喷火龙-超级喷火龙Ｘ）；9 个组合无对应宝可梦，显示「无」。图片仅作展示引用。</p>
   </footer>
@@ -432,6 +432,22 @@
     $('all-tbody').innerHTML = html;
     $('row-count').textContent = rows.length + ' / ' + ALL.length + ' 项';
   }
+  /* 手机端表格滚动边界：在表格顶部/底部继续滑动时阻止滚动链传给外层页面 */
+  (function(){
+    var scroller = document.querySelector('.table-scroll');
+    if (!scroller) return;
+    var startY = 0;
+    scroller.addEventListener('touchstart', function(e){
+      if (e.touches && e.touches.length) startY = e.touches[0].clientY;
+    }, { passive: true });
+    scroller.addEventListener('touchmove', function(e){
+      if (!e.touches || !e.touches.length) return;
+      var dy = e.touches[0].clientY - startY;
+      var atTop = scroller.scrollTop <= 0;
+      var atBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 1;
+      if ((atTop && dy > 0) || (atBottom && dy < 0)) e.preventDefault();
+    }, { passive: false });
+  })();
   /* 表头排序：同列再点切换升/降 */
   var thbtns = document.querySelectorAll('.thbtn');
   for (var ti = 0; ti < thbtns.length; ti++) {
