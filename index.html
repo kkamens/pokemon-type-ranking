@@ -441,17 +441,17 @@
             + '代表宝可梦：' + extra;
         }
       },
-      grid: { left: '8.333%', right: '8.333%', top: '8.824%', bottom: '8.824%', containLabel: false },
+      grid: { left: '12%', right: '8%', top: '9%', bottom: '12%', containLabel: false },
       xAxis: {
-        type: 'value', name: '抗击', min: -8, max: 24, interval: 5,
-        nameTextStyle: { color: '#5A6472', fontSize: 12, padding: [8, 0, 0, 0] },
+        type: 'value', name: '抗击得分', min: -8, max: 24, interval: 5, nameLocation: 'middle', nameGap: 34,
+        nameTextStyle: { color: '#5A6472', fontSize: 12 },
         axisLine: { lineStyle: { color: '#C9D2DD' } },
         axisLabel: { color: '#5A6472', fontSize: 11, margin: 10 },
         splitLine: { lineStyle: { color: '#EDF1F6', type: 'dashed' } }
       },
       yAxis: {
-        type: 'value', name: '打击得分（等效18项）', min: -15, max: 20, interval: 5,
-        nameTextStyle: { color: '#5A6472', fontSize: 12, padding: [0, 0, 0, 12] },
+        type: 'value', name: '打击得分', min: -15, max: 20, interval: 5, nameLocation: 'middle', nameGap: 46,
+        nameTextStyle: { color: '#5A6472', fontSize: 12 },
         axisLine: { lineStyle: { color: '#C9D2DD' } },
         axisLabel: { color: '#5A6472', fontSize: 11, margin: 10 },
         splitLine: { lineStyle: { color: '#EDF1F6', type: 'dashed' } }
