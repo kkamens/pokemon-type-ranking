@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -207,10 +207,52 @@
       .table-scroll { max-height: 68vh; }
     }
   }
+
+  /* ===== Language selector ===== */
+  .langbar { display:flex; justify-content:flex-end; margin:0 auto 8px; }
+  .lang-switch { display:inline-flex; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:#fff; }
+  .lang-btn { min-height:44px; padding:0 13px; border:0; border-left:1px solid var(--line); background:#fff; color:var(--ink-2); font:inherit; font-size:13px; cursor:pointer; }
+  .lang-btn:first-child { border-left:0; }
+  .lang-btn.on { background:var(--blue-soft); color:var(--blue); font-weight:800; }
+  .lang-btn:focus-visible { outline:2px solid var(--blue); outline-offset:-3px; }
+  html[lang="en"] body { font-family:"Noto Sans SC","Segoe UI",sans-serif; }
+  html[lang="ja"] body { font-family:"Noto Sans SC","Yu Gothic","Meiryo",sans-serif; }
+  html[lang="en"] .nm, html[lang="ja"] .nm { width:auto; min-width:4.8em; }
+  html[lang="en"] .quick-table .entry:not(.single), html[lang="ja"] .quick-table .entry:not(.single), html[lang="en"] .starter-type .entry:not(.single), html[lang="ja"] .starter-type .entry:not(.single) { width:236px; }
+  html[lang="en"] .quick-table .entry:not(.single) .ai, html[lang="ja"] .quick-table .entry:not(.single) .ai,
+  html[lang="en"] .starter-type .entry:not(.single) .ai, html[lang="ja"] .starter-type .entry:not(.single) .ai { grid-template-columns:108px 20px 108px; width:236px; }
+  html[lang="en"] .quick-table .a1, html[lang="en"] .quick-table .a2, html[lang="ja"] .quick-table .a1, html[lang="ja"] .quick-table .a2,
+  html[lang="en"] .starter-type .a1, html[lang="en"] .starter-type .a2, html[lang="ja"] .starter-type .a1, html[lang="ja"] .starter-type .a2 { width:108px; min-width:108px; }
+  html[lang="en"] .quick-table .entry.single, html[lang="ja"] .quick-table .entry.single, html[lang="en"] .starter-type .entry.single, html[lang="ja"] .starter-type .entry.single { width:108px; }
+  html[lang="en"] .starter-table, html[lang="ja"] .starter-table { min-width:1200px; }
+  html[lang="en"] .quick-table .entry.single .ai, html[lang="ja"] .quick-table .entry.single .ai { grid-template-columns:0 0 108px; width:108px; }
+  @media (max-width:768px) { .langbar { justify-content:center; } .lang-switch { width:100%; } .lang-btn { flex:1; } }
+
 </style>
+<script>
+(function(){
+  var TYPE_I18N = {"一般":{"en":"Normal","ja":"ノーマル"},"火":{"en":"Fire","ja":"ほのお"},"水":{"en":"Water","ja":"みず"},"电":{"en":"Electric","ja":"でんき"},"草":{"en":"Grass","ja":"くさ"},"冰":{"en":"Ice","ja":"こおり"},"格斗":{"en":"Fighting","ja":"かくとう"},"毒":{"en":"Poison","ja":"どく"},"地面":{"en":"Ground","ja":"じめん"},"飞行":{"en":"Flying","ja":"ひこう"},"超能力":{"en":"Psychic","ja":"エスパー"},"虫":{"en":"Bug","ja":"むし"},"岩石":{"en":"Rock","ja":"いわ"},"幽灵":{"en":"Ghost","ja":"ゴースト"},"龙":{"en":"Dragon","ja":"ドラゴン"},"恶":{"en":"Dark","ja":"あく"},"钢":{"en":"Steel","ja":"はがね"},"妖精":{"en":"Fairy","ja":"フェアリー"}};
+  var POKE_I18N = {"3":{"en":"Venusaur","ja":"フシギバナ"},"6":{"en":"Charizard","ja":"リザードン"},"9":{"en":"Blastoise","ja":"カメックス"},"31":{"en":"Nidoqueen","ja":"ニドクイン"},"73":{"en":"Tentacruel","ja":"ドククラゲ"},"89":{"en":"Muk","ja":"ベトベトン"},"127":{"en":"Pinsir","ja":"カイロス"},"130":{"en":"Gyarados","ja":"ギャラドス"},"144":{"en":"Articuno","ja":"フリーザー"},"145":{"en":"Zapdos","ja":"サンダー"},"154":{"en":"Meganium","ja":"メガニウム"},"157":{"en":"Typhlosion","ja":"バクフーン"},"160":{"en":"Feraligatr","ja":"オーダイル"},"169":{"en":"Crobat","ja":"クロバット"},"213":{"en":"Shuckle","ja":"ツボツボ"},"244":{"en":"Entei","ja":"エンテイ"},"249":{"en":"Lugia","ja":"ルギア"},"250":{"en":"Ho-Oh","ja":"ホウオウ"},"251":{"en":"Celebi","ja":"セレビィ"},"254":{"en":"Sceptile","ja":"ジュカイン"},"257":{"en":"Blaziken","ja":"バシャーモ"},"260":{"en":"Swampert","ja":"ラグラージ"},"292":{"en":"Shedinja","ja":"ヌケニン"},"344":{"en":"Claydol","ja":"ネンドール"},"377":{"en":"Regirock","ja":"レジロック"},"378":{"en":"Regice","ja":"レジアイス"},"383":{"en":"Groudon","ja":"グラードン - グラードンのすがた"},"389":{"en":"Torterra","ja":"ドダイトス"},"392":{"en":"Infernape","ja":"ゴウカザル"},"395":{"en":"Empoleon","ja":"エンペルト"},"400":{"en":"Bibarel","ja":"ビーダル"},"426":{"en":"Drifblim","ja":"フワライド"},"462":{"en":"Magnezone","ja":"ジバコイル"},"464":{"en":"Rhyperior","ja":"ドサイドン"},"473":{"en":"Mamoswine","ja":"マンムー"},"479":{"en":"Rotom","ja":"ロトム - ロトムのすがた"},"483":{"en":"Dialga","ja":"ディアルガ"},"484":{"en":"Palkia","ja":"パルキア"},"487":{"en":"Altered Giratina","ja":"ギラティナ - アナザーフォルム"},"492":{"en":"Land Shaymin","ja":"シェイミ - ランドフォルム"},"493":{"en":"Normal Arceus","ja":"アルセウス - ノーマルタイプ"},"497":{"en":"Serperior","ja":"ジャローダ"},"500":{"en":"Emboar","ja":"エンブオー"},"503":{"en":"Samurott","ja":"ダイケンキ"},"542":{"en":"Leavanny","ja":"ハハコモリ"},"635":{"en":"Hydreigon","ja":"サザンドラ"},"637":{"en":"Volcarona","ja":"ウルガモス"},"641":{"en":"Incarnate Tornadus","ja":"トルネロス - けしんフォルム"},"643":{"en":"Reshiram","ja":"レシラム"},"644":{"en":"Zekrom","ja":"ゼクロム"},"645":{"en":"Incarnate Landorus","ja":"ランドロス - けしんフォルム"},"647":{"en":"Ordinary Keldeo","ja":"ケルディオ - いつものすがた"},"648":{"en":"Aria Meloetta","ja":"メロエッタ - ボイスフォルム"},"652":{"en":"Chesnaught","ja":"ブリガロン"},"655":{"en":"Delphox","ja":"マフォクシー"},"658":{"en":"Greninja","ja":"ゲッコウガ"},"689":{"en":"Barbaracle","ja":"ガメノデス"},"695":{"en":"Heliolisk","ja":"エレザード"},"697":{"en":"Tyrantrum","ja":"ガチゴラス"},"699":{"en":"Aurorus","ja":"アマルルガ"},"716":{"en":"Active Xerneas","ja":"ゼルネアス - アクティブモード"},"717":{"en":"Yveltal","ja":"イベルタル"},"721":{"en":"Volcanion","ja":"ボルケニオン"},"724":{"en":"Decidueye","ja":"ジュナイパー"},"727":{"en":"Incineroar","ja":"ガオガエン"},"730":{"en":"Primarina","ja":"アシレーヌ"},"738":{"en":"Vikavolt","ja":"クワガノン"},"743":{"en":"Ribombee","ja":"アブリボン"},"768":{"en":"Golisopod","ja":"グソクムシャ"},"785":{"en":"Tapu Koko","ja":"カプ・コケコ"},"788":{"en":"Tapu Fini","ja":"カプ・レヒレ"},"792":{"en":"Lunala","ja":"ルナアーラ"},"797":{"en":"Celesteela","ja":"テッカグヤ"},"798":{"en":"Kartana","ja":"カミツルギ"},"802":{"en":"Marshadow","ja":"マーシャドー"},"805":{"en":"Stakataka","ja":"ツンデツンデ"},"812":{"en":"Rillaboom","ja":"ゴリランダー"},"815":{"en":"Cinderace","ja":"エースバーン"},"818":{"en":"Inteleon","ja":"インテレオン"},"826":{"en":"Orbeetle","ja":"イオルブ"},"849":{"en":"Amped Toxtricity","ja":"ストリンダー - ハイなすがた"},"861":{"en":"Grimmsnarl","ja":"オーロンゲ"},"862":{"en":"Obstagoon","ja":"タチフサグマ"},"873":{"en":"Frosmoth","ja":"モスノウ"},"877":{"en":"Full Belly Morpeko","ja":"モルペコ - まんぷくもよう"},"889":{"en":"Zamazenta","ja":"ザマゼンタ - れきせんのゆうしゃ"},"893":{"en":"Zarude","ja":"ザルード"},"897":{"en":"Spectrier","ja":"レイスポス"},"902":{"en":"Male Basculegion","ja":"イダイトウ - オスのすがた"},"904":{"en":"Overqwil","ja":"ハリーマン"},"908":{"en":"Meowscarada","ja":"マスカーニャ"},"911":{"en":"Skeledirge","ja":"ラウドボーン"},"914":{"en":"Quaquaval","ja":"ウェーニバル"},"920":{"en":"Lokix","ja":"エクスレッグ"},"930":{"en":"Arboliva","ja":"オリーヴァ"},"945":{"en":"Grafaiai","ja":"タギングル"},"966":{"en":"Revavroom","ja":"ブロロローム"},"983":{"en":"Kingambit","ja":"ドドゲザン"},"984":{"en":"Great Tusk","ja":"イダイナキバ"},"987":{"en":"Flutter Mane","ja":"ハバタクカミ"},"989":{"en":"Sandy Shocks","ja":"スナノケガワ"},"991":{"en":"Iron Bundle","ja":"テツノツツミ"},"992":{"en":"Iron Hands","ja":"テツノカイナ"},"994":{"en":"Iron Moth","ja":"テツノドクガ"},"995":{"en":"Iron Thorns","ja":"テツノイバラ"},"1000":{"en":"Gholdengo","ja":"サーフゴー"},"1002":{"en":"Chien-Pao","ja":"パオジアン"},"1003":{"en":"Ting-Lu","ja":"ディンルー"},"1006":{"en":"Iron Valiant","ja":"テツノブジン"},"1007":{"en":"Koraidon - Apex Build","ja":"コライドン - かんぜんけいたい"},"1014":{"en":"Okidogi","ja":"イイネイヌ"},"1015":{"en":"Munkidori","ja":"マシマシラ"},"1016":{"en":"Fezandipiti","ja":"キチキギス"},"1022":{"en":"Iron Boulder","ja":"テツノイワオ"},"1025":{"en":"Pecharunt","ja":"モモワロウ"},"10004":{"en":"Sandy Wormadam","ja":"ミノマダム - すなちのミノ"},"10006":{"en":"Sky Shaymin","ja":"シェイミ - スカイフォルム"},"10008":{"en":"Heat Rotom","ja":"ロトム - ヒートロトム"},"10009":{"en":"Wash Rotom","ja":"ロトム - ウォッシュロトム"},"10010":{"en":"Frost Rotom","ja":"ロトム - フロストロトム"},"10012":{"en":"Mow Rotom","ja":"ロトム - カットロトム"},"10018":{"en":"Pirouette Meloetta","ja":"メロエッタ - ステップフォルム"},"10022":{"en":"Black Kyurem","ja":"キュレム - ブラックキュレム"},"10033":{"en":"Mega Venusaur","ja":"フシギバナ - メガフシギバナ"},"10040":{"en":"Mega Pinsir","ja":"カイロス - メガカイロス"},"10041":{"en":"Mega Gyarados","ja":"ギャラドス - メガギャラドス"},"10042":{"en":"Mega Aerodactyl","ja":"プテラ - メガプテラ"},"10043":{"en":"Mega Mewtwo X","ja":"ミュウツー - メガミュウツーＸ"},"10044":{"en":"Mega Mewtwo Y","ja":"ミュウツー - メガミュウツーＹ"},"10047":{"en":"Mega Heracross","ja":"ヘラクロス - メガヘラクロス"},"10048":{"en":"Mega Houndoom","ja":"ヘルガー - メガヘルガー"},"10049":{"en":"Mega Tyranitar","ja":"バンギラス - メガバンギラス"},"10050":{"en":"Mega Blaziken","ja":"バシャーモ - メガバシャーモ"},"10051":{"en":"Mega Gardevoir","ja":"サーナイト - メガサーナイト"},"10053":{"en":"Mega Aggron","ja":"ボスゴドラ - メガボスゴドラ"},"10060":{"en":"Mega Abomasnow","ja":"ユキノオー - メガユキノオー"},"10064":{"en":"Mega Swampert","ja":"ラグラージ - メガラグラージ"},"10065":{"en":"Mega Sceptile","ja":"ジュカイン - メガジュカイン"},"10067":{"en":"Mega Altaria","ja":"チルタリス - メガチルタリス"},"10069":{"en":"Mega Audino","ja":"タブンネ - メガタブンネ"},"10072":{"en":"Mega Steelix","ja":"ハガネール - メガハガネール"},"10073":{"en":"Mega Pidgeot","ja":"ピジョット - メガピジョット"},"10075":{"en":"Mega Diancie","ja":"ディアンシー - メガディアンシー"},"10076":{"en":"Mega Metagross","ja":"メタグロス - メガメタグロス"},"10077":{"en":"Primal Kyogre","ja":"カイオーガ - ゲンシカイキのすがた"},"10078":{"en":"Primal Groudon","ja":"グラードン - ゲンシカイキのすがた"},"10079":{"en":"Mega Rayquaza","ja":"レックウザ - メガレックウザ"},"10086":{"en":"Hoopa Unbound","ja":"フーパ - ときはなたれしフーパ"},"10100":{"en":"Alolan Raichu","ja":"ライチュウ - アローラのすがた"},"10102":{"en":"Alolan Sandslash","ja":"サンドパン - アローラのすがた"},"10104":{"en":"Alolan Ninetales","ja":"キュウコン - アローラのすがた"},"10157":{"en":"Ultra Necrozma","ja":"ネクロズマ - ウルトラネクロズマ"},"10178":{"en":"Zen Galarian Darmanitan","ja":"ヒヒダルマ - ダルマモード"},"10188":{"en":"Crowned Zacian","ja":"ザシアン - けんのおう"},"10189":{"en":"Crowned Zamazenta","ja":"ザマゼンタ - たてのおう"},"10190":{"en":"Eternamax Eternatus","ja":"ムゲンダイナ - ムゲンダイマックス"},"10193":{"en":"Ice Calyrex","ja":"バドレックス - はくばじょうのすがた"},"10230":{"en":"Hisuian Arcanine","ja":"ウインディ - ヒスイのすがた"},"10239":{"en":"Hisuian Zoroark","ja":"ゾロアーク - ヒスイのすがた"},"10272":{"en":"Bloodmoon Ursaluna","ja":"ガチグマ - アカツキ"},"10273":{"en":"Wellspring Mask Ogerpon","ja":"オーガポン - いどのめん"},"10275":{"en":"Cornerstone Mask Ogerpon","ja":"オーガポン - いしずえのめん"},"10278":{"en":"Mega Clefable","ja":"ピクシー - メガピクシー"},"10280":{"en":"Mega Starmie","ja":"スターミー - メガスターミー"},"10282":{"en":"Mega Meganium","ja":"メガニウム - メガメガニウム"},"10285":{"en":"Mega Froslass","ja":"ユキメノコ - メガユキメノコ"},"10288":{"en":"Mega Scolipede","ja":"ペンドラー - メガペンドラー"},"10289":{"en":"Mega Scrafty","ja":"ズルズキン - メガズルズキン"},"10291":{"en":"Mega Chandelure","ja":"シャンデラ - メガシャンデラ"},"10292":{"en":"Mega Chesnaught","ja":"ブリガロン - メガブリガロン"},"10293":{"en":"Mega Delphox","ja":"マフォクシー - メガマフォクシー"},"10295":{"en":"Mega Pyroar","ja":"カエンジシ - メガカエンジシ"},"10298":{"en":"Mega Barbaracle","ja":"ガメノデス - メガガメノデス"},"10300":{"en":"Mega Hawlucha","ja":"ルチャブル - メガルチャブル"},"10301":{"en":"Mega Zygarde","ja":"ジガルデ - メガジガルデ"},"10302":{"en":"Mega Drampa","ja":"ジジーロン - メガジジーロン"},"10307":{"en":"Mega Absol Z","ja":"アブソル - メガアブソルZ"},"10309":{"en":"Mega Garchomp Z","ja":"ガブリアス - メガガブリアスZ"},"10311":{"en":"Mega Heatran","ja":"ヒードラン - メガヒードラン"},"10312":{"en":"Mega Darkrai","ja":"ダークライ - メガダークライ"},"10313":{"en":"Mega Golurk","ja":"ゴルーグ - メガゴルーグ"},"10315":{"en":"Mega Crabominable","ja":"ケケンカニ - メガケケンカニ"},"10316":{"en":"Mega Golisopod","ja":"グソクムシャ - メガグソクムシャ"},"10319":{"en":"Mega Zeraora","ja":"ゼラオラ - メガゼラオラ"},"10320":{"en":"Mega Scovillain","ja":"スコヴィラン - メガスコヴィラン"},"10321":{"en":"Mega Glimmora","ja":"キラフロル - メガキラフロル"}};
+  var TEXT_I18N = { en: {"纯规则倍率 · 不含实战环境":"Type matchups only · No battle context","宝可梦属性相克 · 纯数值理论排名":"Pokémon Type Matchups · Pure Numerical Ranking","18 单属性 + 153 双属性，每项附代表性宝可梦。":"18 single types + 153 dual types, each with a representative Pokémon.","页面目录":"Contents","打击与抗击速览":"Offense & defense overview","分布全景":"Full distribution","关键结论":"Key findings","御三家排名":"Starter rankings","全量排名":"Complete ranking","计算规则":"Scoring rules","单 / 双 / 全部 · 打击与抗击速览":"Single / Dual / All · Offense & defense overview","类型":"Category","强弱":"Extreme","全部属性":"All types","双属性":"Dual type","单属性":"Single type","综合":"Overall","平衡":"Balance","打击":"Offense","抗击":"Defense","最强":"Best","最弱":"Worst","打击与抗击分布全景 · 171 项":"Offense–defense distribution · 171 combinations","基于 171 种属性组合的纯倍率结果":"Based solely on matchup multipliers across 171 type combinations","属性边际贡献":"Marginal type value","钢的优势不是个别强配对，而是稳定抬升底盘":"Steel raises the baseline, not just a few pairings","打击与抗击分工":"Offense–defense roles","地面推进打击前沿，钢控制抗击上限":"Ground drives offense; Steel sets the defensive ceiling","帕累托前沿":"Pareto frontier","真正不可被同时超越的组合只有五个":"Only five combinations are not dominated on both axes","双属性协同":"Dual-type synergy","双属性收益来自覆盖并集，且不是简单相加":"Dual-type gains come from coverage union, not simple addition","攻守关系":"Offense–defense relationship","高打击并不必然换来低抗击":"High offense does not necessarily sacrifice defense","平衡指标解释":"Reading the balance metric","最平衡不等于最强，先看综合再看平衡才合理":"Most balanced does not mean strongest; read overall first","每个世代御三家属性排名":"Starter final-evolution type ranking by generation","常规最终进化形态 · 名次基于全量 171 项":"Standard final evolutions · Ranks are among all 171 combinations","选择综合、打击或抗击后，每个世代的三只最终进化会按该项全量名次从左到右排列；#数字是其属性组合在 171 项中的名次。同项并列时按综合位次稳定排序。":"Choose Overall, Offense, or Defense. Each generation’s three final evolutions are ordered left to right by their global type-combination rank. The # number is the rank among all 171 combinations; ties remain stable by overall rank.","世代":"Generation","第 1 名":"1st","第 2 名":"2nd","第 3 名":"3rd","全量排名数据表":"Complete ranking table","171 项 · 点击表头排序，单/双筛选 + 关键字过滤":"171 rows · Sort by column, filter single/dual types, and search","全部":"All","分值":"Score","分值（百分制）":"Score (0–100)","名次":"Rank","属性":"Type","代表宝可梦":"Representative Pokémon","无":"None","倍率":"Multiplier","打击得分":"Offense score","抗击得分":"Defense score"}, ja: {"纯规则倍率 · 不含实战环境":"タイプ相性のみ・対戦環境は考慮しない","宝可梦属性相克 · 纯数值理论排名":"ポケモンタイプ相性・純数値ランキング","18 单属性 + 153 双属性，每项附代表性宝可梦。":"単タイプ18種＋複合タイプ153種。各組み合わせに代表ポケモンを表示。","页面目录":"目次","打击与抗击速览":"攻撃・耐性早見","分布全景":"全体分布","关键结论":"重要な結論","御三家排名":"御三家ランキング","全量排名":"全ランキング","计算规则":"計算ルール","单 / 双 / 全部 · 打击与抗击速览":"単／複合／全体・攻撃と耐性の早見表","类型":"指標","强弱":"評価","全部属性":"全タイプ","双属性":"複合タイプ","单属性":"単タイプ","综合":"総合","平衡":"バランス","打击":"攻撃","抗击":"耐性","最强":"最高","最弱":"最低","打击与抗击分布全景 · 171 项":"攻撃・耐性の全体分布・171通り","基于 171 种属性组合的纯倍率结果":"171タイプ組み合わせの相性倍率のみで算出","属性边际贡献":"タイプの限界寄与","钢的优势不是个别强配对，而是稳定抬升底盘":"はがねは一部の強い組み合わせだけでなく、基礎性能を安定して高める","打击与抗击分工":"攻撃と耐性の役割","地面推进打击前沿，钢控制抗击上限":"じめんが攻撃面を伸ばし、はがねが耐性の上限を決める","帕累托前沿":"パレートフロンティア","真正不可被同时超越的组合只有五个":"攻撃と耐性の両方で同時に上回られない組み合わせは5つだけ","双属性协同":"複合タイプの相乗効果","双属性收益来自覆盖并集，且不是简单相加":"複合タイプの利得は範囲の和集合から生まれ、単純加算ではない","攻守关系":"攻撃と耐性の関係","高打击并不必然换来低抗击":"高い攻撃性能が必ずしも耐性低下を招くわけではない","平衡指标解释":"バランス指標の読み方","最平衡不等于最强，先看综合再看平衡才合理":"最も均衡していても最強とは限らない。まず総合、次にバランスを見る","每个世代御三家属性排名":"世代別・御三家最終進化のタイプリランキング","常规最终进化形态 · 名次基于全量 171 项":"通常の最終進化形・順位は全171通りを基準","选择综合、打击或抗击后，每个世代的三只最终进化会按该项全量名次从左到右排列；#数字是其属性组合在 171 项中的名次。同项并列时按综合位次稳定排序。":"総合・攻撃・耐性を選ぶと、各世代の最終進化3匹を全体順位順に左から表示します。#は171通り中のタイプ順位で、同点は総合順位で安定ソートします。","世代":"世代","第 1 名":"1位","第 2 名":"2位","第 3 名":"3位","全量排名数据表":"全ランキング表","171 项 · 点击表头排序，单/双筛选 + 关键字过滤":"171件・列見出しで並べ替え、単／複合フィルターと検索","全部":"すべて","分值":"スコア","分值（百分制）":"スコア（100点換算）","名次":"順位","属性":"タイプ","代表宝可梦":"代表ポケモン","无":"なし","倍率":"倍率","打击得分":"攻撃スコア","抗击得分":"耐性スコア"} };
+  var lang = localStorage.getItem('pokemon-type-ranking-language') || 'zh';
+  if (['zh','en','ja'].indexOf(lang) < 0) lang = 'zh';
+  window.APP_LANG = lang;
+  window.TYPE_I18N = TYPE_I18N;
+  window.POKE_I18N = POKE_I18N;
+  window.TEXT_I18N = TEXT_I18N;
+  window.typeI18n = function(t){ return lang === 'zh' ? t : ((TYPE_I18N[t] && TYPE_I18N[t][lang]) || t); };
+  window.comboI18n = function(name){ return String(name).split('/').map(window.typeI18n).join('/'); };
+  window.pokemonI18n = function(id, fallback){ var e=POKE_I18N[String(id)]; return lang==='zh' ? fallback : ((e && e[lang]) || fallback); };
+  window.uiI18n = function(zh){ return lang==='zh' ? zh : ((TEXT_I18N[lang] && TEXT_I18N[lang][zh]) || zh); };
+  window.generationI18n = function(n){ return lang==='en' ? 'Gen ' + n : (lang==='ja' ? '第' + n + '世代' : '第' + n + '世代'); };
+  window.metricRankI18n = function(metric, n){ var labels={total:window.uiI18n('综合'),atk:window.uiI18n('打击'),def:window.uiI18n('抗击')}; return lang==='en' ? labels[metric]+' '+n+(n===1?'st':n===2?'nd':n===3?'rd':'th') : (lang==='ja' ? labels[metric]+' '+n+'位' : labels[metric]+'第 '+n+' 名'); };
+})();
+</script>
 </head>
 <body>
 <div class="wrap">
+  <div class="langbar"><div class="lang-switch" role="group" aria-label="Language"><button class="lang-btn" type="button" data-lang="zh">中文</button><button class="lang-btn" type="button" data-lang="en">English</button><button class="lang-btn" type="button" data-lang="ja">日本語</button></div></div>
+
 
   <!-- ===== Hero ===== -->
   <header class="hero">
@@ -307,14 +349,14 @@
       if (!dataNode || !body || !controls.length) return;
       var rows = JSON.parse(dataNode.textContent);
       var metric = 'total';
-      var labels = { total: '综合', atk: '打击', def: '抗击' };
+      var labels = { total: window.uiI18n('综合'), atk: window.uiI18n('打击'), def: window.uiI18n('抗击') };
       function card(row, place){
         var pos = row.sprite || [0, 0];
         var style = 'background-position:' + (-pos[0] * 76) + 'px ' + (-pos[1] * 76) + 'px';
         return '<div class="starter-card' + (place === 1 ? ' best' : '') + '">'
-          + '<span class="starter-art" role="img" aria-label="' + row.pokemon + '" style="' + style + '"></span>'
+          + '<span class="starter-art" role="img" aria-label="' + window.pokemonI18n(row.pokemon_id,row.pokemon) + '" style="' + style + '"></span>'
           + '<div class="starter-detail"><div class="starter-name-line"><span class="starter-place">' + place + '</span>'
-          + '<a class="starter-name" href="' + row.wiki + '" target="_blank" rel="noopener noreferrer">' + row.pokemon + '</a></div>'
+          + '<a class="starter-name" href="' + row.wiki + '" target="_blank" rel="noopener noreferrer">' + window.pokemonI18n(row.pokemon_id,row.pokemon) + '</a></div>'
           + '<div class="starter-type-line"><div class="starter-type">' + row.type_html + '</div>'
           + '<span class="starter-global-rank">#' + row.ranks[metric] + '</span></div></div></div>';
       }
@@ -327,13 +369,13 @@
             if (delta !== 0) return delta;
             return a.ranks.total - b.ranks.total;
           });
-          out += '<tr><td class="starter-generation">第' + generation + '世代</td>';
+          out += '<tr><td class="starter-generation">' + window.generationI18n(generation) + '</td>';
           for (var i = 0; i < group.length; i++) out += '<td>' + card(group[i], i + 1) + '</td>';
           out += '</tr>';
         }
         body.innerHTML = out;
         var head = document.querySelectorAll('.starter-table thead th');
-        for (var h = 1; h < head.length; h++) head[h].textContent = labels[metric] + '第 ' + h + ' 名';
+        for (var h = 1; h < head.length; h++) head[h].textContent = window.metricRankI18n(metric,h);
       }
       for (var i = 0; i < controls.length; i++) {
         controls[i].addEventListener('click', function(){
@@ -438,7 +480,7 @@
     return null;
   }
   function prop(t, padSingle){
-    var s = padSingle ? new Array(Math.max(0, 3 - t.length) + 1).join('\u3000') + t : t;
+    var shown = window.typeI18n(t); var s = shown;
     return '<a class="wiki-link" href="' + wikiUrl(typeWikiTitle(t)) + '" target="_blank" rel="noopener noreferrer" title="在 52Poké 百科查看' + esc(typeWikiTitle(t)) + '"><img class="qi" src="' + TYPES[t] + '" alt="' + esc(t) + '"><span class="nm">' + esc(s) + '</span></a>';
   }
   function linkStaticProps(){
@@ -473,11 +515,11 @@
     return '<td class="name"><span class="entry' + (parts.length === 1 ? ' single' : '') + '"><span class="ai">' + inner + '</span></span></td>';
   }
   function pokeCell(poke){
-    if (!poke) return '<td class="poke"><span class="nopoke">无</span></td>';
+    if (!poke) return '<td class="poke"><span class="nopoke">' + window.uiI18n('无') + '</span></td>';
     var href = wikiUrl(pokeWikiTitle(poke.name));
     var pos = POKE_SPRITE[String(poke.id)] || [0, 0];
     var style = 'background-position:' + (-pos[0] * 40) + 'px ' + (-pos[1] * 40) + 'px';
-    return '<td class="poke"><a class="poke-cell wiki-link" href="' + href + '" target="_blank" rel="noopener noreferrer" title="在 52Poké 百科查看' + esc(pokeWikiTitle(poke.name)) + '"><span class="pokebadge" role="img" aria-label="' + esc(poke.name) + '" style="' + style + '"></span><span class="poke-name">' + esc(poke.name) + '</span></a></td>';
+    return '<td class="poke"><a class="poke-cell wiki-link" href="' + href + '" target="_blank" rel="noopener noreferrer" title="在 52Poké 百科查看' + esc(pokeWikiTitle(poke.name)) + '"><span class="pokebadge" role="img" aria-label="' + esc(poke.name) + '" style="' + style + '"></span><span class="poke-name">' + esc(window.pokemonI18n(poke.id,poke.name)) + '</span></a></td>';
   }
 
   /* ---------- 全量表（Excel 式筛选 + 排序） ---------- */
@@ -495,12 +537,12 @@
   var Q = '';
   function cmpRows(a, b){
     var k = SORT.key, d = SORT.dir;
-    if (k === 'name') return a.name.localeCompare(b.name, 'zh') * d;
+    if (k === 'name') return window.comboI18n(a.name).localeCompare(window.comboI18n(b.name), window.APP_LANG) * d;
     if (k === 'kind') return a.kind.localeCompare(b.kind, 'zh') * d;
     if (k === 'poke') {
       var na = a.poke ? a.poke.name : '\uFFFF';
       var nb = b.poke ? b.poke.name : '\uFFFF';
-      return na.localeCompare(nb, 'zh') * d;
+      return window.pokemonI18n(a.poke&&a.poke.id,na).localeCompare(window.pokemonI18n(b.poke&&b.poke.id,nb),window.APP_LANG) * d;
     }
     /* 数值列：主键 + 按 综合、平衡、打击、抗击 依次补次级键 */
     var r = a[k] - b[k];
@@ -519,7 +561,7 @@
     for (var i = 0; i < btns.length; i++) {
       var b = btns[i];
       var arrow = (b.getAttribute('data-key') === SORT.key) ? '<span class="arrow">' + (SORT.dir === -1 ? '&#9660;' : '&#9650;') + '</span>' : '';
-      b.innerHTML = b.getAttribute('data-label') + arrow;
+      b.innerHTML = window.uiI18n(b.getAttribute('data-label')) + arrow;
     }
   }
   /* 各数值维度的名次（当前筛选集合内降序，并列同分同名次） */
@@ -561,7 +603,7 @@
     var rows = ALL.slice();
     if (TYPE === 'single') rows = rows.filter(function(r){ return r.kind === '单'; });
     else if (TYPE === 'dual') rows = rows.filter(function(r){ return r.kind === '双'; });
-    if (Q) rows = rows.filter(function(r){ return r.name.indexOf(Q) >= 0; });
+    if (Q) rows = rows.filter(function(r){ var hay=(r.name+' '+window.comboI18n(r.name)+' '+(r.poke?window.pokemonI18n(r.poke.id,r.poke.name):'')).toLowerCase(); return hay.indexOf(Q.toLowerCase())>=0; });
     rows.sort(cmpRows);
     var atkR = null, defR = null, balR = null, totR = null;
     if (SHOW === 'rank') {
@@ -581,7 +623,7 @@
       var dv = rankMode ? defR[r.name] : (percentMode ? percentScore(r.def, 'def') : scoreFmt(r.def));
       var bv = rankMode ? balR[r.name] : (percentMode ? percentScore(r.bal, 'bal') : scoreFmt(r.bal));
       var tv = rankMode ? totR[r.name] : (percentMode ? percentScore(r.total, 'total') : scoreFmt(r.total));
-      html += '<tr>' + badgeCell(r.name) + '<td>' + (r.kind === '双' ? '双属性' : '单属性') + '</td>'
+      html += '<tr>' + badgeCell(r.name) + '<td>' + (r.kind === '双' ? window.uiI18n('双属性') : window.uiI18n('单属性')) + '</td>'
         + '<td class="' + cls(tv) + '">' + tv + '</td>'
         + '<td class="' + (percentMode ? 'pct' : (rankMode ? 'rk' : '')) + '">' + bv + '</td>'
         + '<td class="' + cls(av) + '">' + av + '</td>'
@@ -589,7 +631,7 @@
         + pokeCell(r.poke) + '</tr>';
     }
     $('all-tbody').innerHTML = html;
-    $('row-count').textContent = rows.length + ' / ' + ALL.length + ' 项';
+    $('row-count').textContent = rows.length + ' / ' + ALL.length + (window.APP_LANG==='en'?' rows':window.APP_LANG==='ja'?'件':' 项');
   }
   /* 表头排序：同列再点切换升/降 */
   var thbtns = document.querySelectorAll('.thbtn');
@@ -636,7 +678,7 @@
   /* ---------- ECharts：打击与抗击分布散点 ---------- */
   if (typeof echarts === 'undefined') {
     var el = $('scatter');
-    if (el) el.innerHTML = '<div style="padding:14px;color:#5A6472;font-size:13px;">图表库加载失败，已回退为文字说明。</div>';
+    if (el) el.innerHTML = '<div style="padding:14px;color:#5A6472;font-size:13px;"><span id="chart-fallback-text">图表库加载失败，已回退为文字说明。</span></div>';
     return;
   }
   (function(){
@@ -661,31 +703,31 @@
         top: 2, right: 2,
         itemWidth: 12, itemHeight: 12, itemGap: 16,
         textStyle: { color: '#5A6472', fontSize: 12 },
-        data: ['单属性', '双属性']
+        data: [window.uiI18n('单属性'), window.uiI18n('双属性')]
       },
       tooltip: {
         trigger: 'item', triggerOn: 'click', renderMode: 'richText', confine: true,
         backgroundColor: '#FFFFFF', borderColor: '#E3E7EC', textStyle: { color: '#20242C', fontSize: 12 },
         formatter: function(p){
           if (!p || !p.data) return '';
-          var kind = (p.data.kind === '单') ? '单属性' : '双属性';
+          var kind = (p.data.kind === '单') ? window.uiI18n('单属性') : window.uiI18n('双属性');
           var poke = pokeForName(p.data.name);
-          var extra = poke ? poke.name : '该组合暂无宝可梦';
-          return p.data.name + '（' + kind + '）' + String.fromCharCode(10)
-            + '抗击 ' + scoreFmt(p.value[0]) + ' · 打击 ' + scoreFmt(p.value[1]) + ' · 综合 ' + scoreFmt(p.value[2]) + String.fromCharCode(10)
-            + '代表宝可梦：' + extra;
+          var extra = poke ? window.pokemonI18n(poke.id,poke.name) : (window.APP_LANG==='en'?'No matching Pokémon':window.APP_LANG==='ja'?'該当ポケモンなし':'该组合暂无宝可梦');
+          return window.comboI18n(p.data.name) + '（' + kind + '）' + String.fromCharCode(10)
+            + window.uiI18n('抗击') + ' ' + scoreFmt(p.value[0]) + ' · ' + window.uiI18n('打击') + ' ' + scoreFmt(p.value[1]) + ' · ' + window.uiI18n('综合') + ' ' + scoreFmt(p.value[2]) + String.fromCharCode(10)
+            + window.uiI18n('代表宝可梦') + '：' + extra;
         }
       },
       grid: { left: '12%', right: '8%', top: '9%', bottom: '12%', containLabel: false },
       xAxis: {
-        type: 'value', name: '抗击得分', min: -8, max: 24, interval: 5, nameLocation: 'middle', nameGap: 34,
+        type: 'value', name: window.uiI18n('抗击得分'), min: -8, max: 24, interval: 5, nameLocation: 'middle', nameGap: 34,
         nameTextStyle: { color: '#5A6472', fontSize: 12 },
         axisLine: { lineStyle: { color: '#C9D2DD' } },
         axisLabel: { color: '#5A6472', fontSize: 11, margin: 10 },
         splitLine: { lineStyle: { color: '#EDF1F6', type: 'dashed' } }
       },
       yAxis: {
-        type: 'value', name: '打击得分（等效18项）', min: -15, max: 20, interval: 5, nameLocation: 'middle', nameGap: 46,
+        type: 'value', name: (window.APP_LANG==='en'?'Offense score (18-item equivalent)':window.APP_LANG==='ja'?'攻撃スコア（18項目換算）':'打击得分（等效18项）'), min: -15, max: 20, interval: 5, nameLocation: 'middle', nameGap: 46,
         nameTextStyle: { color: '#5A6472', fontSize: 12 },
         axisLine: { lineStyle: { color: '#C9D2DD' } },
         axisLabel: { color: '#5A6472', fontSize: 11, margin: 10 },
@@ -693,7 +735,7 @@
       },
       series: [
         {
-          name: '单属性', type: 'scatter', data: singlePts, cursor: 'default',
+          name: window.uiI18n('单属性'), type: 'scatter', data: singlePts, cursor: 'default',
           itemStyle: { color: '#D63B3B', opacity: 0.82 },
           emphasis: { itemStyle: { opacity: 1 } },
           markLine: {
@@ -704,16 +746,16 @@
           }
         },
         {
-          name: '双属性', type: 'scatter', data: dualPts, cursor: 'default',
+          name: window.uiI18n('双属性'), type: 'scatter', data: dualPts, cursor: 'default',
           itemStyle: { color: '#2F6DB5', opacity: 0.78 },
           emphasis: { itemStyle: { opacity: 1 } },
           markArea: {
             silent: true,
             data: [
-              [{ name: '双强区', coord: [0, 0], itemStyle: { color: 'rgba(63,124,88,0.07)' }, label: { show: true, position: 'insideTopRight', color: '#537965', fontSize: 11 } }, { coord: [24, 20] }],
-              [{ name: '打击优势区', coord: [-8, 0], itemStyle: { color: 'rgba(47,109,181,0.055)' }, label: { show: true, position: 'insideTopLeft', color: '#587596', fontSize: 11 } }, { coord: [0, 20] }],
-              [{ name: '抗击优势区', coord: [0, -15], itemStyle: { color: 'rgba(232,163,61,0.06)' }, label: { show: true, position: 'insideBottomRight', color: '#8A6B3E', fontSize: 11 } }, { coord: [24, 0] }],
-              [{ name: '双弱区', coord: [-8, -15], itemStyle: { color: 'rgba(194,85,78,0.065)' }, label: { show: true, position: 'insideBottomLeft', color: '#95605C', fontSize: 11 } }, { coord: [0, 0] }]
+              [{ name: (window.APP_LANG==='en'?"Strong on both":window.APP_LANG==='ja'?"\u4e21\u9762\u5f37\u533a":"\u53cc\u5f3a\u533a"), coord: [0, 0], itemStyle: { color: 'rgba(63,124,88,0.07)' }, label: { show: true, position: 'insideTopRight', color: '#537965', fontSize: 11 } }, { coord: [24, 20] }],
+              [{ name: (window.APP_LANG==='en'?"Offense advantage":window.APP_LANG==='ja'?"\u653b\u6483\u512a\u4f4d\u533a":"\u6253\u51fb\u4f18\u52bf\u533a"), coord: [-8, 0], itemStyle: { color: 'rgba(47,109,181,0.055)' }, label: { show: true, position: 'insideTopLeft', color: '#587596', fontSize: 11 } }, { coord: [0, 20] }],
+              [{ name: (window.APP_LANG==='en'?"Defense advantage":window.APP_LANG==='ja'?"\u8010\u6027\u512a\u4f4d\u533a":"\u6297\u51fb\u4f18\u52bf\u533a"), coord: [0, -15], itemStyle: { color: 'rgba(232,163,61,0.06)' }, label: { show: true, position: 'insideBottomRight', color: '#8A6B3E', fontSize: 11 } }, { coord: [24, 0] }],
+              [{ name: (window.APP_LANG==='en'?"Weak on both":window.APP_LANG==='ja'?"\u4e21\u9762\u5f31\u533a":"\u53cc\u5f31\u533a"), coord: [-8, -15], itemStyle: { color: 'rgba(194,85,78,0.065)' }, label: { show: true, position: 'insideBottomLeft', color: '#95605C', fontSize: 11 } }, { coord: [0, 0] }]
             ]
           }
         }
@@ -722,5 +764,48 @@
   })();
 })();
 </script>
+<script>
+(function(){
+  var lang=window.APP_LANG;
+  var buttons=document.querySelectorAll('.lang-btn');
+  for(var i=0;i<buttons.length;i++){
+    var code=buttons[i].getAttribute('data-lang');
+    buttons[i].className='lang-btn'+(code===lang?' on':'');
+    buttons[i].setAttribute('aria-pressed',code===lang?'true':'false');
+    buttons[i].addEventListener('click',function(){var next=this.getAttribute('data-lang');if(next!==lang){localStorage.setItem('pokemon-type-ranking-language',next);location.reload();}});
+  }
+  document.documentElement.lang=lang==='zh'?'zh-CN':lang;
+  var titleMap={zh:'宝可梦属性相克 · 纯数值理论排名',en:'Pokémon Type Matchups · Pure Numerical Ranking',ja:'ポケモンタイプ相性・純数値ランキング'};
+  document.title=titleMap[lang];
+  if(lang==='zh') return;
+  var dict=window.TEXT_I18N[lang]||{};
+  var skip={SCRIPT:1,STYLE:1};
+  function translateText(root){
+    var walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+    var nodes=[],n; while(n=walker.nextNode()) nodes.push(n);
+    for(var i=0;i<nodes.length;i++){
+      n=nodes[i]; if(!n.parentNode||skip[n.parentNode.nodeName]) continue;
+      var raw=n.nodeValue,trim=raw.trim(); if(!trim) continue;
+      var val=dict[trim];
+      if(!val && window.TYPE_I18N[trim]) val=window.TYPE_I18N[trim][lang];
+      if(val) n.nodeValue=raw.replace(trim,val);
+    }
+  }
+  translateText(document.body);
+  var insights={"en":["Across all 17 dual types containing Steel, the mean overall score is <b>24.46</b>, versus 12.40 for other dual types—a gap of <b>12.06</b>. Twelve of the top 20 include Steel, showing a reusable defensive lift rather than a few accidental pairings.","Dual types containing Ground average <b>13.70</b> on offense, the highest of all 18 types; Steel-containing dual types average <b>16.41</b> on defense, also the highest. Ground/Steel combines 14.79 offense with 16.00 defense, ranking second overall while remaining highly balanced.","If a combination is retained only when no other option has both higher offense and higher defense, only <b>Ghost/Steel, Ground/Steel, Ground/Flying, Ground/Rock, and Ice/Ground</b> remain. They form the full efficiency frontier from defensive extreme to offensive extreme.","All 153 dual types score higher overall than the stronger of their two component single types, with an average gain of <b>11.95</b>. Ground/Flying gains the most at 22.47. Offensively, each target uses the better of the two types, creating a coverage union; defensively, weaknesses, resistances, and immunities are recombined.","Across 153 dual types, the correlation between offense and defense is only <b>−0.014</b>, essentially no linear relationship. 127 dual types are non-negative on both axes, and none fall into the double-weak quadrant. Pairing can improve both ends at once.","There are 32 combinations whose offense–defense gap is at most 2, all of them dual types. Normal/Water has a gap of 0 but only 12.00 overall; Ground/Steel has a 1.21 gap and reaches 30.79 overall. Balance measures closeness, not strength."],"ja":["はがねを含む17の複合タイプの総合平均は<b>24.46</b>で、その他の複合タイプ平均12.40を<b>12.06</b>上回ります。総合上位20のうち12がはがねを含み、少数の偶然ではなく再利用可能な耐性向上を示します。","じめんを含む複合タイプの攻撃平均は<b>13.70</b>で18タイプ中最高。はがねを含む複合タイプの耐性平均は<b>16.41</b>で同じく最高です。じめん／はがねは攻撃14.79、耐性16.00で、総合2位かつ高い均衡を持ちます。","他の組み合わせに攻撃と耐性の両方で上回られない条件では、<b>ゴースト／はがね、じめん／はがね、じめん／ひこう、じめん／いわ、こおり／じめん</b>の5つだけが残ります。耐性極振りから攻撃極振りまでの効率境界を構成します。","153の複合タイプはすべて、構成する単タイプのうち強い方より総合点が高く、平均上昇は<b>11.95</b>です。最大はじめん／ひこうの22.47。攻撃側では対象ごとに有利な方を採用して範囲の和集合を作り、耐性側では弱点・耐性・無効を再構成します。","153の複合タイプにおける攻撃と耐性の相関係数は<b>−0.014</b>で、線形関係はほぼありません。127タイプが両軸とも非負で、両方が負の領域には1つもありません。組み合わせにより両面を同時に改善できます。","攻撃と耐性の差が2以内の組み合わせは32あり、すべて複合タイプです。ノーマル／みずは差0でも総合12.00、じめん／はがねは差1.21で総合30.79。バランスは近さを測る指標で、強さそのものではありません。"]}[lang]||[];
+  var copies=document.querySelectorAll('.insight-copy');
+  for(var c=0;c<copies.length&&c<insights.length;c++) copies[c].innerHTML=insights[c];
+  var rules={"en":"<li><b>Multiplier → score</b>: Start with log₂(multiplier), then apply an additional ±0.5 in the same direction for every non-neutral multiplier. This magnifies differences between broader and narrower offensive/defensive coverage.<table class=\"rate\"><thead><tr><th>Multiplier</th><th>Offense</th><th>Defense</th></tr></thead><tbody><tr><td>4×</td><td>+2.5</td><td>−2.5</td></tr><tr><td>2×</td><td>+1.5</td><td>−1.5</td></tr><tr><td>1×</td><td>0</td><td>0</td></tr><tr><td>½×</td><td>−1.5</td><td>+1.5</td></tr><tr><td>¼×</td><td>−2.5</td><td>+2.5</td></tr><tr><td>0×</td><td>−4.5</td><td>+4.5</td></tr></tbody></table></li><li><b>Offense score</b>: Score attacks against all 171 defending type combinations. For a dual attacking combination, use the more favorable of its two types against each target. Divide the raw total by 9.5 to match the 18-item defensive scale.</li><li><b>Defense score</b>: Sum scores against attacks from all 18 single types.</li><li><b>Overall</b> = equivalent offense + defense, with equal weight.</li><li><b>Balance</b> = −|equivalent offense − defense|; closer to 0 means more balanced.</li><li><b>0–100 score</b>: Normalize Overall, Balance, Offense, and Defense linearly across all 171 combinations. Filtering does not change the scale; sorting still uses raw scores.</li><li>Ties in the complete table are displayed by comparing Overall → Balance → Offense → Defense in order.</li><li><b>Data source</b>: Types, forms, and base stats use the fixed PokeAPI master-branch snapshot 2fe9553 (2026-10-07, REST API v2, including Pokémon Legends: Z-A data). Matchup multipliers come from the fixed matrix on this page and all values are recalculated by script.</li>","ja":"<li><b>倍率 → スコア</b>：log₂（倍率）を基礎とし、等倍以外は同じ正負方向に±0.5を追加します。これにより、広い／狭い攻撃範囲と耐性範囲の差を強調します。<table class=\"rate\"><thead><tr><th>倍率</th><th>攻撃</th><th>耐性</th></tr></thead><tbody><tr><td>4×</td><td>+2.5</td><td>−2.5</td></tr><tr><td>2×</td><td>+1.5</td><td>−1.5</td></tr><tr><td>1×</td><td>0</td><td>0</td></tr><tr><td>½×</td><td>−1.5</td><td>+1.5</td></tr><tr><td>¼×</td><td>−2.5</td><td>+2.5</td></tr><tr><td>0×</td><td>−4.5</td><td>+4.5</td></tr></tbody></table></li><li><b>攻撃スコア</b>：全171種類の防御側タイプ組み合わせに対して採点します。複合攻撃タイプは、各対象に対して2タイプのうち有利な倍率を採用します。生の合計を9.5で割り、耐性側と同じ18項目スケールに換算します。</li><li><b>耐性スコア</b>：18種類の単タイプ攻撃を受けたときのスコアを合計します。</li><li><b>総合</b>＝換算攻撃スコア＋耐性スコア。両者は同じ重みです。</li><li><b>バランス</b>＝−|換算攻撃スコア−耐性スコア|。0に近いほど均衡しています。</li><li><b>100点換算</b>：総合・バランス・攻撃・耐性を全171通りで線形正規化し、最低0、最高100とします。フィルターで尺度は変わらず、並べ替えは元スコアを使います。</li><li>全ランキング表で同点の場合、総合 → バランス → 攻撃 → 耐性の順に比較して表示順位を決めます。</li><li><b>データソース</b>：タイプ、フォルム、種族値はPokeAPI master-branch固定スナップショット2fe9553（2026-10-07、REST API v2、『Pokémon LEGENDS Z-A』データを含む）を使用。タイプ相性倍率は本ページの固定行列から計算し、数値はスクリプトで再計算しています。</li>"}[lang]; var ol=document.querySelector('#rules ol'); if(ol&&rules) ol.innerHTML=rules;
+  var src=document.querySelector('#rules .src-note'); if(src) src.textContent={"en":"Type icons are cropped from a public third-party asset collection. Each representative Pokémon is the official form with the highest six-stat base-stat total in the fixed snapshot; existing representatives are retained on ties. Nine combinations have no matching Pokémon and display “None”. Images are shown for reference only.","ja":"タイプアイコンは公開されている第三者素材集から切り出したものです。代表ポケモンは固定スナップショット内の全公式フォルムから種族値合計が最大のものを採用し、同値では既存の代表を維持します。該当ポケモンがいない9組は「なし」と表示します。画像は表示上の参照です。"}[lang];
+  var q=document.getElementById('q'); if(q) q.placeholder=lang==='en'?'Filter types, e.g. Steel / Ghost…':'タイプを検索（例：はがね / ゴースト）…';
+  // Dynamic tables were rendered before this final pass. Translate their type labels too.
+  translateText(document.getElementById('starter-tbody')||document.body);
+  translateText(document.getElementById('all-tbody')||document.body);
+})();
+</script>
 </body>
 </html>
+
+
+
+
