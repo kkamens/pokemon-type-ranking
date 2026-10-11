@@ -603,6 +603,186 @@
   html[lang="en"] .entry.single .sep, html[lang="ja"] .entry.single .sep {
     visibility: hidden !important;
   }
+  /* ===== Final alignment contract ===== */
+  html { --type-word-slot: 3em; --type-icon-slot: 24px; --type-gap: 4px; --type-sep-slot: 22px; }
+  html[lang="en"] { --type-word-slot: 8ch; }
+  html[lang="ja"] { --type-word-slot: 5em; }
+  html[lang="en"] .entry,
+  html[lang="ja"] .entry {
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot)) !important;
+    justify-content: center !important;
+  }
+  html[lang="en"] .entry .ai,
+  html[lang="ja"] .entry .ai {
+    display: grid !important;
+    grid-template-columns: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) var(--type-sep-slot) calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot)) !important;
+  }
+  html[lang="en"] .entry .a1, html[lang="en"] .entry .a2,
+  html[lang="ja"] .entry .a1, html[lang="ja"] .entry .a2 {
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+    min-width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+  }
+  html[lang="en"] .entry .wiki-link,
+  html[lang="ja"] .entry .wiki-link {
+    display: grid !important;
+    grid-template-columns: var(--type-icon-slot) var(--type-word-slot) !important;
+    column-gap: var(--type-gap) !important;
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+    align-items: center !important;
+  }
+  html[lang="en"] .entry .nm,
+  html[lang="ja"] .entry .nm {
+    width: var(--type-word-slot) !important;
+    min-width: var(--type-word-slot) !important;
+    text-align: right !important;
+  }
+  html[lang="en"] .entry .sep,
+  html[lang="ja"] .entry .sep {
+    width: var(--type-sep-slot) !important;
+    min-width: var(--type-sep-slot) !important;
+    text-align: center !important;
+  }
+  /* Everywhere except the quick overview, a single type occupies the second-type column. */
+  html[lang="en"] .starter-type .entry.single,
+  html[lang="ja"] .starter-type .entry.single,
+  html[lang="en"] .table-scroll .entry.single,
+  html[lang="ja"] .table-scroll .entry.single {
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot)) !important;
+  }
+  html[lang="en"] .starter-type .entry.single .ai,
+  html[lang="ja"] .starter-type .entry.single .ai,
+  html[lang="en"] .table-scroll .entry.single .ai,
+  html[lang="ja"] .table-scroll .entry.single .ai {
+    grid-template-columns: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) var(--type-sep-slot) calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot)) !important;
+  }
+  html[lang="en"] .starter-type .entry.single .a1,
+  html[lang="ja"] .starter-type .entry.single .a1,
+  html[lang="en"] .starter-type .entry.single .sep,
+  html[lang="ja"] .starter-type .entry.single .sep,
+  html[lang="en"] .table-scroll .entry.single .a1,
+  html[lang="ja"] .table-scroll .entry.single .a1,
+  html[lang="en"] .table-scroll .entry.single .sep,
+  html[lang="ja"] .table-scroll .entry.single .sep {
+    visibility: hidden !important;
+    width: auto !important;
+    min-width: 0 !important;
+  }
+  /* Quick overview single-type column: compact combination centered in its own cell. */
+  html[lang="en"] .quick-table .entry.single,
+  html[lang="ja"] .quick-table .entry.single {
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+    margin-inline: auto !important;
+  }
+  html[lang="en"] .quick-table .entry.single .ai,
+  html[lang="ja"] .quick-table .entry.single .ai {
+    grid-template-columns: 0 0 calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+  }
+  html[lang="en"] .quick-table .entry.single .a1,
+  html[lang="ja"] .quick-table .entry.single .a1,
+  html[lang="en"] .quick-table .entry.single .sep,
+  html[lang="ja"] .quick-table .entry.single .sep {
+    display: none !important;
+  }
+  html[lang="en"] .quick-table td.qcol,
+  html[lang="ja"] .quick-table td.qcol { text-align: center !important; }
+  /* ===== One authoritative type layout for zh / en / ja ===== */
+  html[lang="zh-CN"], html[lang="zh"] { --type-word-slot: 3em; }
+  html[lang="en"] { --type-word-slot: 8ch; }
+  html[lang="ja"] { --type-word-slot: 5em; }
+  html { --type-icon-slot: 24px; --type-icon-gap: 4px; --type-slash-slot: 22px; }
+  .quick-table .entry,
+  .starter-type .entry,
+  .table-scroll .entry {
+    display: inline-flex !important;
+    width: calc((var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) * 2 + var(--type-slash-slot)) !important;
+    justify-content: center !important;
+    vertical-align: middle;
+  }
+  .quick-table .entry .ai,
+  .starter-type .entry .ai,
+  .table-scroll .entry .ai {
+    display: grid !important;
+    grid-template-columns: calc(var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) var(--type-slash-slot) calc(var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) !important;
+    width: calc((var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) * 2 + var(--type-slash-slot)) !important;
+    flex: none !important;
+    align-items: center !important;
+  }
+  .quick-table .entry .a1, .quick-table .entry .a2,
+  .starter-type .entry .a1, .starter-type .entry .a2,
+  .table-scroll .entry .a1, .table-scroll .entry .a2 {
+    display: block !important;
+    width: calc(var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) !important;
+    min-width: calc(var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) !important;
+  }
+  .quick-table .entry .wiki-link,
+  .starter-type .entry .wiki-link,
+  .table-scroll .entry .wiki-link {
+    display: grid !important;
+    grid-template-columns: var(--type-icon-slot) var(--type-word-slot) !important;
+    column-gap: var(--type-icon-gap) !important;
+    align-items: center !important;
+    width: calc(var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) !important;
+  }
+  .quick-table .entry .qi,
+  .starter-type .entry .qi,
+  .table-scroll .entry .qi {
+    width: var(--type-icon-slot) !important;
+    height: var(--type-icon-slot) !important;
+    margin: 0 !important;
+  }
+  .quick-table .entry .nm,
+  .starter-type .entry .nm,
+  .table-scroll .entry .nm {
+    display: block !important;
+    width: var(--type-word-slot) !important;
+    min-width: var(--type-word-slot) !important;
+    padding: 0 !important;
+    white-space: nowrap !important;
+    text-align: right !important;
+  }
+  .quick-table .entry .sep,
+  .starter-type .entry .sep,
+  .table-scroll .entry .sep {
+    display: block !important;
+    width: var(--type-slash-slot) !important;
+    min-width: var(--type-slash-slot) !important;
+    text-align: center !important;
+  }
+  /* In starter/full tables, keep empty first and slash columns for single types. */
+  .starter-type .entry.single,
+  .table-scroll .entry.single,
+  .starter-type .entry.single .ai,
+  .table-scroll .entry.single .ai {
+    width: calc((var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) * 2 + var(--type-slash-slot)) !important;
+  }
+  .starter-type .entry.single .ai,
+  .table-scroll .entry.single .ai {
+    grid-template-columns: calc(var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) var(--type-slash-slot) calc(var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) !important;
+  }
+  .starter-type .entry.single .a1,
+  .table-scroll .entry.single .a1,
+  .starter-type .entry.single .sep,
+  .table-scroll .entry.single .sep { visibility: hidden !important; }
+  /* In quick overview, center the visible single-type block inside its own cell. */
+  .quick-table td { text-align: center !important; }
+  .quick-table .entry.single {
+    width: calc(var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  .quick-table .entry.single .ai {
+    grid-template-columns: calc(var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) !important;
+    width: calc(var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) !important;
+  }
+  .quick-table .entry.single .a1,
+  .quick-table .entry.single .sep { display: none !important; }
+  .quick-table .entry.single .a2 { grid-column: 1 !important; }
+  @media (max-width: 768px) {
+    html { --type-icon-slot: 20px; --type-icon-gap: 3px; --type-slash-slot: 18px; }
+  }
 </style>
 <script>
 (function(){
@@ -1182,6 +1362,8 @@
 </script>
 </body>
 </html>
+
+
 
 
 
