@@ -355,6 +355,254 @@
     html[lang="en"] .starter-type .entry:not(.single), html[lang="ja"] .starter-type .entry:not(.single) { width: 244px; }
     html[lang="en"] .table-scroll td.name, html[lang="ja"] .table-scroll td.name { min-width: 270px; }
   }
+  /* ===== Language-aware fixed type word slots ===== */
+  html { --type-word-slot: 3em; --type-icon-slot: 24px; --type-gap: 4px; --type-sep-slot: 20px; }
+  html[lang="en"] { --type-word-slot: 8ch; }
+  html[lang="ja"] { --type-word-slot: 5em; }
+  .entry { justify-content: center; }
+  .entry .ai {
+    display: grid;
+    grid-template-columns: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) var(--type-sep-slot) calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot));
+    flex: none;
+    align-items: center;
+  }
+  .entry .a1, .entry .a2 {
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    min-width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    flex: none;
+  }
+  .entry .a1 { justify-content: flex-end; }
+  .entry .a2 { justify-content: flex-start; }
+  .entry .wiki-link {
+    display: grid;
+    grid-template-columns: var(--type-icon-slot) var(--type-word-slot);
+    column-gap: var(--type-gap);
+    align-items: center;
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+  }
+  .entry .qi { width: var(--type-icon-slot); height: var(--type-icon-slot); margin: 0; }
+  .entry .nm {
+    display: block;
+    width: var(--type-word-slot);
+    min-width: var(--type-word-slot);
+    padding: 0;
+    white-space: nowrap;
+    text-align: right;
+  }
+  .entry .sep { width: var(--type-sep-slot); min-width: var(--type-sep-slot); text-align: center; }
+  .entry.single {
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+  }
+  .entry.single .ai {
+    grid-template-columns: 0 0 calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+  }
+  .entry.single .a1, .entry.single .sep { width: 0; min-width: 0; overflow: hidden; }
+  .entry.single .a2 { justify-content: flex-start; }
+  .quick-table .entry, .starter-type .entry { display: inline-flex; }
+  .table-scroll td.name { min-width: 340px; }
+  html[lang="en"] .table-scroll td.name { min-width: 360px; }
+  html[lang="ja"] .table-scroll td.name { min-width: 390px; }
+  html[lang="en"] .starter-table { min-width: 1380px; }
+  html[lang="ja"] .starter-table { min-width: 1460px; }
+  @media (max-width: 768px) {
+    html { --type-icon-slot: 20px; --type-gap: 3px; --type-sep-slot: 18px; }
+    html[lang="en"] { --type-word-slot: 8ch; }
+    html[lang="ja"] { --type-word-slot: 5em; }
+    .table-scroll td.name { min-width: 300px; }
+    html[lang="en"] .table-scroll td.name { min-width: 320px; }
+    html[lang="ja"] .table-scroll td.name { min-width: 340px; }
+  }
+  /* ===== Final type alignment: icon + longest-word slot / icon + longest-word slot ===== */
+  html { --type-word-slot: 3em; --type-icon-slot: 24px; --type-gap: 4px; --type-sep-slot: 22px; }
+  html[lang="en"] { --type-word-slot: 8ch; }
+  html[lang="ja"] { --type-word-slot: 5em; }
+  .entry,
+  .entry.single,
+  .quick-table .entry,
+  .quick-table .entry.single,
+  .starter-type .entry,
+  .starter-type .entry.single {
+    display: inline-flex;
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot));
+    justify-content: center;
+    vertical-align: middle;
+  }
+  .entry .ai,
+  .entry.single .ai,
+  .quick-table .entry .ai,
+  .quick-table .entry.single .ai,
+  .starter-type .entry .ai,
+  .starter-type .entry.single .ai {
+    display: grid;
+    grid-template-columns: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) var(--type-sep-slot) calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot));
+    flex: none;
+    align-items: center;
+  }
+  .entry .a1, .entry .a2,
+  .quick-table .entry .a1, .quick-table .entry .a2,
+  .starter-type .entry .a1, .starter-type .entry .a2 {
+    display: block;
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    min-width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+  }
+  .entry .wiki-link,
+  .quick-table .entry .wiki-link,
+  .starter-type .entry .wiki-link {
+    display: grid;
+    grid-template-columns: var(--type-icon-slot) var(--type-word-slot);
+    column-gap: var(--type-gap);
+    align-items: center;
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+  }
+  .entry .qi { width: var(--type-icon-slot); height: var(--type-icon-slot); margin: 0; }
+  .entry .nm {
+    display: block;
+    width: var(--type-word-slot);
+    min-width: var(--type-word-slot);
+    padding: 0;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .entry .sep,
+  .quick-table .entry .sep,
+  .starter-type .entry .sep {
+    display: block;
+    width: var(--type-sep-slot);
+    min-width: var(--type-sep-slot);
+    text-align: center;
+  }
+  .entry.single .a1,
+  .entry.single .sep { visibility: hidden; width: auto; min-width: 0; overflow: visible; }
+  .entry.single .a2 { justify-content: initial; }
+  html[lang="en"] .table-scroll td.name { min-width: 360px; }
+  html[lang="ja"] .table-scroll td.name { min-width: 390px; }
+  html[lang="en"] .starter-table { min-width: 1380px; }
+  html[lang="ja"] .starter-table { min-width: 1460px; }
+  @media (max-width: 768px) {
+    html { --type-icon-slot: 20px; --type-gap: 3px; --type-sep-slot: 18px; }
+  }
+  /* ===== Preserve empty columns for single-type alignment ===== */
+  .quick-table .entry.single,
+  .starter-type .entry.single,
+  .table-scroll .entry.single {
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot));
+  }
+  .quick-table .entry.single .ai,
+  .starter-type .entry.single .ai,
+  .table-scroll .entry.single .ai {
+    grid-template-columns: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) var(--type-sep-slot) calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot));
+  }
+  .quick-table .entry.single .a1,
+  .starter-type .entry.single .a1,
+  .table-scroll .entry.single .a1 {
+    visibility: hidden;
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    min-width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+  }
+  .quick-table .entry.single .sep,
+  .starter-type .entry.single .sep,
+  .table-scroll .entry.single .sep {
+    visibility: hidden;
+    width: var(--type-sep-slot);
+    min-width: var(--type-sep-slot);
+  }
+  .quick-table .entry.single .a2,
+  .starter-type .entry.single .a2,
+  .table-scroll .entry.single .a2 {
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    min-width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+  }
+  /* ===== Language-specific single-type column preservation ===== */
+  html[lang="en"] .quick-table .entry.single,
+  html[lang="ja"] .quick-table .entry.single,
+  html[lang="en"] .starter-type .entry.single,
+  html[lang="ja"] .starter-type .entry.single,
+  html[lang="en"] .table-scroll .entry.single,
+  html[lang="ja"] .table-scroll .entry.single {
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot));
+  }
+  html[lang="en"] .quick-table .entry.single .ai,
+  html[lang="ja"] .quick-table .entry.single .ai,
+  html[lang="en"] .starter-type .entry.single .ai,
+  html[lang="ja"] .starter-type .entry.single .ai,
+  html[lang="en"] .table-scroll .entry.single .ai,
+  html[lang="ja"] .table-scroll .entry.single .ai {
+    grid-template-columns: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) var(--type-sep-slot) calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot));
+  }
+  html[lang="en"] .quick-table .entry.single .a1,
+  html[lang="ja"] .quick-table .entry.single .a1,
+  html[lang="en"] .starter-type .entry.single .a1,
+  html[lang="ja"] .starter-type .entry.single .a1,
+  html[lang="en"] .table-scroll .entry.single .a1,
+  html[lang="ja"] .table-scroll .entry.single .a1 {
+    visibility: hidden;
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    min-width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+  }
+  html[lang="en"] .quick-table .entry.single .sep,
+  html[lang="ja"] .quick-table .entry.single .sep,
+  html[lang="en"] .starter-type .entry.single .sep,
+  html[lang="ja"] .starter-type .entry.single .sep,
+  html[lang="en"] .table-scroll .entry.single .sep,
+  html[lang="ja"] .table-scroll .entry.single .sep {
+    visibility: hidden;
+    width: var(--type-sep-slot);
+    min-width: var(--type-sep-slot);
+  }
+  /* ===== Authoritative type grid; overrides legacy fixed pixels ===== */
+  html[lang="en"] .entry,
+  html[lang="ja"] .entry,
+  html[lang="en"] .entry.single,
+  html[lang="ja"] .entry.single,
+  html[lang="en"] .quick-table .entry,
+  html[lang="ja"] .quick-table .entry,
+  html[lang="en"] .quick-table .entry.single,
+  html[lang="ja"] .quick-table .entry.single,
+  html[lang="en"] .starter-type .entry,
+  html[lang="ja"] .starter-type .entry,
+  html[lang="en"] .starter-type .entry.single,
+  html[lang="ja"] .starter-type .entry.single {
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot)) !important;
+  }
+  html[lang="en"] .entry .ai,
+  html[lang="ja"] .entry .ai,
+  html[lang="en"] .entry.single .ai,
+  html[lang="ja"] .entry.single .ai,
+  html[lang="en"] .quick-table .entry .ai,
+  html[lang="ja"] .quick-table .entry .ai,
+  html[lang="en"] .quick-table .entry.single .ai,
+  html[lang="ja"] .quick-table .entry.single .ai,
+  html[lang="en"] .starter-type .entry .ai,
+  html[lang="ja"] .starter-type .entry .ai,
+  html[lang="en"] .starter-type .entry.single .ai,
+  html[lang="ja"] .starter-type .entry.single .ai {
+    grid-template-columns: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) var(--type-sep-slot) calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot)) !important;
+  }
+  html[lang="en"] .entry .a1, html[lang="en"] .entry .a2,
+  html[lang="ja"] .entry .a1, html[lang="ja"] .entry .a2,
+  html[lang="en"] .quick-table .entry .a1, html[lang="en"] .quick-table .entry .a2,
+  html[lang="ja"] .quick-table .entry .a1, html[lang="ja"] .quick-table .entry .a2,
+  html[lang="en"] .starter-type .entry .a1, html[lang="en"] .starter-type .entry .a2,
+  html[lang="ja"] .starter-type .entry .a1, html[lang="ja"] .starter-type .entry .a2 {
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+    min-width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+  }
+  html[lang="en"] .entry .sep, html[lang="ja"] .entry .sep,
+  html[lang="en"] .quick-table .entry .sep, html[lang="ja"] .quick-table .entry .sep,
+  html[lang="en"] .starter-type .entry .sep, html[lang="ja"] .starter-type .entry .sep {
+    width: var(--type-sep-slot) !important;
+    min-width: var(--type-sep-slot) !important;
+  }
+  html[lang="en"] .entry.single .a1, html[lang="ja"] .entry.single .a1,
+  html[lang="en"] .entry.single .sep, html[lang="ja"] .entry.single .sep {
+    visibility: hidden !important;
+  }
 </style>
 <script>
 (function(){
@@ -904,6 +1152,8 @@
   document.documentElement.lang=lang==='zh'?'zh-CN':lang;
   var titleMap={zh:'宝可梦属性相克 · 纯数值理论排名',en:'Pokémon Type Matchups · Pure Numerical Ranking',ja:'ポケモンタイプ相性・純数値ランキング'};
   document.title=titleMap[lang];
+  var typeNameNodes=document.querySelectorAll('.entry .nm');
+  for(var tn=0;tn<typeNameNodes.length;tn++) typeNameNodes[tn].textContent=typeNameNodes[tn].textContent.replace(/^[\\u3000\\s]+/,'').replace(/[\\u3000\\s]+$/,'');
   if(lang==='zh') return;
   var dict=window.TEXT_I18N[lang]||{};
   var skip={SCRIPT:1,STYLE:1};
@@ -932,6 +1182,12 @@
 </script>
 </body>
 </html>
+
+
+
+
+
+
 
 
 
