@@ -37,7 +37,7 @@
   .toc-link:hover { color: var(--blue); background: var(--blue-soft); }
   .toc-link:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
   [id] { scroll-margin-top: 14px; }
-  @media (max-width: 1379px) {
+  @media (max-width: 1599px) {
     .toc { position: static; width: auto; max-width: 820px; margin: 18px auto 0; padding: 0; border: 0; border-radius: 0; background: transparent; }
     .toc-title { text-align: center; }
     .toc-list { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 7px; }
@@ -140,7 +140,7 @@
   .starter-table th:first-child { width: 82px; }
   .starter-table td { padding: 7px 10px; border-bottom: 1px solid #EDF0F4; }
   .starter-table tbody tr:last-child td { border-bottom: 0; }
-  .starter-generation { font-weight: 900; color: var(--ink); background: #F7F9FB; }
+  .starter>=neration { font-weight: 900; color: var(--ink); background: #F7F9FB; }
   .starter-place { display: inline-flex; width: 24px; height: 24px; align-items: center; justify-content: center; border-radius: 50%; background: #EEF1F5; color: var(--ink-2); font-size: 11px; font-weight: 900; flex: none; }
   .starter-card { display: grid; grid-template-columns: 76px minmax(118px, 1fr); gap: 8px; align-items: center; min-height: 86px; text-align: left; }
   .starter-card.best { background: var(--blue-soft); border-radius: 8px; padding: 4px 6px; }
@@ -228,6 +228,84 @@
   html[lang="en"] .quick-table .entry.single .ai, html[lang="ja"] .quick-table .entry.single .ai { grid-template-columns:0 0 108px; width:108px; }
   @media (max-width:768px) { .langbar { justify-content:center; } .lang-switch { width:100%; } .lang-btn { flex:1; } }
 
+  /* ===== Desktop readability upgrade ===== */
+  @media (min-width: 1024px) {
+    body { font-size: 16.5px; line-height: 1.72; }
+    .wrap { max-width: 1280px; padding: 42px 30px 88px; }
+    .hero { padding-top: 14px; }
+    .langbar { margin-bottom: 14px; }
+    .lang-btn { min-height: 46px; padding: 0 18px; font-size: 14.5px; }
+    .eyebrow { gap: 10px; padding: 7px 18px; font-size: 14.5px; }
+    .eyebrow svg { width: 17px; height: 17px; }
+    h1 { margin: 18px 0 10px; font-size: 42px; letter-spacing: 0.015em; }
+    .lead { max-width: 780px; font-size: 18px; }
+    .section { margin-top: 58px; }
+    .section-head { gap: 16px; margin-bottom: 18px; }
+    .section-head h2 { font-size: 27px; }
+    .section-head .note { font-size: 15px; }
+    .panel { padding: 26px; border-radius: 16px; }
+    #quick-overview, #scatter-overview { margin-top: 28px !important; }
+    .quick-table { width: 100%; font-size: 15.5px; }
+    .quick-table th { padding: 11px 14px; font-size: 14px; }
+    .quick-table td { padding: 10px 14px; line-height: 2.05; }
+    .quick-table .weak { font-size: 14px; }
+    .quick-table .entry { width: 178px; }
+    .quick-table .ai { grid-template-columns: 80px 18px 80px; width: 178px; }
+    .quick-table .a1, .quick-table .a2 { width: 80px; min-width: 80px; }
+    .quick-table .sep { width: 18px; }
+    .quick-table .entry.single { width: 80px; }
+    .quick-table .entry.single .ai { grid-template-columns: 0 0 80px; width: 80px; }
+    html[lang="en"] .quick-table .entry:not(.single), html[lang="ja"] .quick-table .entry:not(.single),
+    html[lang="en"] .starter-type .entry:not(.single), html[lang="ja"] .starter-type .entry:not(.single) { width: 272px; }
+    html[lang="en"] .quick-table .entry:not(.single) .ai, html[lang="ja"] .quick-table .entry:not(.single) .ai,
+    html[lang="en"] .starter-type .entry:not(.single) .ai, html[lang="ja"] .starter-type .entry:not(.single) .ai { grid-template-columns: 126px 20px 126px; width: 272px; }
+    html[lang="en"] .quick-table .a1, html[lang="en"] .quick-table .a2, html[lang="ja"] .quick-table .a1, html[lang="ja"] .quick-table .a2,
+    html[lang="en"] .starter-type .a1, html[lang="en"] .starter-type .a2, html[lang="ja"] .starter-type .a1, html[lang="ja"] .starter-type .a2 { width: 126px; min-width: 126px; }
+    html[lang="en"] .quick-table .entry.single, html[lang="ja"] .quick-table .entry.single,
+    html[lang="en"] .starter-type .entry.single, html[lang="ja"] .starter-type .entry.single { width: 126px; }
+    html[lang="en"] .quick-table .entry.single .ai, html[lang="ja"] .quick-table .entry.single .ai { grid-template-columns: 0 0 126px; width: 126px; }
+    .qi { width: 24px; height: 24px; border-radius: 6px; }
+    .chart-box { width: min(100%, 980px); aspect-ratio: 16 / 10; }
+    .insight { font-size: 15px; }
+    .insight-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .insight-item { padding: 20px 22px; }
+    .insight-kicker { font-size: 13.5px; margin-bottom: 7px; }
+    .insight-title { font-size: 18px; line-height: 1.45; margin-bottom: 8px; }
+    .insight-copy { font-size: 15px; line-height: 1.78; }
+    .starter-note { font-size: 15px; }
+    .starter-metric, .sortbtn { min-height: 46px; font-size: 15px; padding: 0 17px; }
+    .starter-scroll { max-height: 560px; }
+    .starter-table { min-width: 1100px; font-size: 15px; }
+    .starter-table th { padding: 11px 12px; font-size: 14px; }
+    .starter-table td { padding: 10px 12px; }
+    .starter-card { grid-template-columns: 88px minmax(150px,1fr); min-height: 100px; gap: 12px; }
+
+    .starter-name { font-size: 15.5px; }
+    .starter-global-rank { font-size: 13px; }
+    .toolbar { gap: 12px; margin-bottom: 16px; }
+    .search { min-height: 46px; font-size: 16px; }
+    table { font-size: 15px; }
+    th, td { padding: 10px 13px; }
+    th { font-size: 14px; }
+    td.name { width: 230px; }
+    td.poke { width: 290px; }
+
+    .poke-cell { gap: 11px; }
+    .nopoke { font-size: 14px; }
+    .thbtn { min-height: 48px; font-size: 14px; padding: 8px 12px; }
+    .count { font-size: 14px; }
+    .table-scroll { max-height: 720px; }
+    .foot { margin-top: 56px; padding-top: 20px; font-size: 14.5px; }
+    .foot h3 { font-size: 20px; margin-bottom: 9px; }
+    .foot ol { line-height: 1.85; }
+    .foot .rate { margin: 12px 0 6px; font-size: 14px; }
+    .foot .rate th, .foot .rate td { padding: 6px 22px; }
+  }
+  @media (min-width: 1600px) {
+    .toc { left: max(18px, calc((100vw - 1640px) / 2)); width: 170px; padding: 15px; }
+    .toc-title { font-size: 13px; margin-bottom: 9px; }
+    .toc-link { min-height: 44px; padding: 0 12px; font-size: 14px; }
+  }
 </style>
 <script>
 (function(){
@@ -274,11 +352,11 @@
       </ul>
     </nav>
     <div class="panel" id="quick-overview" style="text-align:left;margin-top:18px;">
-      <div class="section-head"><h2 style="font-size:17px;">单 / 双 / 全部 · 打击与抗击速览</h2></div>
+      <div class="section-head"><h2>单 / 双 / 全部 · 打击与抗击速览</h2></div>
       <div class="quick"><div class="quick-scroll"><table class="quick-table"><thead><tr><th>类型</th><th>强弱</th><th>全部属性</th><th>双属性</th><th>单属性</th></tr></thead><tbody><tr><td class="range" rowspan="2">综合</td><td class="weak strongest">最强</td><td colspan="2"><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/rbWE5urv3u" alt="幽灵"><span class="nm">　幽灵</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/ovVOetZ1de" alt="钢"><span class="nm">　　钢</span></span></span></span></td><td class="qcol"><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/ovVOetZ1de" alt="钢"><span class="nm">　　钢</span></span></span></span></td></tr><tr><td class="weak weakest">最弱</td><td><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/FL4sH3TE1T" alt="草"><span class="nm">　　草</span></span></span></span></td><td class="qcol"><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/FL4sH3TE1T" alt="草"><span class="nm">　　草</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/JjtAxXkqTj" alt="虫"><span class="nm">　　虫</span></span></span></span></td><td class="qcol"><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/FL4sH3TE1T" alt="草"><span class="nm">　　草</span></span></span></span></td></tr><tr><td class="range" rowspan="2">平衡</td><td class="weak strongest">最强</td><td colspan="2"><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/EzkrtPUaM2" alt="一般"><span class="nm">　一般</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/Z4wE2hHv4z" alt="水"><span class="nm">　　水</span></span></span></span></td><td class="qcol"><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/Z4wE2hHv4z" alt="水"><span class="nm">　　水</span></span></span></span></td></tr><tr><td class="weak weakest">最弱</td><td colspan="2"><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/xTvWPgBJ2u" alt="冰"><span class="nm">　　冰</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/Xva2HuinHe" alt="地面"><span class="nm">　地面</span></span></span></span></td><td class="qcol"><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/VYYnK1t3zf" alt="毒"><span class="nm">　　毒</span></span></span></span></td></tr><tr><td class="range" rowspan="2">打击</td><td class="weak strongest">最强</td><td colspan="2"><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/xTvWPgBJ2u" alt="冰"><span class="nm">　　冰</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/Xva2HuinHe" alt="地面"><span class="nm">　地面</span></span></span></span></td><td class="qcol"><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/zzbEs5NgIr" alt="岩石"><span class="nm">　岩石</span></span></span></span></td></tr><tr><td class="weak weakest">最弱</td><td><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/EzkrtPUaM2" alt="一般"><span class="nm">　一般</span></span></span></span></td><td class="qcol"><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/EzkrtPUaM2" alt="一般"><span class="nm">　一般</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/VYYnK1t3zf" alt="毒"><span class="nm">　　毒</span></span></span></span></td><td class="qcol"><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/EzkrtPUaM2" alt="一般"><span class="nm">　一般</span></span></span></span></td></tr><tr><td class="range" rowspan="2">抗击</td><td class="weak strongest">最强</td><td colspan="2"><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/rbWE5urv3u" alt="幽灵"><span class="nm">　幽灵</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/ovVOetZ1de" alt="钢"><span class="nm">　　钢</span></span></span></span></td><td class="qcol"><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/ovVOetZ1de" alt="钢"><span class="nm">　　钢</span></span></span></span></td></tr><tr><td class="weak weakest">最弱</td><td colspan="2"><span class="entry"><span class="ai"><span class="a1"><img class="qi" src="https://aka.doubaocdn.com/s/xTvWPgBJ2u" alt="冰"><span class="nm">　　冰</span></span><span class="sep">/</span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/FELRNrk4Ts" alt="超能力"><span class="nm">超能力</span></span></span></span></td><td class="qcol"><span class="entry"><span class="ai"><span class="a1"></span><span class="sep"></span><span class="a2"><img class="qi" src="https://aka.doubaocdn.com/s/xTvWPgBJ2u" alt="冰"><span class="nm">　　冰</span></span></span></span></td></tr></tbody></table></div></div>
     </div>
     <div class="panel" id="scatter-overview" style="text-align:left;margin-top:26px;">
-      <div class="section-head"><h2 style="font-size:17px;">打击与抗击分布全景 · 171 项</h2></div>
+      <div class="section-head"><h2>打击与抗击分布全景 · 171 项</h2></div>
       <div id="scatter" class="chart-box"></div>
     </div>
   </header>
@@ -369,7 +447,7 @@
             if (delta !== 0) return delta;
             return a.ranks.total - b.ranks.total;
           });
-          out += '<tr><td class="starter-generation">' + window.generationI18n(generation) + '</td>';
+          out += '<tr><td class="starter>=neration">' + window.generationI18n(generation) + '</td>';
           for (var i = 0; i < group.length; i++) out += '<td>' + card(group[i], i + 1) + '</td>';
           out += '</tr>';
         }
@@ -701,13 +779,13 @@
       backgroundColor: 'transparent',
       legend: {
         top: 2, right: 2,
-        itemWidth: 12, itemHeight: 12, itemGap: 16,
-        textStyle: { color: '#5A6472', fontSize: 12 },
+        itemWidth: (window.innerWidth >= 1024 ? 16 : 12), itemHeight: (window.innerWidth >= 1024 ? 16 : 12), itemGap: (window.innerWidth >= 1024 ? 24 : 16),
+        textStyle: { color: '#5A6472', fontSize: (window.innerWidth >= 1024 ? 15 : 12) },
         data: [window.uiI18n('单属性'), window.uiI18n('双属性')]
       },
       tooltip: {
         trigger: 'item', triggerOn: 'click', renderMode: 'richText', confine: true,
-        backgroundColor: '#FFFFFF', borderColor: '#E3E7EC', textStyle: { color: '#20242C', fontSize: 12 },
+        backgroundColor: '#FFFFFF', borderColor: '#E3E7EC', textStyle: { color: '#20242C', fontSize: (window.innerWidth >= 1024 ? 14 : 12) },
         formatter: function(p){
           if (!p || !p.data) return '';
           var kind = (p.data.kind === '单') ? window.uiI18n('单属性') : window.uiI18n('双属性');
@@ -721,16 +799,16 @@
       grid: { left: '12%', right: '8%', top: '9%', bottom: '12%', containLabel: false },
       xAxis: {
         type: 'value', name: window.uiI18n('抗击得分'), min: -8, max: 24, interval: 5, nameLocation: 'middle', nameGap: 34,
-        nameTextStyle: { color: '#5A6472', fontSize: 12 },
+        nameTextStyle: { color: '#5A6472', fontSize: (window.innerWidth >= 1024 ? 15 : 12) },
         axisLine: { lineStyle: { color: '#C9D2DD' } },
-        axisLabel: { color: '#5A6472', fontSize: 11, margin: 10 },
+        axisLabel: { color: '#5A6472', fontSize: (window.innerWidth >= 1024 ? 13 : 11), margin: 10 },
         splitLine: { lineStyle: { color: '#EDF1F6', type: 'dashed' } }
       },
       yAxis: {
         type: 'value', name: (window.APP_LANG==='en'?'Offense score (18-item equivalent)':window.APP_LANG==='ja'?'攻撃スコア（18項目換算）':'打击得分（等效18项）'), min: -15, max: 20, interval: 5, nameLocation: 'middle', nameGap: 46,
-        nameTextStyle: { color: '#5A6472', fontSize: 12 },
+        nameTextStyle: { color: '#5A6472', fontSize: (window.innerWidth >= 1024 ? 15 : 12) },
         axisLine: { lineStyle: { color: '#C9D2DD' } },
-        axisLabel: { color: '#5A6472', fontSize: 11, margin: 10 },
+        axisLabel: { color: '#5A6472', fontSize: (window.innerWidth >= 1024 ? 13 : 11), margin: 10 },
         splitLine: { lineStyle: { color: '#EDF1F6', type: 'dashed' } }
       },
       series: [
@@ -752,10 +830,10 @@
           markArea: {
             silent: true,
             data: [
-              [{ name: (window.APP_LANG==='en'?"Strong on both":window.APP_LANG==='ja'?"\u4e21\u9762\u5f37\u533a":"\u53cc\u5f3a\u533a"), coord: [0, 0], itemStyle: { color: 'rgba(63,124,88,0.07)' }, label: { show: true, position: 'insideTopRight', color: '#537965', fontSize: 11 } }, { coord: [24, 20] }],
-              [{ name: (window.APP_LANG==='en'?"Offense advantage":window.APP_LANG==='ja'?"\u653b\u6483\u512a\u4f4d\u533a":"\u6253\u51fb\u4f18\u52bf\u533a"), coord: [-8, 0], itemStyle: { color: 'rgba(47,109,181,0.055)' }, label: { show: true, position: 'insideTopLeft', color: '#587596', fontSize: 11 } }, { coord: [0, 20] }],
-              [{ name: (window.APP_LANG==='en'?"Defense advantage":window.APP_LANG==='ja'?"\u8010\u6027\u512a\u4f4d\u533a":"\u6297\u51fb\u4f18\u52bf\u533a"), coord: [0, -15], itemStyle: { color: 'rgba(232,163,61,0.06)' }, label: { show: true, position: 'insideBottomRight', color: '#8A6B3E', fontSize: 11 } }, { coord: [24, 0] }],
-              [{ name: (window.APP_LANG==='en'?"Weak on both":window.APP_LANG==='ja'?"\u4e21\u9762\u5f31\u533a":"\u53cc\u5f31\u533a"), coord: [-8, -15], itemStyle: { color: 'rgba(194,85,78,0.065)' }, label: { show: true, position: 'insideBottomLeft', color: '#95605C', fontSize: 11 } }, { coord: [0, 0] }]
+              [{ name: (window.APP_LANG==='en'?"Strong on both":window.APP_LANG==='ja'?"\u4e21\u9762\u5f37\u533a":"\u53cc\u5f3a\u533a"), coord: [0, 0], itemStyle: { color: 'rgba(63,124,88,0.07)' }, label: { show: true, position: 'insideTopRight', color: '#537965', fontSize: (window.innerWidth >= 1024 ? 13 : 11) } }, { coord: [24, 20] }],
+              [{ name: (window.APP_LANG==='en'?"Offense advantage":window.APP_LANG==='ja'?"\u653b\u6483\u512a\u4f4d\u533a":"\u6253\u51fb\u4f18\u52bf\u533a"), coord: [-8, 0], itemStyle: { color: 'rgba(47,109,181,0.055)' }, label: { show: true, position: 'insideTopLeft', color: '#587596', fontSize: (window.innerWidth >= 1024 ? 13 : 11) } }, { coord: [0, 20] }],
+              [{ name: (window.APP_LANG==='en'?"Defense advantage":window.APP_LANG==='ja'?"\u8010\u6027\u512a\u4f4d\u533a":"\u6297\u51fb\u4f18\u52bf\u533a"), coord: [0, -15], itemStyle: { color: 'rgba(232,163,61,0.06)' }, label: { show: true, position: 'insideBottomRight', color: '#8A6B3E', fontSize: (window.innerWidth >= 1024 ? 13 : 11) } }, { coord: [24, 0] }],
+              [{ name: (window.APP_LANG==='en'?"Weak on both":window.APP_LANG==='ja'?"\u4e21\u9762\u5f31\u533a":"\u53cc\u5f31\u533a"), coord: [-8, -15], itemStyle: { color: 'rgba(194,85,78,0.065)' }, label: { show: true, position: 'insideBottomLeft', color: '#95605C', fontSize: (window.innerWidth >= 1024 ? 13 : 11) } }, { coord: [0, 0] }]
             ]
           }
         }
@@ -805,6 +883,10 @@
 </script>
 </body>
 </html>
+
+
+
+
 
 
 
