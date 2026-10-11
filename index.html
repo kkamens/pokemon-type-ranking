@@ -93,6 +93,7 @@
   .pos { color: var(--blue); font-weight: 700; }
   .neg { color: var(--red); font-weight: 700; }
   .rk { color: var(--ink-2); font-weight: 700; }
+  .pct { color: var(--ink-2); font-weight: 700; }
   td.poke { text-align: left; width: 210px; }
   .poke-cell { display: inline-flex; align-items: center; gap: 8px; }
   .pokebadge { width: 40px; height: 40px; border-radius: 0; background-color: transparent; background-image: url('pokemon-sprite.webp'); background-repeat: no-repeat; background-size: 480px 560px; display: inline-block; flex: none; }
@@ -168,34 +169,34 @@
     <div class="section-head"><h2>关键结论</h2><span class="note">基于 171 种属性组合的纯倍率结果</span></div>
     <div class="insight-grid">
       <article class="insight-item">
-        <div class="insight-kicker">综合</div>
-        <div class="insight-title">钢属性主导综合榜前列</div>
-        <p class="insight-copy">综合前四名依次为幽灵／钢、地面／钢、飞行／钢、钢／妖精，<b>全部包含钢属性</b>；其中幽灵／钢以 31.26 分居首。</p>
+        <div class="insight-kicker">属性边际贡献</div>
+        <div class="insight-title">钢的优势不是个别强配对，而是稳定抬升底盘</div>
+        <p class="insight-copy">在全部 17 个含钢双属性中，平均综合为 <b>24.46</b>；其余双属性平均仅 12.40，差值达 <b>12.06</b>。综合前 20 名有 12 个含钢，说明钢带来的主要是可跨搭档复用的抗击端增益，而非少数偶然组合。</p>
       </article>
       <article class="insight-item">
-        <div class="insight-kicker">打击</div>
-        <div class="insight-title">地面是最强打击搭档</div>
-        <p class="insight-copy">打击前五名全部包含地面属性；冰／地面以 18.58 分第一，说明地面的广打击面与冰的补盲组合最突出。</p>
+        <div class="insight-kicker">打击与抗击分工</div>
+        <div class="insight-title">地面推进打击前沿，钢控制抗击上限</div>
+        <p class="insight-copy">含地面双属性的平均打击为 <b>13.70</b>，18 种属性中最高；含钢双属性的平均抗击为 <b>16.41</b>，同样居首。两者结合成地面／钢后，分别取得打击 14.79、抗击 16.00，是综合第二且高度均衡的组合。</p>
       </article>
       <article class="insight-item">
-        <div class="insight-kicker">抗击</div>
-        <div class="insight-title">抗击榜前五全部含钢</div>
-        <p class="insight-copy">幽灵／钢抗击得分 22，为全体最高；抗击前五名均包含钢属性，钢的抗性数量构成明显优势。</p>
+        <div class="insight-kicker">帕累托前沿</div>
+        <div class="insight-title">真正不可被同时超越的组合只有五个</div>
+        <p class="insight-copy">若要求不存在另一组合同时拥有更高打击和更高抗击，171 项中仅剩 <b>幽灵／钢、地面／钢、地面／飞行、地面／岩石、冰／地面</b>。它们构成从抗击极致到打击极致的完整效率边界。</p>
       </article>
       <article class="insight-item">
-        <div class="insight-kicker">单双属性</div>
-        <div class="insight-title">双属性的理论收益非常显著</div>
-        <p class="insight-copy">153 种双属性中 <b>152 种综合为正</b>，平均综合 13.74；18 种单属性仅 9 种综合为正，平均综合 −2.42。</p>
+        <div class="insight-kicker">双属性协同</div>
+        <div class="insight-title">双属性收益来自覆盖并集，且不是简单相加</div>
+        <p class="insight-copy">153 个双属性的综合都高于各自两个单属性中更强者，平均提升 <b>11.95</b>；其中地面／飞行提升最大，达 22.47。原因是打击端逐目标取两种属性的更优倍率，形成覆盖并集，而抗击端又重新组合弱点、抗性与免疫。</p>
       </article>
       <article class="insight-item">
-        <div class="insight-kicker">平衡</div>
-        <div class="insight-title">一般／水最接近攻守均衡</div>
-        <p class="insight-copy">一般／水的平衡得分为 0，等效打击与抗击完全相等；冰／地面虽然打击第一，但平衡得分最低，属于明显偏科。</p>
+        <div class="insight-kicker">攻守关系</div>
+        <div class="insight-title">高打击并不必然换来低抗击</div>
+        <p class="insight-copy">153 个双属性中，打击与抗击的相关系数仅 <b>−0.014</b>，几乎没有线性关系；其中 127 个同时处于打击、抗击非负的双强区，没有任何双属性落入双弱区。规则空间允许通过搭配同时改善两端。</p>
       </article>
       <article class="insight-item">
-        <div class="insight-kicker">单属性</div>
-        <div class="insight-title">单属性两端极值并不一致</div>
-        <p class="insight-copy">岩石是单属性打击最强，钢是单属性抗击与综合最强；草的综合最低，一般的打击得分最低。</p>
+        <div class="insight-kicker">平衡指标解释</div>
+        <div class="insight-title">最平衡不等于最强，先看综合再看平衡才合理</div>
+        <p class="insight-copy">共有 32 个组合的打击与抗击差值不超过 2，且全部为双属性。一般／水虽然差值为 0，但综合仅 12.00；地面／钢差值 1.21、综合却达 30.79。平衡只衡量两端接近程度，不能单独代表强度。</p>
       </article>
     </div>
   </section>
@@ -256,7 +257,7 @@
       <li><b>综合</b> = 等效打击得分 + 抗击得分，两端权重相等。</li>
       <li><b>平衡</b> = −|等效打击得分 − 抗击得分|（越接近 0 越均衡）。</li>
       <li><b>百分制</b>：综合、平衡、打击、抗击分别按全量 171 项线性归一化，最低值记为 0，最高值记为 100；筛选不会改变百分制，排序仍按原始分值进行。</li>
-      <li><b>排名</b>：按 综合 → 平衡 → 打击 → 抗击 依次比较；并列由排序键决出，名次固定 171 项、不受筛选影响。</li>
+      <li>全量数据表中并列时，按综合 → 平衡 → 打击 → 抗击依次比较显示位次。</li>
       <li><b>数据来源</b>：属性、形态、种族值与官方图片对应关系基于 PokeAPI 2.9.0（REST API v2）；属性相克倍率由本页固定矩阵计算，数值由脚本复算。</li>
     </ol>
     <p class="src-note">属性图标裁剪自公开素材合集（第三方来源）；代表宝可梦取该组合所有官方形态（含 mega、地区形态）中种族值最高者，特殊形态标注形态名（如 喷火龙-超级喷火龙Ｘ）；9 个组合无对应宝可梦，显示「无」。图片仅作展示引用。</p>
@@ -421,7 +422,7 @@
     var html = '';
     var rankMode = (SHOW === 'rank');
     var percentMode = (SHOW === 'percent');
-    var cls = function(v){ return rankMode ? 'rk' : (percentMode || Number(v) >= 0 ? 'pos' : 'neg'); };
+    var cls = function(v){ return percentMode ? 'pct' : (rankMode ? 'rk' : (Number(v) >= 0 ? 'pos' : 'neg')); };
     for (var i = 0; i < rows.length; i++) {
       var r = rows[i];
       var av = rankMode ? atkR[r.name] : (percentMode ? percentScore(r.atk, 'atk') : scoreFmt(r.atk));
@@ -430,7 +431,7 @@
       var tv = rankMode ? totR[r.name] : (percentMode ? percentScore(r.total, 'total') : scoreFmt(r.total));
       html += '<tr>' + badgeCell(r.name) + '<td>' + (r.kind === '双' ? '双属性' : '单属性') + '</td>'
         + '<td class="' + cls(tv) + '">' + tv + '</td>'
-        + '<td class="' + (rankMode ? 'rk' : '') + '">' + bv + '</td>'
+        + '<td class="' + (percentMode ? 'pct' : (rankMode ? 'rk' : '')) + '">' + bv + '</td>'
         + '<td class="' + cls(av) + '">' + av + '</td>'
         + '<td class="' + cls(dv) + '">' + dv + '</td>'
         + pokeCell(r.poke) + '</tr>';
