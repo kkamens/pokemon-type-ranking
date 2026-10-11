@@ -30,16 +30,23 @@
   h1 { font-size: 30px; font-weight: 900; letter-spacing: 0.02em; margin: 14px 0 8px; }
   .lead { font-size: 15px; color: var(--ink-2); max-width: 640px; margin: 0 auto; }
   /* ===== 页内目录 ===== */
-  .toc { margin: 18px auto 0; max-width: 820px; }
-  .toc-title { font-size: 12px; font-weight: 800; color: var(--ink-3); letter-spacing: 0.08em; margin-bottom: 7px; }
-  .toc-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; list-style: none; }
-  .toc-link { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 13px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); color: var(--ink-2); font-size: 13px; font-weight: 700; text-decoration: none; }
-  .toc-link:hover { color: var(--blue); border-color: #AFC5E0; background: var(--blue-soft); }
+  .toc { position: fixed; z-index: 20; top: 22px; left: max(14px, calc((100vw - 1380px) / 2)); width: 146px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,0.96); }
+  .toc-title { font-size: 12px; font-weight: 800; color: var(--ink-3); letter-spacing: 0.08em; margin-bottom: 7px; padding: 0 4px; }
+  .toc-list { display: flex; flex-direction: column; gap: 4px; list-style: none; }
+  .toc-link { display: flex; align-items: center; min-height: 40px; padding: 0 10px; border-radius: 8px; color: var(--ink-2); font-size: 12.5px; font-weight: 700; text-align: left; text-decoration: none; }
+  .toc-link:hover { color: var(--blue); background: var(--blue-soft); }
   .toc-link:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
   [id] { scroll-margin-top: 14px; }
+  @media (max-width: 1379px) {
+    .toc { position: static; width: auto; max-width: 820px; margin: 18px auto 0; padding: 0; border: 0; border-radius: 0; background: transparent; }
+    .toc-title { text-align: center; }
+    .toc-list { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 7px; }
+    .toc-link { justify-content: center; min-height: 44px; padding: 0 13px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); }
+  }
   @media (max-width: 768px) {
-    .toc-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .toc-link { width: 100%; padding: 0 8px; font-size: 12.5px; }
+    .toc-list { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; padding-bottom: 3px; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; }
+    .toc-list li { flex: 0 0 auto; }
+    .toc-link { white-space: nowrap; padding: 0 12px; font-size: 12.5px; }
   }
   /* ===== 通用 section ===== */
   .section { margin-top: 44px; }
@@ -126,10 +133,10 @@
   .starter-metric:first-child { border-left: 0; }
   .starter-metric.on { background: var(--blue-soft); color: var(--blue); font-weight: 800; }
   .starter-metric:focus-visible { outline: 2px solid var(--blue); outline-offset: -3px; }
-  .starter-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--line); border-radius: 10px; overscroll-behavior: contain; }
+  .starter-scroll { max-height: 430px; overflow: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--line); border-radius: 10px; overscroll-behavior: contain; }
   .starter-table { min-width: 900px; margin: 0 auto; table-layout: fixed; }
   .starter-table th, .starter-table td, .starter-table th:first-child, .starter-table td:first-child { text-align: center; vertical-align: middle; }
-  .starter-table th { background: #F0F3F7; padding: 8px 10px; }
+  .starter-table th { position: sticky; top: 0; z-index: 3; background: #F0F3F7; padding: 8px 10px; }
   .starter-table th:first-child { width: 82px; }
   .starter-table td { padding: 7px 10px; border-bottom: 1px solid #EDF0F4; }
   .starter-table tbody tr:last-child td { border-bottom: 0; }
@@ -159,6 +166,12 @@
     .starter-note { flex-basis: 100%; font-size: 14px; }
     .starter-metrics { width: 100%; }
     .starter-metric { flex: 1; }
+    .starter-scroll { max-height: 62dvh; }
+  }
+  @supports not (height: 1dvh) {
+    @media (max-width: 768px) {
+      .starter-scroll { max-height: 62vh; }
+    }
   }
   /* ===== 全量表 ===== */
   .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
