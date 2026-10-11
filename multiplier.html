@@ -1,0 +1,1291 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>宝可梦属性相克 · 纯数值理论排名</title>
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+  :root {
+    --bg: #F5F6F8;
+    --panel: #FFFFFF;
+    --ink: #20242C;
+    --ink-2: #5A6472;
+    --ink-3: #8A93A1;
+    --line: #E3E7EC;
+    --blue: #2F6DB5;
+    --blue-soft: #E8F0F9;
+    --red: #C2554E;
+    --red-soft: #F9ECEA;
+    --amber: #E8A33D;
+    --amber-soft: #FBF3E4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 28px 18px 64px; }
+  /* ===== Hero ===== */
+  .hero { text-align: center; padding: 8px 0 4px; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; letter-spacing: 0.12em; color: var(--ink-2); border: 1px solid var(--line); border-radius: 999px; padding: 4px 14px; background: var(--panel); }
+  .eyebrow svg { width: 14px; height: 14px; }
+  h1 { font-size: 30px; font-weight: 900; letter-spacing: 0.02em; margin: 14px 0 8px; }
+  .lead { font-size: 15px; color: var(--ink-2); max-width: 640px; margin: 0 auto; }
+  /* ===== 页内目录 ===== */
+  .toc { position: fixed; z-index: 20; top: 22px; left: max(14px, calc((100vw - 1380px) / 2)); width: 146px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,0.96); }
+  .toc-title { font-size: 12px; font-weight: 800; color: var(--ink-3); letter-spacing: 0.08em; margin-bottom: 7px; padding: 0 4px; }
+  .toc-list { display: flex; flex-direction: column; gap: 4px; list-style: none; }
+  .toc-link { display: flex; align-items: center; min-height: 40px; padding: 0 10px; border-radius: 8px; color: var(--ink-2); font-size: 12.5px; font-weight: 700; text-align: left; text-decoration: none; }
+  .toc-link:hover { color: var(--blue); background: var(--blue-soft); }
+  .toc-link:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  [id] { scroll-margin-top: 14px; }
+  @media (max-width: 1599px) {
+    .toc { position: static; width: auto; max-width: 820px; margin: 18px auto 0; padding: 0; border: 0; border-radius: 0; background: transparent; }
+    .toc-title { text-align: center; }
+    .toc-list { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 7px; }
+    .toc-link { justify-content: center; min-height: 44px; padding: 0 13px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); }
+  }
+  @media (max-width: 768px) {
+    .toc-list { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; padding-bottom: 3px; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; }
+    .toc-list li { flex: 0 0 auto; }
+    .toc-link { white-space: nowrap; padding: 0 12px; font-size: 12.5px; }
+  }
+  /* ===== 通用 section ===== */
+  .section { margin-top: 44px; }
+  .section-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .section-head h2 { font-size: 21px; font-weight: 900; letter-spacing: 0.01em; }
+  .section-head .note { font-size: 13px; color: var(--ink-3); }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+  .chart-box { width: min(100%, 660px); aspect-ratio: 113 / 125; min-height: 0; margin: 0 auto; }
+  .insight { font-size: 13.5px; color: var(--ink-2); border-top: 1px solid var(--line); margin-top: 14px; padding-top: 12px; }
+  .insight b { color: var(--ink); }
+  /* 速览表格 */
+  .quick-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--line); border-radius: 10px; }
+  .quick-table { width: auto; margin: 0 auto; border-collapse: collapse; font-size: 13px; }
+  .quick-table th { background: #F0F3F7; color: var(--ink-2); font-size: 12px; font-weight: 700; padding: 8px 10px; text-align: center; white-space: nowrap; border-bottom: 1px solid var(--line); }
+  .quick-table td { padding: 7px 10px; border-bottom: 1px solid #EDF0F4; white-space: nowrap; vertical-align: middle; line-height: 1.9; text-align: center; }
+  .quick-table tbody tr:nth-child(even) { background: #FAFBFC; }
+  .quick-table .range { font-weight: 700; color: var(--ink); }
+  .quick-table .weak { font-weight: 700; font-size: 12px; }
+  .quick-table .strongest { color: #C2554E; }
+  .quick-table .weakest { color: #3F7C58; }
+  .quick-table .pick { color: #E8590C; font-weight: 800; margin-right: 2px; }
+  .quick-table td.qcol { border-left: 1px solid #E3E7EC; }
+  /* 属性固定对齐（所有表通用）：图标固定列 + 三格文字槽；第一属性右对齐到 /，单属性对齐第二属性 */
+  .entry { display: flex; align-items: center; width: 100%; }
+  .ai { display: flex; align-items: center; flex: 1; min-width: 0; }
+  .a1 { display: flex; align-items: center; flex: none; width: 66px; justify-content: flex-end; }
+  .a1 .qi { flex: none; margin-right: 0; }
+  .a1 .nm { display: inline-block; width: 3em; flex: none; white-space: nowrap; text-align: left; }
+  .sep { flex: none; width: 16px; color: #9AA3AD; }
+  .a2 { display: flex; align-items: center; flex: 1; min-width: 0; }
+  .a2 .qi { flex: none; }
+  .a2 .nm { display: inline-block; width: 3em; flex: none; white-space: nowrap; text-align: left; }
+  /* 速览表：每个属性组合固定为 148px 三列（66 / 16 / 66），属性文字占三格，组合整体在单元格内居中 */
+  .quick-table .entry { display: inline-flex; width: 148px; justify-content: center; vertical-align: middle; }
+  .quick-table .ai { display: grid; grid-template-columns: 66px 16px 66px; width: 148px; flex: none; align-items: center; }
+  .quick-table .a1, .quick-table .a2 { width: 66px; min-width: 66px; }
+  .quick-table .a1 { justify-content: flex-end; }
+  .quick-table .a2 { justify-content: flex-start; }
+  .quick-table .sep { width: 16px; text-align: center; }
+  /* 单属性不再占用空白的第一属性与分隔符列，确保可见内容处于单元格几何中心 */
+  .quick-table .entry.single { width: 66px; }
+  .quick-table .entry.single .ai { grid-template-columns: 0 0 66px; width: 66px; }
+  .quick-table .entry.single .a1,
+  .quick-table .entry.single .sep { width: 0; min-width: 0; overflow: hidden; }
+  .quick-table .entry.single .a2 { justify-content: center; }
+  /* 速览表：所有单元格（含第一列）强制居中——防止被全局 td:first-child{text-align:left} 覆盖 */
+  .quick-table td, .quick-table th, .quick-table td:first-child, .quick-table th:first-child { text-align: center; }
+  .quick-table td > .entry { margin-left: auto; margin-right: auto; }
+  /* 全量表：属性列条目同样居中（与其他列对齐方式一致） */
+  .table-scroll .ai { justify-content: center; }
+  .table-scroll .a2 { flex: none; }
+  .qi { width: 20px; height: 20px; border-radius: 5px; background: #fff; vertical-align: -5px; margin-right: 0; }
+  .wiki-link { color: inherit; text-decoration: none; display: inline-flex; align-items: center; }
+  .wiki-link:hover .nm, .wiki-link:hover .poke-name { text-decoration: underline; text-underline-offset: 3px; }
+  .wiki-link:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 4px; }
+  /* ===== 表格 ===== */
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { padding: 7px 10px; text-align: right; white-space: nowrap; }
+  th { color: var(--ink-2); font-weight: 700; font-size: 12.5px; border-bottom: 1px solid var(--line); }
+  td:first-child, th:first-child { text-align: left; }
+  tbody tr:nth-child(even) { background: #FAFBFC; }
+  td.name { font-weight: 500; width: 170px; }
+  .pos { color: var(--blue); font-weight: 700; }
+  .neg { color: var(--red); font-weight: 700; }
+  .rk { color: var(--ink-2); font-weight: 700; }
+  .pct { color: var(--ink-2); font-weight: 700; }
+  td.poke { text-align: left; width: 210px; }
+  .poke-cell { display: inline-flex; align-items: center; gap: 8px; }
+  .pokebadge { width: 40px; height: 40px; border-radius: 0; background-color: transparent; background-image: url('pokemon-sprite-2fe9553.webp'); background-repeat: no-repeat; background-size: 480px 560px; display: inline-block; flex: none; }
+  .nopoke { color: var(--ink-3); font-size: 12.5px; }
+
+  /* ===== 关键结论 ===== */
+  .insight-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+  .insight-item { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; background: #FFFFFF; text-align: left; }
+  .insight-kicker { font-size: 12px; color: var(--ink-3); font-weight: 700; margin-bottom: 4px; }
+  .insight-title { font-size: 15px; font-weight: 800; color: var(--ink); margin-bottom: 5px; }
+  .insight-copy { font-size: 13px; color: var(--ink-2); line-height: 1.65; }
+  .insight-copy b { color: var(--blue); }
+  /* ===== 御三家属性排名 ===== */
+  .starter-top { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 10px; }
+  .starter-note { flex: 1 1 520px; color: var(--ink-2); font-size: 13px; line-height: 1.7; }
+  .starter-metrics { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .starter-metric { min-width: 70px; min-height: 44px; border: 0; border-left: 1px solid var(--line); padding: 0 14px; background: #fff; color: var(--ink-2); font: inherit; font-size: 13.5px; cursor: pointer; }
+  .starter-metric:first-child { border-left: 0; }
+  .starter-metric.on { background: var(--blue-soft); color: var(--blue); font-weight: 800; }
+  .starter-metric:focus-visible { outline: 2px solid var(--blue); outline-offset: -3px; }
+  .starter-scroll { max-height: 430px; overflow: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--line); border-radius: 10px; overscroll-behavior: contain; }
+  .starter-table { min-width: 900px; margin: 0 auto; table-layout: fixed; }
+  .starter-table th, .starter-table td, .starter-table th:first-child, .starter-table td:first-child { text-align: center; vertical-align: middle; }
+  .starter-table th { position: sticky; top: 0; z-index: 3; background: #F0F3F7; padding: 8px 10px; }
+  .starter-table th:first-child { width: 82px; }
+  .starter-table td { padding: 7px 10px; border-bottom: 1px solid #EDF0F4; }
+  .starter-table tbody tr:last-child td { border-bottom: 0; }
+  .starter>=neration { font-weight: 900; color: var(--ink); background: #F7F9FB; }
+  .starter-card { display: grid; grid-template-columns: 76px minmax(118px, 1fr); gap: 8px; align-items: center; min-height: 86px; text-align: left; }
+  .starter-art { width: 76px; height: 76px; background-color: transparent; background-image: url('starter-sprite-2fe9553.webp'); background-repeat: no-repeat; background-size: 684px 228px; display: block; }
+  .starter-detail { min-width: 0; }
+  .starter-name-line { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .starter-name { color: var(--ink); font-size: 14px; font-weight: 800; text-decoration: none; white-space: nowrap; }
+  .starter-name:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .starter-type-line { display: flex; align-items: center; gap: 6px; min-width: 0; }
+  .starter-global-rank { color: var(--blue); font-size: 12px; font-weight: 900; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .starter-type .entry { display: inline-flex; width: 148px; justify-content: flex-start; vertical-align: middle; }
+  .starter-type .ai { display: grid; grid-template-columns: 66px 16px 66px; width: 148px; flex: none; align-items: center; }
+  .starter-type .a1, .starter-type .a2 { width: 66px; min-width: 66px; }
+  .starter-type .a1 { justify-content: flex-end; }
+  .starter-type .a2 { justify-content: flex-start; }
+  .starter-type .sep { width: 16px; text-align: center; }
+  .starter-type .entry.single { width: 66px; }
+  .starter-type .entry.single .ai { grid-template-columns: 0 0 66px; width: 66px; }
+  .starter-type .entry.single .a1, .starter-type .entry.single .sep { width: 0; min-width: 0; overflow: hidden; }
+  .starter-type .entry.single .a2 { justify-content: flex-start; }
+  @media (max-width: 768px) {
+    .starter-top { align-items: stretch; }
+    .starter-note { flex-basis: 100%; font-size: 14px; }
+    .starter-metrics { width: 100%; }
+    .starter-metric { flex: 1; }
+    .starter-scroll { max-height: 62dvh; }
+  }
+  @supports not (height: 1dvh) {
+    @media (max-width: 768px) {
+      .starter-scroll { max-height: 62vh; }
+    }
+  }
+  /* ===== 全量表 ===== */
+  .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .seg .sortbtn { border: none; border-radius: 0; }
+  .search { flex: 1 1 180px; min-height: 44px; border: 1px solid var(--line); border-radius: 10px; padding: 0 14px; font-size: 14.5px; background: #fff; color: var(--ink); font-family: inherit; }
+  .sortbtn { min-height: 44px; border: 1px solid var(--line); border-radius: 10px; padding: 0 14px; background: #fff; font-size: 13.5px; color: var(--ink-2); cursor: pointer; font-family: inherit; }
+  .sortbtn.on { background: var(--blue-soft); border-color: var(--blue); color: var(--blue); font-weight: 700; }
+  .count { font-size: 12.5px; color: var(--ink-3); margin-left: auto; }
+  .table-scroll { max-height: 620px; overflow: auto; border: 1px solid var(--line); border-radius: 10px; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+  .table-scroll table th, .table-scroll table td { text-align: center; }
+  .table-scroll table th { position: sticky; top: 0; background: #F0F3F7; padding: 0; }
+  .thbtn { display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%; min-height: 44px; border: none; background: none; font: inherit; font-size: 12.5px; font-weight: 700; color: var(--ink-2); cursor: pointer; user-select: none; padding: 6px 10px; }
+  .thbtn .arrow { color: var(--blue); font-size: 10px; }
+  .foot { margin-top: 40px; font-size: 12.5px; color: var(--ink-3); border-top: 1px solid var(--line); padding-top: 14px; }
+  .foot h3 { font-size: 14px; color: var(--ink-2); font-weight: 900; margin-bottom: 6px; }
+  .foot ol { margin: 6px 0 0; padding-left: 22px; line-height: 1.75; }
+  .foot li { margin: 5px 0; }
+  .foot b { color: var(--ink-2); font-weight: 700; }
+  .foot .rate { border-collapse: collapse; margin: 8px 0 2px; font-size: 12.5px; }
+  .foot .rate th, .foot .rate td { border: 1px solid var(--line); padding: 3px 16px; text-align: center; }
+  .foot .rate th { background: #F0F3F7; color: var(--ink-2); font-weight: 700; }
+  .foot .rate td { color: var(--ink-2); }
+  .foot .src-note { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .foot a { color: var(--ink-3); }
+  @media (max-width: 768px) {
+    h1 { font-size: 24px; }
+    .count { display: none; }
+    .table-scroll { max-height: 68dvh; }
+  }
+  @supports not (height: 1dvh) {
+    @media (max-width: 768px) {
+      .table-scroll { max-height: 68vh; }
+    }
+  }
+
+  /* ===== Language selector ===== */
+  .langbar { display:flex; justify-content:flex-end; margin:0 auto 8px; }
+  .lang-switch { display:inline-flex; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:#fff; }
+  .lang-btn { min-height:44px; padding:0 13px; border:0; border-left:1px solid var(--line); background:#fff; color:var(--ink-2); font:inherit; font-size:13px; cursor:pointer; }
+  .lang-btn:first-child { border-left:0; }
+  .lang-btn.on { background:var(--blue-soft); color:var(--blue); font-weight:800; }
+  .lang-btn:focus-visible { outline:2px solid var(--blue); outline-offset:-3px; }
+  html[lang="en"] body { font-family:"Noto Sans SC","Segoe UI",sans-serif; }
+  html[lang="ja"] body { font-family:"Noto Sans SC","Yu Gothic","Meiryo",sans-serif; }
+  html[lang="en"] .nm, html[lang="ja"] .nm { width:auto; min-width:4.8em; }
+  html[lang="en"] .quick-table .entry:not(.single), html[lang="ja"] .quick-table .entry:not(.single), html[lang="en"] .starter-type .entry:not(.single), html[lang="ja"] .starter-type .entry:not(.single) { width:236px; }
+  html[lang="en"] .quick-table .entry:not(.single) .ai, html[lang="ja"] .quick-table .entry:not(.single) .ai,
+  html[lang="en"] .starter-type .entry:not(.single) .ai, html[lang="ja"] .starter-type .entry:not(.single) .ai { grid-template-columns:108px 20px 108px; width:236px; }
+  html[lang="en"] .quick-table .a1, html[lang="en"] .quick-table .a2, html[lang="ja"] .quick-table .a1, html[lang="ja"] .quick-table .a2,
+  html[lang="en"] .starter-type .a1, html[lang="en"] .starter-type .a2, html[lang="ja"] .starter-type .a1, html[lang="ja"] .starter-type .a2 { width:108px; min-width:108px; }
+  html[lang="en"] .quick-table .entry.single, html[lang="ja"] .quick-table .entry.single, html[lang="en"] .starter-type .entry.single, html[lang="ja"] .starter-type .entry.single { width:108px; }
+  html[lang="en"] .starter-table, html[lang="ja"] .starter-table { min-width:1200px; }
+  html[lang="en"] .quick-table .entry.single .ai, html[lang="ja"] .quick-table .entry.single .ai { grid-template-columns:0 0 108px; width:108px; }
+  @media (max-width:768px) { .langbar { justify-content:center; } .lang-switch { width:100%; } .lang-btn { flex:1; } }
+
+  /* ===== Desktop readability upgrade ===== */
+  @media (min-width: 1024px) {
+    body { font-size: 16.5px; line-height: 1.72; }
+    .wrap { max-width: 1280px; padding: 42px 30px 88px; }
+    .hero { padding-top: 14px; }
+    .langbar { margin-bottom: 14px; }
+    .lang-btn { min-height: 46px; padding: 0 18px; font-size: 14.5px; }
+    .eyebrow { gap: 10px; padding: 7px 18px; font-size: 14.5px; }
+    .eyebrow svg { width: 17px; height: 17px; }
+    h1 { margin: 18px 0 10px; font-size: 42px; letter-spacing: 0.015em; }
+    .lead { max-width: 780px; font-size: 18px; }
+    .section { margin-top: 58px; }
+    .section-head { gap: 16px; margin-bottom: 18px; }
+    .section-head h2 { font-size: 27px; }
+    .section-head .note { font-size: 15px; }
+    .panel { padding: 26px; border-radius: 16px; }
+    #quick-overview, #scatter-overview { margin-top: 28px !important; }
+    .quick-table { width: 100%; font-size: 15.5px; }
+    .quick-table th { padding: 11px 14px; font-size: 14px; }
+    .quick-table td { padding: 10px 14px; line-height: 2.05; }
+    .quick-table .weak { font-size: 14px; }
+    .quick-table .entry { width: 178px; }
+    .quick-table .ai { grid-template-columns: 80px 18px 80px; width: 178px; }
+    .quick-table .a1, .quick-table .a2 { width: 80px; min-width: 80px; }
+    .quick-table .sep { width: 18px; }
+    .quick-table .entry.single { width: 80px; }
+    .quick-table .entry.single .ai { grid-template-columns: 0 0 80px; width: 80px; }
+    html[lang="en"] .quick-table .entry:not(.single), html[lang="ja"] .quick-table .entry:not(.single),
+    html[lang="en"] .starter-type .entry:not(.single), html[lang="ja"] .starter-type .entry:not(.single) { width: 272px; }
+    html[lang="en"] .quick-table .entry:not(.single) .ai, html[lang="ja"] .quick-table .entry:not(.single) .ai,
+    html[lang="en"] .starter-type .entry:not(.single) .ai, html[lang="ja"] .starter-type .entry:not(.single) .ai { grid-template-columns: 126px 20px 126px; width: 272px; }
+    html[lang="en"] .quick-table .a1, html[lang="en"] .quick-table .a2, html[lang="ja"] .quick-table .a1, html[lang="ja"] .quick-table .a2,
+    html[lang="en"] .starter-type .a1, html[lang="en"] .starter-type .a2, html[lang="ja"] .starter-type .a1, html[lang="ja"] .starter-type .a2 { width: 126px; min-width: 126px; }
+    html[lang="en"] .quick-table .entry.single, html[lang="ja"] .quick-table .entry.single,
+    html[lang="en"] .starter-type .entry.single, html[lang="ja"] .starter-type .entry.single { width: 126px; }
+    html[lang="en"] .quick-table .entry.single .ai, html[lang="ja"] .quick-table .entry.single .ai { grid-template-columns: 0 0 126px; width: 126px; }
+    .qi { width: 24px; height: 24px; border-radius: 6px; }
+    .chart-box { width: min(100%, 980px); aspect-ratio: 16 / 10; }
+    .insight { font-size: 15px; }
+    .insight-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .insight-item { padding: 20px 22px; }
+    .insight-kicker { font-size: 13.5px; margin-bottom: 7px; }
+    .insight-title { font-size: 18px; line-height: 1.45; margin-bottom: 8px; }
+    .insight-copy { font-size: 15px; line-height: 1.78; }
+    .starter-note { font-size: 15px; }
+    .starter-metric, .sortbtn { min-height: 46px; font-size: 15px; padding: 0 17px; }
+    .starter-scroll { max-height: 560px; }
+    .starter-table { min-width: 1100px; font-size: 15px; }
+    .starter-table th { padding: 11px 12px; font-size: 14px; }
+    .starter-table td { padding: 10px 12px; }
+    .starter-card { grid-template-columns: 88px minmax(150px,1fr); min-height: 100px; gap: 12px; }
+
+    .starter-name { font-size: 15.5px; }
+    .starter-global-rank { font-size: 13px; }
+    .toolbar { gap: 12px; margin-bottom: 16px; }
+    .search { min-height: 46px; font-size: 16px; }
+    table { font-size: 15px; }
+    th, td { padding: 10px 13px; }
+    th { font-size: 14px; }
+    td.name { width: 230px; }
+    td.poke { width: 290px; }
+
+    .poke-cell { gap: 11px; }
+    .nopoke { font-size: 14px; }
+    .thbtn { min-height: 48px; font-size: 14px; padding: 8px 12px; }
+    .count { font-size: 14px; }
+    .table-scroll { max-height: 720px; }
+    .foot { margin-top: 56px; padding-top: 20px; font-size: 14.5px; }
+    .foot h3 { font-size: 20px; margin-bottom: 9px; }
+    .foot ol { line-height: 1.85; }
+    .foot .rate { margin: 12px 0 6px; font-size: 14px; }
+    .foot .rate th, .foot .rate td { padding: 6px 22px; }
+  }
+  @media (min-width: 1600px) {
+    .toc { left: max(18px, calc((100vw - 1640px) / 2)); width: 170px; padding: 15px; }
+    .toc-title { font-size: 13px; margin-bottom: 9px; }
+    .toc-link { min-height: 44px; padding: 0 12px; font-size: 14px; }
+  }
+  /* ===== Fixed alignment for English / Japanese type labels ===== */
+  html[lang="en"] .entry, html[lang="ja"] .entry { justify-content: center; }
+  html[lang="en"] .entry .ai, html[lang="ja"] .entry .ai {
+    display: grid;
+    grid-template-columns: 136px 22px 136px;
+    width: 294px;
+    flex: none;
+    align-items: center;
+  }
+  html[lang="en"] .entry .a1, html[lang="ja"] .entry .a1,
+  html[lang="en"] .entry .a2, html[lang="ja"] .entry .a2 {
+    width: 136px;
+    min-width: 136px;
+    flex: none;
+  }
+  html[lang="en"] .entry .a1, html[lang="ja"] .entry .a1 { justify-content: flex-end; }
+  html[lang="en"] .entry .a2, html[lang="ja"] .entry .a2 { justify-content: flex-start; }
+  html[lang="en"] .entry .sep, html[lang="ja"] .entry .sep { width: 22px; text-align: center; }
+  html[lang="en"] .entry .wiki-link, html[lang="ja"] .entry .wiki-link { gap: 4px; }
+  html[lang="en"] .entry .nm, html[lang="ja"] .entry .nm {
+    width: auto;
+    min-width: 0;
+    padding: 0;
+    text-align: left;
+    white-space: nowrap;
+  }
+  html[lang="en"] .entry.single, html[lang="ja"] .entry.single { width: 136px; }
+  html[lang="en"] .entry.single .ai, html[lang="ja"] .entry.single .ai {
+    grid-template-columns: 0 0 136px;
+    width: 136px;
+  }
+  html[lang="en"] .entry.single .a1, html[lang="ja"] .entry.single .a1,
+  html[lang="en"] .entry.single .sep, html[lang="ja"] .entry.single .sep { width: 0; min-width: 0; overflow: hidden; }
+  html[lang="en"] .entry.single .a2, html[lang="ja"] .entry.single .a2 { justify-content: center; }
+  html[lang="en"] .table-scroll td.name, html[lang="ja"] .table-scroll td.name { min-width: 320px; }
+  html[lang="en"] .quick-table .entry:not(.single), html[lang="ja"] .quick-table .entry:not(.single),
+  html[lang="en"] .starter-type .entry:not(.single), html[lang="ja"] .starter-type .entry:not(.single) { width: 294px; }
+  html[lang="en"] .starter-table, html[lang="ja"] .starter-table { min-width: 1280px; }
+  @media (max-width: 768px) {
+    html[lang="en"] .entry .ai, html[lang="ja"] .entry .ai { grid-template-columns: 112px 20px 112px; width: 244px; }
+    html[lang="en"] .entry .a1, html[lang="ja"] .entry .a1,
+    html[lang="en"] .entry .a2, html[lang="ja"] .entry .a2 { width: 112px; min-width: 112px; }
+    html[lang="en"] .entry .sep, html[lang="ja"] .entry .sep { width: 20px; }
+    html[lang="en"] .entry.single, html[lang="ja"] .entry.single { width: 112px; }
+    html[lang="en"] .entry.single .ai, html[lang="ja"] .entry.single .ai { grid-template-columns: 0 0 112px; width: 112px; }
+    html[lang="en"] .quick-table .entry:not(.single), html[lang="ja"] .quick-table .entry:not(.single),
+    html[lang="en"] .starter-type .entry:not(.single), html[lang="ja"] .starter-type .entry:not(.single) { width: 244px; }
+    html[lang="en"] .table-scroll td.name, html[lang="ja"] .table-scroll td.name { min-width: 270px; }
+  }
+  /* ===== Language-aware fixed type word slots ===== */
+  html { --type-word-slot: 3em; --type-icon-slot: 24px; --type-gap: 4px; --type-sep-slot: 20px; }
+  html[lang="en"] { --type-word-slot: 8ch; }
+  html[lang="ja"] { --type-word-slot: 5em; }
+  .entry { justify-content: center; }
+  .entry .ai {
+    display: grid;
+    grid-template-columns: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) var(--type-sep-slot) calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot));
+    flex: none;
+    align-items: center;
+  }
+  .entry .a1, .entry .a2 {
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    min-width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    flex: none;
+  }
+  .entry .a1 { justify-content: flex-end; }
+  .entry .a2 { justify-content: flex-start; }
+  .entry .wiki-link {
+    display: grid;
+    grid-template-columns: var(--type-icon-slot) var(--type-word-slot);
+    column-gap: var(--type-gap);
+    align-items: center;
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+  }
+  .entry .qi { width: var(--type-icon-slot); height: var(--type-icon-slot); margin: 0; }
+  .entry .nm {
+    display: block;
+    width: var(--type-word-slot);
+    min-width: var(--type-word-slot);
+    padding: 0;
+    white-space: nowrap;
+    text-align: right;
+  }
+  .entry .sep { width: var(--type-sep-slot); min-width: var(--type-sep-slot); text-align: center; }
+  .entry.single {
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+  }
+  .entry.single .ai {
+    grid-template-columns: 0 0 calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+  }
+  .entry.single .a1, .entry.single .sep { width: 0; min-width: 0; overflow: hidden; }
+  .entry.single .a2 { justify-content: flex-start; }
+  .quick-table .entry, .starter-type .entry { display: inline-flex; }
+  .table-scroll td.name { min-width: 340px; }
+  html[lang="en"] .table-scroll td.name { min-width: 360px; }
+  html[lang="ja"] .table-scroll td.name { min-width: 390px; }
+  html[lang="en"] .starter-table { min-width: 1380px; }
+  html[lang="ja"] .starter-table { min-width: 1460px; }
+  @media (max-width: 768px) {
+    html { --type-icon-slot: 20px; --type-gap: 3px; --type-sep-slot: 18px; }
+    html[lang="en"] { --type-word-slot: 8ch; }
+    html[lang="ja"] { --type-word-slot: 5em; }
+    .table-scroll td.name { min-width: 300px; }
+    html[lang="en"] .table-scroll td.name { min-width: 320px; }
+    html[lang="ja"] .table-scroll td.name { min-width: 340px; }
+  }
+  /* ===== Final type alignment: icon + longest-word slot / icon + longest-word slot ===== */
+  html { --type-word-slot: 3em; --type-icon-slot: 24px; --type-gap: 4px; --type-sep-slot: 22px; }
+  html[lang="en"] { --type-word-slot: 8ch; }
+  html[lang="ja"] { --type-word-slot: 5em; }
+  .entry,
+  .entry.single,
+  .quick-table .entry,
+  .quick-table .entry.single,
+  .starter-type .entry,
+  .starter-type .entry.single {
+    display: inline-flex;
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot));
+    justify-content: center;
+    vertical-align: middle;
+  }
+  .entry .ai,
+  .entry.single .ai,
+  .quick-table .entry .ai,
+  .quick-table .entry.single .ai,
+  .starter-type .entry .ai,
+  .starter-type .entry.single .ai {
+    display: grid;
+    grid-template-columns: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) var(--type-sep-slot) calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot));
+    flex: none;
+    align-items: center;
+  }
+  .entry .a1, .entry .a2,
+  .quick-table .entry .a1, .quick-table .entry .a2,
+  .starter-type .entry .a1, .starter-type .entry .a2 {
+    display: block;
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    min-width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+  }
+  .entry .wiki-link,
+  .quick-table .entry .wiki-link,
+  .starter-type .entry .wiki-link {
+    display: grid;
+    grid-template-columns: var(--type-icon-slot) var(--type-word-slot);
+    column-gap: var(--type-gap);
+    align-items: center;
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+  }
+  .entry .qi { width: var(--type-icon-slot); height: var(--type-icon-slot); margin: 0; }
+  .entry .nm {
+    display: block;
+    width: var(--type-word-slot);
+    min-width: var(--type-word-slot);
+    padding: 0;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .entry .sep,
+  .quick-table .entry .sep,
+  .starter-type .entry .sep {
+    display: block;
+    width: var(--type-sep-slot);
+    min-width: var(--type-sep-slot);
+    text-align: center;
+  }
+  .entry.single .a1,
+  .entry.single .sep { visibility: hidden; width: auto; min-width: 0; overflow: visible; }
+  .entry.single .a2 { justify-content: initial; }
+  html[lang="en"] .table-scroll td.name { min-width: 360px; }
+  html[lang="ja"] .table-scroll td.name { min-width: 390px; }
+  html[lang="en"] .starter-table { min-width: 1380px; }
+  html[lang="ja"] .starter-table { min-width: 1460px; }
+  @media (max-width: 768px) {
+    html { --type-icon-slot: 20px; --type-gap: 3px; --type-sep-slot: 18px; }
+  }
+  /* ===== Preserve empty columns for single-type alignment ===== */
+  .quick-table .entry.single,
+  .starter-type .entry.single,
+  .table-scroll .entry.single {
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot));
+  }
+  .quick-table .entry.single .ai,
+  .starter-type .entry.single .ai,
+  .table-scroll .entry.single .ai {
+    grid-template-columns: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) var(--type-sep-slot) calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot));
+  }
+  .quick-table .entry.single .a1,
+  .starter-type .entry.single .a1,
+  .table-scroll .entry.single .a1 {
+    visibility: hidden;
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    min-width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+  }
+  .quick-table .entry.single .sep,
+  .starter-type .entry.single .sep,
+  .table-scroll .entry.single .sep {
+    visibility: hidden;
+    width: var(--type-sep-slot);
+    min-width: var(--type-sep-slot);
+  }
+  .quick-table .entry.single .a2,
+  .starter-type .entry.single .a2,
+  .table-scroll .entry.single .a2 {
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    min-width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+  }
+  /* ===== Language-specific single-type column preservation ===== */
+  html[lang="en"] .quick-table .entry.single,
+  html[lang="ja"] .quick-table .entry.single,
+  html[lang="en"] .starter-type .entry.single,
+  html[lang="ja"] .starter-type .entry.single,
+  html[lang="en"] .table-scroll .entry.single,
+  html[lang="ja"] .table-scroll .entry.single {
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot));
+  }
+  html[lang="en"] .quick-table .entry.single .ai,
+  html[lang="ja"] .quick-table .entry.single .ai,
+  html[lang="en"] .starter-type .entry.single .ai,
+  html[lang="ja"] .starter-type .entry.single .ai,
+  html[lang="en"] .table-scroll .entry.single .ai,
+  html[lang="ja"] .table-scroll .entry.single .ai {
+    grid-template-columns: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) var(--type-sep-slot) calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot));
+  }
+  html[lang="en"] .quick-table .entry.single .a1,
+  html[lang="ja"] .quick-table .entry.single .a1,
+  html[lang="en"] .starter-type .entry.single .a1,
+  html[lang="ja"] .starter-type .entry.single .a1,
+  html[lang="en"] .table-scroll .entry.single .a1,
+  html[lang="ja"] .table-scroll .entry.single .a1 {
+    visibility: hidden;
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+    min-width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot));
+  }
+  html[lang="en"] .quick-table .entry.single .sep,
+  html[lang="ja"] .quick-table .entry.single .sep,
+  html[lang="en"] .starter-type .entry.single .sep,
+  html[lang="ja"] .starter-type .entry.single .sep,
+  html[lang="en"] .table-scroll .entry.single .sep,
+  html[lang="ja"] .table-scroll .entry.single .sep {
+    visibility: hidden;
+    width: var(--type-sep-slot);
+    min-width: var(--type-sep-slot);
+  }
+  /* ===== Authoritative type grid; overrides legacy fixed pixels ===== */
+  html[lang="en"] .entry,
+  html[lang="ja"] .entry,
+  html[lang="en"] .entry.single,
+  html[lang="ja"] .entry.single,
+  html[lang="en"] .quick-table .entry,
+  html[lang="ja"] .quick-table .entry,
+  html[lang="en"] .quick-table .entry.single,
+  html[lang="ja"] .quick-table .entry.single,
+  html[lang="en"] .starter-type .entry,
+  html[lang="ja"] .starter-type .entry,
+  html[lang="en"] .starter-type .entry.single,
+  html[lang="ja"] .starter-type .entry.single {
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot)) !important;
+  }
+  html[lang="en"] .entry .ai,
+  html[lang="ja"] .entry .ai,
+  html[lang="en"] .entry.single .ai,
+  html[lang="ja"] .entry.single .ai,
+  html[lang="en"] .quick-table .entry .ai,
+  html[lang="ja"] .quick-table .entry .ai,
+  html[lang="en"] .quick-table .entry.single .ai,
+  html[lang="ja"] .quick-table .entry.single .ai,
+  html[lang="en"] .starter-type .entry .ai,
+  html[lang="ja"] .starter-type .entry .ai,
+  html[lang="en"] .starter-type .entry.single .ai,
+  html[lang="ja"] .starter-type .entry.single .ai {
+    grid-template-columns: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) var(--type-sep-slot) calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot)) !important;
+  }
+  html[lang="en"] .entry .a1, html[lang="en"] .entry .a2,
+  html[lang="ja"] .entry .a1, html[lang="ja"] .entry .a2,
+  html[lang="en"] .quick-table .entry .a1, html[lang="en"] .quick-table .entry .a2,
+  html[lang="ja"] .quick-table .entry .a1, html[lang="ja"] .quick-table .entry .a2,
+  html[lang="en"] .starter-type .entry .a1, html[lang="en"] .starter-type .entry .a2,
+  html[lang="ja"] .starter-type .entry .a1, html[lang="ja"] .starter-type .entry .a2 {
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+    min-width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+  }
+  html[lang="en"] .entry .sep, html[lang="ja"] .entry .sep,
+  html[lang="en"] .quick-table .entry .sep, html[lang="ja"] .quick-table .entry .sep,
+  html[lang="en"] .starter-type .entry .sep, html[lang="ja"] .starter-type .entry .sep {
+    width: var(--type-sep-slot) !important;
+    min-width: var(--type-sep-slot) !important;
+  }
+  html[lang="en"] .entry.single .a1, html[lang="ja"] .entry.single .a1,
+  html[lang="en"] .entry.single .sep, html[lang="ja"] .entry.single .sep {
+    visibility: hidden !important;
+  }
+  /* ===== Final alignment contract ===== */
+  html { --type-word-slot: 3em; --type-icon-slot: 24px; --type-gap: 4px; --type-sep-slot: 22px; }
+  html[lang="en"] { --type-word-slot: 8ch; }
+  html[lang="ja"] { --type-word-slot: 5em; }
+  html[lang="en"] .entry,
+  html[lang="ja"] .entry {
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot)) !important;
+    justify-content: center !important;
+  }
+  html[lang="en"] .entry .ai,
+  html[lang="ja"] .entry .ai {
+    display: grid !important;
+    grid-template-columns: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) var(--type-sep-slot) calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot)) !important;
+  }
+  html[lang="en"] .entry .a1, html[lang="en"] .entry .a2,
+  html[lang="ja"] .entry .a1, html[lang="ja"] .entry .a2 {
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+    min-width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+  }
+  html[lang="en"] .entry .wiki-link,
+  html[lang="ja"] .entry .wiki-link {
+    display: grid !important;
+    grid-template-columns: var(--type-icon-slot) var(--type-word-slot) !important;
+    column-gap: var(--type-gap) !important;
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+    align-items: center !important;
+  }
+  html[lang="en"] .entry .nm,
+  html[lang="ja"] .entry .nm {
+    width: var(--type-word-slot) !important;
+    min-width: var(--type-word-slot) !important;
+    text-align: right !important;
+  }
+  html[lang="en"] .entry .sep,
+  html[lang="ja"] .entry .sep {
+    width: var(--type-sep-slot) !important;
+    min-width: var(--type-sep-slot) !important;
+    text-align: center !important;
+  }
+  /* Everywhere except the quick overview, a single type occupies the second-type column. */
+  html[lang="en"] .starter-type .entry.single,
+  html[lang="ja"] .starter-type .entry.single,
+  html[lang="en"] .table-scroll .entry.single,
+  html[lang="ja"] .table-scroll .entry.single {
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot)) !important;
+  }
+  html[lang="en"] .starter-type .entry.single .ai,
+  html[lang="ja"] .starter-type .entry.single .ai,
+  html[lang="en"] .table-scroll .entry.single .ai,
+  html[lang="ja"] .table-scroll .entry.single .ai {
+    grid-template-columns: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) var(--type-sep-slot) calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+    width: calc((var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) * 2 + var(--type-sep-slot)) !important;
+  }
+  html[lang="en"] .starter-type .entry.single .a1,
+  html[lang="ja"] .starter-type .entry.single .a1,
+  html[lang="en"] .starter-type .entry.single .sep,
+  html[lang="ja"] .starter-type .entry.single .sep,
+  html[lang="en"] .table-scroll .entry.single .a1,
+  html[lang="ja"] .table-scroll .entry.single .a1,
+  html[lang="en"] .table-scroll .entry.single .sep,
+  html[lang="ja"] .table-scroll .entry.single .sep {
+    visibility: hidden !important;
+    width: auto !important;
+    min-width: 0 !important;
+  }
+  /* Quick overview single-type column: compact combination centered in its own cell. */
+  html[lang="en"] .quick-table .entry.single,
+  html[lang="ja"] .quick-table .entry.single {
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+    margin-inline: auto !important;
+  }
+  html[lang="en"] .quick-table .entry.single .ai,
+  html[lang="ja"] .quick-table .entry.single .ai {
+    grid-template-columns: 0 0 calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+    width: calc(var(--type-icon-slot) + var(--type-gap) + var(--type-word-slot)) !important;
+  }
+  html[lang="en"] .quick-table .entry.single .a1,
+  html[lang="ja"] .quick-table .entry.single .a1,
+  html[lang="en"] .quick-table .entry.single .sep,
+  html[lang="ja"] .quick-table .entry.single .sep {
+    display: none !important;
+  }
+  html[lang="en"] .quick-table td.qcol,
+  html[lang="ja"] .quick-table td.qcol { text-align: center !important; }
+  /* ===== One authoritative type layout for zh / en / ja ===== */
+  html[lang="zh-CN"], html[lang="zh"] { --type-word-slot: 3em; }
+  html[lang="en"] { --type-word-slot: 8ch; }
+  html[lang="ja"] { --type-word-slot: 5em; }
+  html { --type-icon-slot: 24px; --type-icon-gap: 4px; --type-slash-slot: 22px; }
+  .quick-table .entry,
+  .starter-type .entry,
+  .table-scroll .entry {
+    display: inline-flex !important;
+    width: calc((var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) * 2 + var(--type-slash-slot)) !important;
+    justify-content: center !important;
+    vertical-align: middle;
+  }
+  .quick-table .entry .ai,
+  .starter-type .entry .ai,
+  .table-scroll .entry .ai {
+    display: grid !important;
+    grid-template-columns: calc(var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) var(--type-slash-slot) calc(var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) !important;
+    width: calc((var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) * 2 + var(--type-slash-slot)) !important;
+    flex: none !important;
+    align-items: center !important;
+  }
+  .quick-table .entry .a1, .quick-table .entry .a2,
+  .starter-type .entry .a1, .starter-type .entry .a2,
+  .table-scroll .entry .a1, .table-scroll .entry .a2 {
+    display: block !important;
+    width: calc(var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) !important;
+    min-width: calc(var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) !important;
+  }
+  .quick-table .entry .wiki-link,
+  .starter-type .entry .wiki-link,
+  .table-scroll .entry .wiki-link {
+    display: grid !important;
+    grid-template-columns: var(--type-icon-slot) var(--type-word-slot) !important;
+    column-gap: var(--type-icon-gap) !important;
+    align-items: center !important;
+    width: calc(var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) !important;
+  }
+  .quick-table .entry .qi,
+  .starter-type .entry .qi,
+  .table-scroll .entry .qi {
+    width: var(--type-icon-slot) !important;
+    height: var(--type-icon-slot) !important;
+    margin: 0 !important;
+  }
+  .quick-table .entry .nm,
+  .starter-type .entry .nm,
+  .table-scroll .entry .nm {
+    display: block !important;
+    width: var(--type-word-slot) !important;
+    min-width: var(--type-word-slot) !important;
+    padding: 0 !important;
+    white-space: nowrap !important;
+    text-align: right !important;
+  }
+  .quick-table .entry .sep,
+  .starter-type .entry .sep,
+  .table-scroll .entry .sep {
+    display: block !important;
+    width: var(--type-slash-slot) !important;
+    min-width: var(--type-slash-slot) !important;
+    text-align: center !important;
+  }
+  /* In starter/full tables, keep empty first and slash columns for single types. */
+  .starter-type .entry.single,
+  .table-scroll .entry.single,
+  .starter-type .entry.single .ai,
+  .table-scroll .entry.single .ai {
+    width: calc((var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) * 2 + var(--type-slash-slot)) !important;
+  }
+  .starter-type .entry.single .ai,
+  .table-scroll .entry.single .ai {
+    grid-template-columns: calc(var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) var(--type-slash-slot) calc(var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) !important;
+  }
+  .starter-type .entry.single .a1,
+  .table-scroll .entry.single .a1,
+  .starter-type .entry.single .sep,
+  .table-scroll .entry.single .sep { visibility: hidden !important; }
+  /* In quick overview, center the visible single-type block inside its own cell. */
+  .quick-table td { text-align: center !important; }
+  .quick-table .entry.single {
+    width: calc(var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  .quick-table .entry.single .ai {
+    grid-template-columns: calc(var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) !important;
+    width: calc(var(--type-icon-slot) + var(--type-icon-gap) + var(--type-word-slot)) !important;
+  }
+  .quick-table .entry.single .a1,
+  .quick-table .entry.single .sep { display: none !important; }
+  .quick-table .entry.single .a2 { grid-column: 1 !important; }
+  @media (max-width: 768px) {
+    html { --type-icon-slot: 20px; --type-icon-gap: 3px; --type-slash-slot: 18px; }
+  }
+
+  /* ===== Transparent type icon sprite ===== */
+  img.qi {
+    background-color: transparent !important;
+    background-image: url('type-icons-transparent.png') !important;
+    background-repeat: no-repeat !important;
+    background-size: 600% 300% !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+  img.qi[alt="一般"] { background-position: 0% 0% !important; }
+  img.qi[alt="火"] { background-position: 20% 0% !important; }
+  img.qi[alt="水"] { background-position: 40% 0% !important; }
+  img.qi[alt="电"] { background-position: 60% 0% !important; }
+  img.qi[alt="草"] { background-position: 80% 0% !important; }
+  img.qi[alt="冰"] { background-position: 100% 0% !important; }
+  img.qi[alt="格斗"] { background-position: 0% 50% !important; }
+  img.qi[alt="毒"] { background-position: 20% 50% !important; }
+  img.qi[alt="地面"] { background-position: 40% 50% !important; }
+  img.qi[alt="飞行"] { background-position: 60% 50% !important; }
+  img.qi[alt="超能力"] { background-position: 80% 50% !important; }
+  img.qi[alt="虫"] { background-position: 100% 50% !important; }
+  img.qi[alt="岩石"] { background-position: 0% 100% !important; }
+  img.qi[alt="幽灵"] { background-position: 20% 100% !important; }
+  img.qi[alt="龙"] { background-position: 40% 100% !important; }
+  img.qi[alt="恶"] { background-position: 60% 100% !important; }
+  img.qi[alt="钢"] { background-position: 80% 100% !important; }
+  img.qi[alt="妖精"] { background-position: 100% 100% !important; }
+
+  /* ===== Rule page switch ===== */
+
+  .langbar { display:flex; justify-content:flex-end; align-items:center; gap:10px; flex-wrap:wrap; }
+  .rule-switch { display:inline-flex; min-height:42px; align-items:center; justify-content:center; padding:0 15px; border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--blue); font-weight:800; font-size:13.5px; text-decoration:none; box-shadow:0 2px 8px rgba(31,52,78,.05); }
+  .rule-switch:hover { background:var(--blue-soft); }
+  .rule-switch:focus-visible { outline:2px solid var(--blue); outline-offset:3px; }
+  @media (max-width:768px){ .langbar{justify-content:space-between}.rule-switch{min-height:44px;padding:0 12px;font-size:13px} }
+
+</style>
+<script>
+(function(){
+  var TYPE_I18N = {"一般":{"en":"Normal","ja":"ノーマル"},"火":{"en":"Fire","ja":"ほのお"},"水":{"en":"Water","ja":"みず"},"电":{"en":"Electric","ja":"でんき"},"草":{"en":"Grass","ja":"くさ"},"冰":{"en":"Ice","ja":"こおり"},"格斗":{"en":"Fighting","ja":"かくとう"},"毒":{"en":"Poison","ja":"どく"},"地面":{"en":"Ground","ja":"じめん"},"飞行":{"en":"Flying","ja":"ひこう"},"超能力":{"en":"Psychic","ja":"エスパー"},"虫":{"en":"Bug","ja":"むし"},"岩石":{"en":"Rock","ja":"いわ"},"幽灵":{"en":"Ghost","ja":"ゴースト"},"龙":{"en":"Dragon","ja":"ドラゴン"},"恶":{"en":"Dark","ja":"あく"},"钢":{"en":"Steel","ja":"はがね"},"妖精":{"en":"Fairy","ja":"フェアリー"}};
+  var POKE_I18N = {"3":{"en":"Venusaur","ja":"フシギバナ"},"6":{"en":"Charizard","ja":"リザードン"},"9":{"en":"Blastoise","ja":"カメックス"},"31":{"en":"Nidoqueen","ja":"ニドクイン"},"73":{"en":"Tentacruel","ja":"ドククラゲ"},"89":{"en":"Muk","ja":"ベトベトン"},"127":{"en":"Pinsir","ja":"カイロス"},"130":{"en":"Gyarados","ja":"ギャラドス"},"144":{"en":"Articuno","ja":"フリーザー"},"145":{"en":"Zapdos","ja":"サンダー"},"154":{"en":"Meganium","ja":"メガニウム"},"157":{"en":"Typhlosion","ja":"バクフーン"},"160":{"en":"Feraligatr","ja":"オーダイル"},"169":{"en":"Crobat","ja":"クロバット"},"213":{"en":"Shuckle","ja":"ツボツボ"},"244":{"en":"Entei","ja":"エンテイ"},"249":{"en":"Lugia","ja":"ルギア"},"250":{"en":"Ho-Oh","ja":"ホウオウ"},"251":{"en":"Celebi","ja":"セレビィ"},"254":{"en":"Sceptile","ja":"ジュカイン"},"257":{"en":"Blaziken","ja":"バシャーモ"},"260":{"en":"Swampert","ja":"ラグラージ"},"292":{"en":"Shedinja","ja":"ヌケニン"},"344":{"en":"Claydol","ja":"ネンドール"},"377":{"en":"Regirock","ja":"レジロック"},"378":{"en":"Regice","ja":"レジアイス"},"383":{"en":"Groudon","ja":"グラードン - グラードンのすがた"},"389":{"en":"Torterra","ja":"ドダイトス"},"392":{"en":"Infernape","ja":"ゴウカザル"},"395":{"en":"Empoleon","ja":"エンペルト"},"400":{"en":"Bibarel","ja":"ビーダル"},"426":{"en":"Drifblim","ja":"フワライド"},"462":{"en":"Magnezone","ja":"ジバコイル"},"464":{"en":"Rhyperior","ja":"ドサイドン"},"473":{"en":"Mamoswine","ja":"マンムー"},"479":{"en":"Rotom","ja":"ロトム - ロトムのすがた"},"483":{"en":"Dialga","ja":"ディアルガ"},"484":{"en":"Palkia","ja":"パルキア"},"487":{"en":"Altered Giratina","ja":"ギラティナ - アナザーフォルム"},"492":{"en":"Land Shaymin","ja":"シェイミ - ランドフォルム"},"493":{"en":"Normal Arceus","ja":"アルセウス - ノーマルタイプ"},"497":{"en":"Serperior","ja":"ジャローダ"},"500":{"en":"Emboar","ja":"エンブオー"},"503":{"en":"Samurott","ja":"ダイケンキ"},"542":{"en":"Leavanny","ja":"ハハコモリ"},"635":{"en":"Hydreigon","ja":"サザンドラ"},"637":{"en":"Volcarona","ja":"ウルガモス"},"641":{"en":"Incarnate Tornadus","ja":"トルネロス - けしんフォルム"},"643":{"en":"Reshiram","ja":"レシラム"},"644":{"en":"Zekrom","ja":"ゼクロム"},"645":{"en":"Incarnate Landorus","ja":"ランドロス - けしんフォルム"},"647":{"en":"Ordinary Keldeo","ja":"ケルディオ - いつものすがた"},"648":{"en":"Aria Meloetta","ja":"メロエッタ - ボイスフォルム"},"652":{"en":"Chesnaught","ja":"ブリガロン"},"655":{"en":"Delphox","ja":"マフォクシー"},"658":{"en":"Greninja","ja":"ゲッコウガ"},"689":{"en":"Barbaracle","ja":"ガメノデス"},"695":{"en":"Heliolisk","ja":"エレザード"},"697":{"en":"Tyrantrum","ja":"ガチゴラス"},"699":{"en":"Aurorus","ja":"アマルルガ"},"716":{"en":"Active Xerneas","ja":"ゼルネアス - アクティブモード"},"717":{"en":"Yveltal","ja":"イベルタル"},"721":{"en":"Volcanion","ja":"ボルケニオン"},"724":{"en":"Decidueye","ja":"ジュナイパー"},"727":{"en":"Incineroar","ja":"ガオガエン"},"730":{"en":"Primarina","ja":"アシレーヌ"},"738":{"en":"Vikavolt","ja":"クワガノン"},"743":{"en":"Ribombee","ja":"アブリボン"},"768":{"en":"Golisopod","ja":"グソクムシャ"},"785":{"en":"Tapu Koko","ja":"カプ・コケコ"},"788":{"en":"Tapu Fini","ja":"カプ・レヒレ"},"792":{"en":"Lunala","ja":"ルナアーラ"},"797":{"en":"Celesteela","ja":"テッカグヤ"},"798":{"en":"Kartana","ja":"カミツルギ"},"802":{"en":"Marshadow","ja":"マーシャドー"},"805":{"en":"Stakataka","ja":"ツンデツンデ"},"812":{"en":"Rillaboom","ja":"ゴリランダー"},"815":{"en":"Cinderace","ja":"エースバーン"},"818":{"en":"Inteleon","ja":"インテレオン"},"826":{"en":"Orbeetle","ja":"イオルブ"},"849":{"en":"Amped Toxtricity","ja":"ストリンダー - ハイなすがた"},"861":{"en":"Grimmsnarl","ja":"オーロンゲ"},"862":{"en":"Obstagoon","ja":"タチフサグマ"},"873":{"en":"Frosmoth","ja":"モスノウ"},"877":{"en":"Full Belly Morpeko","ja":"モルペコ - まんぷくもよう"},"889":{"en":"Zamazenta","ja":"ザマゼンタ - れきせんのゆうしゃ"},"893":{"en":"Zarude","ja":"ザルード"},"897":{"en":"Spectrier","ja":"レイスポス"},"902":{"en":"Male Basculegion","ja":"イダイトウ - オスのすがた"},"904":{"en":"Overqwil","ja":"ハリーマン"},"908":{"en":"Meowscarada","ja":"マスカーニャ"},"911":{"en":"Skeledirge","ja":"ラウドボーン"},"914":{"en":"Quaquaval","ja":"ウェーニバル"},"920":{"en":"Lokix","ja":"エクスレッグ"},"930":{"en":"Arboliva","ja":"オリーヴァ"},"945":{"en":"Grafaiai","ja":"タギングル"},"966":{"en":"Revavroom","ja":"ブロロローム"},"983":{"en":"Kingambit","ja":"ドドゲザン"},"984":{"en":"Great Tusk","ja":"イダイナキバ"},"987":{"en":"Flutter Mane","ja":"ハバタクカミ"},"989":{"en":"Sandy Shocks","ja":"スナノケガワ"},"991":{"en":"Iron Bundle","ja":"テツノツツミ"},"992":{"en":"Iron Hands","ja":"テツノカイナ"},"994":{"en":"Iron Moth","ja":"テツノドクガ"},"995":{"en":"Iron Thorns","ja":"テツノイバラ"},"1000":{"en":"Gholdengo","ja":"サーフゴー"},"1002":{"en":"Chien-Pao","ja":"パオジアン"},"1003":{"en":"Ting-Lu","ja":"ディンルー"},"1006":{"en":"Iron Valiant","ja":"テツノブジン"},"1007":{"en":"Koraidon - Apex Build","ja":"コライドン - かんぜんけいたい"},"1014":{"en":"Okidogi","ja":"イイネイヌ"},"1015":{"en":"Munkidori","ja":"マシマシラ"},"1016":{"en":"Fezandipiti","ja":"キチキギス"},"1022":{"en":"Iron Boulder","ja":"テツノイワオ"},"1025":{"en":"Pecharunt","ja":"モモワロウ"},"10004":{"en":"Sandy Wormadam","ja":"ミノマダム - すなちのミノ"},"10006":{"en":"Sky Shaymin","ja":"シェイミ - スカイフォルム"},"10008":{"en":"Heat Rotom","ja":"ロトム - ヒートロトム"},"10009":{"en":"Wash Rotom","ja":"ロトム - ウォッシュロトム"},"10010":{"en":"Frost Rotom","ja":"ロトム - フロストロトム"},"10012":{"en":"Mow Rotom","ja":"ロトム - カットロトム"},"10018":{"en":"Pirouette Meloetta","ja":"メロエッタ - ステップフォルム"},"10022":{"en":"Black Kyurem","ja":"キュレム - ブラックキュレム"},"10033":{"en":"Mega Venusaur","ja":"フシギバナ - メガフシギバナ"},"10040":{"en":"Mega Pinsir","ja":"カイロス - メガカイロス"},"10041":{"en":"Mega Gyarados","ja":"ギャラドス - メガギャラドス"},"10042":{"en":"Mega Aerodactyl","ja":"プテラ - メガプテラ"},"10043":{"en":"Mega Mewtwo X","ja":"ミュウツー - メガミュウツーＸ"},"10044":{"en":"Mega Mewtwo Y","ja":"ミュウツー - メガミュウツーＹ"},"10047":{"en":"Mega Heracross","ja":"ヘラクロス - メガヘラクロス"},"10048":{"en":"Mega Houndoom","ja":"ヘルガー - メガヘルガー"},"10049":{"en":"Mega Tyranitar","ja":"バンギラス - メガバンギラス"},"10050":{"en":"Mega Blaziken","ja":"バシャーモ - メガバシャーモ"},"10051":{"en":"Mega Gardevoir","ja":"サーナイト - メガサーナイト"},"10053":{"en":"Mega Aggron","ja":"ボスゴドラ - メガボスゴドラ"},"10060":{"en":"Mega Abomasnow","ja":"ユキノオー - メガユキノオー"},"10064":{"en":"Mega Swampert","ja":"ラグラージ - メガラグラージ"},"10065":{"en":"Mega Sceptile","ja":"ジュカイン - メガジュカイン"},"10067":{"en":"Mega Altaria","ja":"チルタリス - メガチルタリス"},"10069":{"en":"Mega Audino","ja":"タブンネ - メガタブンネ"},"10072":{"en":"Mega Steelix","ja":"ハガネール - メガハガネール"},"10073":{"en":"Mega Pidgeot","ja":"ピジョット - メガピジョット"},"10075":{"en":"Mega Diancie","ja":"ディアンシー - メガディアンシー"},"10076":{"en":"Mega Metagross","ja":"メタグロス - メガメタグロス"},"10077":{"en":"Primal Kyogre","ja":"カイオーガ - ゲンシカイキのすがた"},"10078":{"en":"Primal Groudon","ja":"グラードン - ゲンシカイキのすがた"},"10079":{"en":"Mega Rayquaza","ja":"レックウザ - メガレックウザ"},"10086":{"en":"Hoopa Unbound","ja":"フーパ - ときはなたれしフーパ"},"10100":{"en":"Alolan Raichu","ja":"ライチュウ - アローラのすがた"},"10102":{"en":"Alolan Sandslash","ja":"サンドパン - アローラのすがた"},"10104":{"en":"Alolan Ninetales","ja":"キュウコン - アローラのすがた"},"10157":{"en":"Ultra Necrozma","ja":"ネクロズマ - ウルトラネクロズマ"},"10178":{"en":"Zen Galarian Darmanitan","ja":"ヒヒダルマ - ダルマモード"},"10188":{"en":"Crowned Zacian","ja":"ザシアン - けんのおう"},"10189":{"en":"Crowned Zamazenta","ja":"ザマゼンタ - たてのおう"},"10190":{"en":"Eternamax Eternatus","ja":"ムゲンダイナ - ムゲンダイマックス"},"10193":{"en":"Ice Calyrex","ja":"バドレックス - はくばじょうのすがた"},"10230":{"en":"Hisuian Arcanine","ja":"ウインディ - ヒスイのすがた"},"10239":{"en":"Hisuian Zoroark","ja":"ゾロアーク - ヒスイのすがた"},"10272":{"en":"Bloodmoon Ursaluna","ja":"ガチグマ - アカツキ"},"10273":{"en":"Wellspring Mask Ogerpon","ja":"オーガポン - いどのめん"},"10275":{"en":"Cornerstone Mask Ogerpon","ja":"オーガポン - いしずえのめん"},"10278":{"en":"Mega Clefable","ja":"ピクシー - メガピクシー"},"10280":{"en":"Mega Starmie","ja":"スターミー - メガスターミー"},"10282":{"en":"Mega Meganium","ja":"メガニウム - メガメガニウム"},"10285":{"en":"Mega Froslass","ja":"ユキメノコ - メガユキメノコ"},"10288":{"en":"Mega Scolipede","ja":"ペンドラー - メガペンドラー"},"10289":{"en":"Mega Scrafty","ja":"ズルズキン - メガズルズキン"},"10291":{"en":"Mega Chandelure","ja":"シャンデラ - メガシャンデラ"},"10292":{"en":"Mega Chesnaught","ja":"ブリガロン - メガブリガロン"},"10293":{"en":"Mega Delphox","ja":"マフォクシー - メガマフォクシー"},"10295":{"en":"Mega Pyroar","ja":"カエンジシ - メガカエンジシ"},"10298":{"en":"Mega Barbaracle","ja":"ガメノデス - メガガメノデス"},"10300":{"en":"Mega Hawlucha","ja":"ルチャブル - メガルチャブル"},"10301":{"en":"Mega Zygarde","ja":"ジガルデ - メガジガルデ"},"10302":{"en":"Mega Drampa","ja":"ジジーロン - メガジジーロン"},"10307":{"en":"Mega Absol Z","ja":"アブソル - メガアブソルZ"},"10309":{"en":"Mega Garchomp Z","ja":"ガブリアス - メガガブリアスZ"},"10311":{"en":"Mega Heatran","ja":"ヒードラン - メガヒードラン"},"10312":{"en":"Mega Darkrai","ja":"ダークライ - メガダークライ"},"10313":{"en":"Mega Golurk","ja":"ゴルーグ - メガゴルーグ"},"10315":{"en":"Mega Crabominable","ja":"ケケンカニ - メガケケンカニ"},"10316":{"en":"Mega Golisopod","ja":"グソクムシャ - メガグソクムシャ"},"10319":{"en":"Mega Zeraora","ja":"ゼラオラ - メガゼラオラ"},"10320":{"en":"Mega Scovillain","ja":"スコヴィラン - メガスコヴィラン"},"10321":{"en":"Mega Glimmora","ja":"キラフロル - メガキラフロル"}};
+  var TEXT_I18N = { en: {"纯规则倍率 · 不含实战环境":"Type matchups only · No battle context","宝可梦属性相克 · 纯数值理论排名":"Pokémon Type Matchups · Pure Numerical Ranking","18 单属性 + 153 双属性，每项附代表性宝可梦。":"18 single types + 153 dual types, each with a representative Pokémon.","页面目录":"Contents","打击与抗击速览":"Offense & defense overview","分布全景":"Full distribution","关键结论":"Key findings","御三家排名":"Starter rankings","全量排名":"Complete ranking","计算规则":"Scoring rules","单 / 双 / 全部 · 打击与抗击速览":"Single / Dual / All · Offense & defense overview","类型":"Category","强弱":"Extreme","全部属性":"All types","双属性":"Dual type","单属性":"Single type","综合":"Overall","平衡":"Balance","打击":"Offense","抗击":"Defense","最强":"Best","最弱":"Worst","打击与抗击分布全景 · 171 项":"Offense–defense distribution · 171 combinations","基于 171 种属性组合的纯倍率结果":"Based solely on matchup multipliers across 171 type combinations","属性边际贡献":"Marginal type value","钢的优势不是个别强配对，而是稳定抬升底盘":"Steel raises the baseline, not just a few pairings","打击与抗击分工":"Offense–defense roles","地面推进打击前沿，钢控制抗击上限":"Ground drives offense; Steel sets the defensive ceiling","帕累托前沿":"Pareto frontier","真正不可被同时超越的组合只有五个":"Only five combinations are not dominated on both axes","双属性协同":"Dual-type synergy","双属性收益来自覆盖并集，且不是简单相加":"Dual-type gains come from coverage union, not simple addition","攻守关系":"Offense–defense relationship","高打击并不必然换来低抗击":"High offense does not necessarily sacrifice defense","平衡指标解释":"Reading the balance metric","最平衡不等于最强，先看综合再看平衡才合理":"Most balanced does not mean strongest; read overall first","每个世代御三家属性排名":"Starter final-evolution type ranking by generation","常规最终进化形态 · 名次基于全量 171 项":"Standard final evolutions · Ranks are among all 171 combinations","#数字表示该属性组合在全量 171 项中的名次。":"# = type-combination rank among all 171 combinations.","世代":"Generation","第 1 名":"1st","第 2 名":"2nd","第 3 名":"3rd","全量排名数据表":"Complete ranking table","171 项 · 点击表头排序，单/双筛选 + 关键字过滤":"171 rows · Sort by column, filter single/dual types, and search","全部":"All","分值":"Score","分值（百分制）":"Score (0–100)","名次":"Rank","属性":"Type","代表宝可梦":"Representative Pokémon","无":"None","倍率":"Multiplier","打击得分":"Offense score","抗击得分":"Defense score"}, ja: {"纯规则倍率 · 不含实战环境":"タイプ相性のみ・対戦環境は考慮しない","宝可梦属性相克 · 纯数值理论排名":"ポケモンタイプ相性・純数値ランキング","18 单属性 + 153 双属性，每项附代表性宝可梦。":"単タイプ18種＋複合タイプ153種。各組み合わせに代表ポケモンを表示。","页面目录":"目次","打击与抗击速览":"攻撃・耐性早見","分布全景":"全体分布","关键结论":"重要な結論","御三家排名":"御三家ランキング","全量排名":"全ランキング","计算规则":"計算ルール","单 / 双 / 全部 · 打击与抗击速览":"単／複合／全体・攻撃と耐性の早見表","类型":"指標","强弱":"評価","全部属性":"全タイプ","双属性":"複合タイプ","单属性":"単タイプ","综合":"総合","平衡":"バランス","打击":"攻撃","抗击":"耐性","最强":"最高","最弱":"最低","打击与抗击分布全景 · 171 项":"攻撃・耐性の全体分布・171通り","基于 171 种属性组合的纯倍率结果":"171タイプ組み合わせの相性倍率のみで算出","属性边际贡献":"タイプの限界寄与","钢的优势不是个别强配对，而是稳定抬升底盘":"はがねは一部の強い組み合わせだけでなく、基礎性能を安定して高める","打击与抗击分工":"攻撃と耐性の役割","地面推进打击前沿，钢控制抗击上限":"じめんが攻撃面を伸ばし、はがねが耐性の上限を決める","帕累托前沿":"パレートフロンティア","真正不可被同时超越的组合只有五个":"攻撃と耐性の両方で同時に上回られない組み合わせは5つだけ","双属性协同":"複合タイプの相乗効果","双属性收益来自覆盖并集，且不是简单相加":"複合タイプの利得は範囲の和集合から生まれ、単純加算ではない","攻守关系":"攻撃と耐性の関係","高打击并不必然换来低抗击":"高い攻撃性能が必ずしも耐性低下を招くわけではない","平衡指标解释":"バランス指標の読み方","最平衡不等于最强，先看综合再看平衡才合理":"最も均衡していても最強とは限らない。まず総合、次にバランスを見る","每个世代御三家属性排名":"世代別・御三家最終進化のタイプリランキング","常规最终进化形态 · 名次基于全量 171 项":"通常の最終進化形・順位は全171通りを基準","#数字表示该属性组合在全量 171 项中的名次。":"#は全171通り中のタイプ順位。","世代":"世代","第 1 名":"1位","第 2 名":"2位","第 3 名":"3位","全量排名数据表":"全ランキング表","171 项 · 点击表头排序，单/双筛选 + 关键字过滤":"171件・列見出しで並べ替え、単／複合フィルターと検索","全部":"すべて","分值":"スコア","分值（百分制）":"スコア（100点換算）","名次":"順位","属性":"タイプ","代表宝可梦":"代表ポケモン","无":"なし","倍率":"倍率","打击得分":"攻撃スコア","抗击得分":"耐性スコア"} };
+  var lang = localStorage.getItem('pokemon-type-ranking-language') || 'zh';
+  if (['zh','en','ja'].indexOf(lang) < 0) lang = 'zh';
+  window.APP_LANG = lang;
+  window.TYPE_I18N = TYPE_I18N;
+  window.POKE_I18N = POKE_I18N;
+  window.TEXT_I18N = TEXT_I18N;
+  window.typeI18n = function(t){ return lang === 'zh' ? t : ((TYPE_I18N[t] && TYPE_I18N[t][lang]) || t); };
+  window.comboI18n = function(name){ return String(name).split('/').map(window.typeI18n).join('/'); };
+  window.pokemonI18n = function(id, fallback){ var e=POKE_I18N[String(id)]; return lang==='zh' ? fallback : ((e && e[lang]) || fallback); };
+  window.uiI18n = function(zh){ return lang==='zh' ? zh : ((TEXT_I18N[lang] && TEXT_I18N[lang][zh]) || zh); };
+  window.generationI18n = function(n){ return lang==='en' ? 'Gen ' + n : (lang==='ja' ? '第' + n + '世代' : '第' + n + '世代'); };
+  window.metricRankI18n = function(metric, n){ var labels={total:window.uiI18n('综合'),atk:window.uiI18n('打击'),def:window.uiI18n('抗击')}; return lang==='en' ? labels[metric]+' '+n+(n===1?'st':n===2?'nd':n===3?'rd':'th') : (lang==='ja' ? labels[metric]+' '+n+'位' : labels[metric]+'第 '+n+' 名'); };
+})();
+</script>
+</head>
+<body>
+<div class="wrap">
+  <div class="langbar"><a class="rule-switch" data-rule-link href="index.html">对数修正赋分</a><div class="lang-switch" role="group" aria-label="Language"><button class="lang-btn" type="button" data-lang="zh">中文</button><button class="lang-btn" type="button" data-lang="en">English</button><button class="lang-btn" type="button" data-lang="ja">日本語</button></div></div>
+  <!-- ===== Multiplier scoring header ===== -->
+  <header class="linear-hero">
+    <span class="eyebrow" id="linear-eyebrow">倍率直接赋分 · 纯规则倍率</span>
+    <h1 id="linear-title">宝可梦属性排名 · 倍率赋分</h1>
+    <p class="lead" id="linear-lead">打击直接取倍率；抗击取承受倍率的负数，并乘 9.5 对齐 171 项打击尺度。</p>
+  </header>
+  <!-- ===== 全量数据 ===== -->
+  <section class="section" id="full-ranking">
+    <div class="section-head"><h2>全量排名数据表</h2><span class="note">171 项 · 点击表头排序，单/双筛选 + 关键字过滤</span></div>
+    <div class="panel">
+      <div class="toolbar">
+        <div class="seg" id="type-seg">
+          <button class="sortbtn on" data-type="all">全部</button>
+          <button class="sortbtn" data-type="single">单属性</button>
+          <button class="sortbtn" data-type="dual">双属性</button>
+        </div>
+        <div class="seg" id="show-seg">
+          <button class="sortbtn on" data-show="score">分值</button>
+          <button class="sortbtn" data-show="percent">分值（百分制）</button>
+          <button class="sortbtn" data-show="rank">名次</button>
+        </div>
+        <input class="search" id="q" type="search" placeholder="筛选属性，如 钢 / 幽灵…">
+        <span class="count" id="row-count"></span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr>
+            <th><button class="thbtn" data-key="name" data-label="属性">属性</button></th>
+            <th><button class="thbtn" data-key="kind" data-label="类型">类型</button></th>
+            <th><button class="thbtn" data-key="total" data-label="综合">综合</button></th>
+            <th><button class="thbtn" data-key="bal" data-label="平衡">平衡</button></th>
+            <th><button class="thbtn" data-key="atk" data-label="打击">打击</button></th>
+            <th><button class="thbtn" data-key="def" data-label="抗击">抗击</button></th>
+            <th><button class="thbtn" data-key="poke" data-label="代表宝可梦">代表宝可梦</button></th>
+          </tr></thead>
+          <tbody id="all-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>
+
+
+<script>
+(function(){
+  var SINGLES = [{"name":"地面","atk":226.25,"def":-180.5,"total":45.75,"bal":-406.75},{"name":"钢","atk":187.5,"def":-142.5,"total":45.0,"bal":-330.0},{"name":"火","atk":206.5,"def":-171.0,"total":35.5,"bal":-377.5},{"name":"妖精","atk":197.25,"def":-166.25,"total":31.0,"bal":-363.5},{"name":"水","atk":197.25,"def":-171.0,"total":26.25,"bal":-368.25},{"name":"飞行","atk":197.25,"def":-175.75,"total":21.5,"bal":-373.0},{"name":"岩石","atk":216.75,"def":-199.5,"total":17.25,"bal":-416.25},{"name":"幽灵","atk":178.5,"def":-161.5,"total":17.0,"bal":-340.0},{"name":"格斗","atk":195.5,"def":-185.25,"total":10.25,"bal":-380.75},{"name":"冰","atk":206.5,"def":-204.25,"total":2.25,"bal":-410.75},{"name":"恶","atk":178.75,"def":-180.5,"total":-1.75,"bal":-359.25},{"name":"电","atk":160.25,"def":-166.25,"total":-6.0,"bal":-326.5},{"name":"毒","atk":151.5,"def":-166.25,"total":-14.75,"bal":-317.75},{"name":"龙","atk":161.0,"def":-180.5,"total":-19.5,"bal":-341.5},{"name":"超能力","atk":169.25,"def":-190.0,"total":-20.75,"bal":-359.25},{"name":"虫","atk":159.75,"def":-185.25,"total":-25.5,"bal":-345.0},{"name":"一般","atk":136.25,"def":-171.0,"total":-34.75,"bal":-307.25},{"name":"草","atk":159.75,"def":-199.5,"total":-39.75,"bal":-359.25}];
+  var DUALS = [{"name":"地面/钢","atk":285.0,"def":-149.625,"total":135.375,"bal":-434.625},{"name":"火/地面","atk":303.0,"def":-175.75,"total":127.25,"bal":-478.75},{"name":"地面/妖精","atk":296.5,"def":-171.0,"total":125.5,"bal":-467.5},{"name":"地面/飞行","atk":300.5,"def":-175.75,"total":124.75,"bal":-476.25},{"name":"飞行/钢","atk":246.25,"def":-128.25,"total":118.0,"bal":-374.5},{"name":"钢/妖精","atk":242.25,"def":-125.875,"total":116.375,"bal":-368.125},{"name":"格斗/钢","atk":261.0,"def":-147.25,"total":113.75,"bal":-408.25},{"name":"冰/地面","atk":311.0,"def":-204.25,"total":106.75,"bal":-515.25},{"name":"火/妖精","atk":268.5,"def":-163.875,"total":104.625,"bal":-432.375},{"name":"水/钢","atk":241.5,"def":-137.75,"total":103.75,"bal":-379.25},{"name":"幽灵/钢","atk":239.0,"def":-135.375,"total":103.625,"bal":-374.375},{"name":"毒/地面","atk":277.0,"def":-173.375,"total":103.625,"bal":-450.375},{"name":"地面/幽灵","atk":275.5,"def":-173.375,"total":102.125,"bal":-448.875},{"name":"格斗/幽灵","atk":273.0,"def":-173.375,"total":99.625,"bal":-446.375},{"name":"水/妖精","atk":261.0,"def":-161.5,"total":99.5,"bal":-422.5},{"name":"火/水","atk":267.25,"def":-168.625,"total":98.625,"bal":-435.875},{"name":"火/格斗","atk":276.0,"def":-178.125,"total":97.875,"bal":-454.125},{"name":"火/钢","atk":251.75,"def":-154.375,"total":97.375,"bal":-406.125},{"name":"水/地面","atk":266.0,"def":-171.0,"total":95.0,"bal":-437.0},{"name":"电/地面","atk":273.5,"def":-180.5,"total":93.0,"bal":-454.0},{"name":"地面/虫","atk":277.5,"def":-185.25,"total":92.25,"bal":-462.75},{"name":"幽灵/妖精","atk":246.5,"def":-154.375,"total":92.125,"bal":-400.875},{"name":"格斗/飞行","atk":279.5,"def":-187.625,"total":91.875,"bal":-467.125},{"name":"火/幽灵","atk":254.0,"def":-163.875,"total":90.125,"bal":-417.875},{"name":"龙/钢","atk":223.0,"def":-135.375,"total":87.625,"bal":-358.375},{"name":"格斗/地面","atk":283.0,"def":-197.125,"total":85.875,"bal":-480.125},{"name":"水/飞行","atk":261.0,"def":-175.75,"total":85.25,"bal":-436.75},{"name":"电/妖精","atk":239.5,"def":-156.75,"total":82.75,"bal":-396.25},{"name":"地面/恶","atk":272.5,"def":-190.0,"total":82.5,"bal":-462.5},{"name":"恶/钢","atk":239.0,"def":-156.75,"total":82.25,"bal":-395.75},{"name":"水/幽灵","atk":243.0,"def":-161.5,"total":81.5,"bal":-404.5},{"name":"格斗/岩石","atk":290.5,"def":-209.0,"total":81.5,"bal":-499.5},{"name":"虫/钢","atk":230.25,"def":-149.625,"total":80.625,"bal":-379.875},{"name":"电/钢","atk":232.0,"def":-152.0,"total":80.0,"bal":-384.0},{"name":"水/毒","atk":241.5,"def":-161.5,"total":80.0,"bal":-403.0},{"name":"格斗/妖精","atk":264.5,"def":-185.25,"total":79.25,"bal":-449.75},{"name":"火/草","atk":257.25,"def":-178.125,"total":79.125,"bal":-435.375},{"name":"火/恶","atk":250.0,"def":-171.0,"total":79.0,"bal":-421.0},{"name":"电/飞行","atk":235.5,"def":-156.75,"total":78.75,"bal":-392.25},{"name":"电/格斗","atk":254.0,"def":-175.75,"total":78.25,"bal":-429.75},{"name":"岩石/妖精","atk":273.0,"def":-194.75,"total":78.25,"bal":-467.75},{"name":"恶/妖精","atk":246.5,"def":-168.625,"total":77.875,"bal":-415.125},{"name":"水/格斗","atk":263.0,"def":-185.25,"total":77.75,"bal":-448.25},{"name":"超能力/钢","atk":231.5,"def":-154.375,"total":77.125,"bal":-385.875},{"name":"飞行/岩石","atk":262.0,"def":-185.25,"total":76.75,"bal":-447.25},{"name":"火/龙","atk":247.0,"def":-171.0,"total":76.0,"bal":-418.0},{"name":"地面/岩石","atk":306.0,"def":-230.375,"total":75.625,"bal":-536.375},{"name":"冰/格斗","atk":288.0,"def":-213.75,"total":74.25,"bal":-501.75},{"name":"岩石/钢","atk":258.0,"def":-185.25,"total":72.75,"bal":-443.25},{"name":"格斗/恶","atk":265.0,"def":-192.375,"total":72.625,"bal":-457.375},{"name":"一般/地面","atk":253.0,"def":-180.5,"total":72.5,"bal":-433.5},{"name":"火/电","atk":250.5,"def":-178.125,"total":72.375,"bal":-428.625},{"name":"格斗/超能力","atk":262.0,"def":-190.0,"total":72.0,"bal":-452.0},{"name":"毒/恶","atk":223.5,"def":-152.0,"total":71.5,"bal":-375.5},{"name":"草/钢","atk":225.75,"def":-154.375,"total":71.375,"bal":-380.125},{"name":"岩石/幽灵","atk":259.0,"def":-187.625,"total":71.375,"bal":-446.625},{"name":"火/飞行","atk":247.0,"def":-175.75,"total":71.25,"bal":-422.75},{"name":"地面/龙","atk":265.5,"def":-194.75,"total":70.75,"bal":-460.25},{"name":"毒/钢","atk":219.25,"def":-149.625,"total":69.625,"bal":-368.875},{"name":"飞行/幽灵","atk":243.0,"def":-173.375,"total":69.625,"bal":-416.375},{"name":"水/电","atk":233.25,"def":-163.875,"total":69.375,"bal":-397.125},{"name":"水/虫","atk":245.0,"def":-175.75,"total":69.25,"bal":-420.75},{"name":"火/超能力","atk":254.0,"def":-185.25,"total":68.75,"bal":-439.25},{"name":"冰/幽灵","atk":254.0,"def":-185.25,"total":68.75,"bal":-439.25},{"name":"地面/超能力","atk":268.0,"def":-199.5,"total":68.5,"bal":-467.5},{"name":"电/幽灵","atk":224.5,"def":-156.75,"total":67.75,"bal":-381.25},{"name":"飞行/恶","atk":243.0,"def":-175.75,"total":67.25,"bal":-418.75},{"name":"冰/钢","atk":254.25,"def":-187.625,"total":66.625,"bal":-441.875},{"name":"飞行/妖精","atk":241.5,"def":-175.75,"total":65.75,"bal":-417.25},{"name":"水/岩石","atk":267.0,"def":-201.875,"total":65.125,"bal":-468.875},{"name":"水/冰","atk":262.0,"def":-197.125,"total":64.875,"bal":-459.125},{"name":"虫/岩石","atk":254.75,"def":-190.0,"total":64.75,"bal":-444.75},{"name":"草/岩石","atk":264.0,"def":-199.5,"total":64.5,"bal":-463.5},{"name":"火/冰","atk":270.25,"def":-206.625,"total":63.625,"bal":-476.875},{"name":"毒/妖精","atk":224.5,"def":-161.5,"total":63.0,"bal":-386.0},{"name":"格斗/毒","atk":249.25,"def":-187.625,"total":61.625,"bal":-436.875},{"name":"水/龙","atk":232.5,"def":-171.0,"total":61.5,"bal":-403.5},{"name":"火/岩石","atk":272.0,"def":-211.375,"total":60.625,"bal":-483.375},{"name":"水/恶","atk":239.5,"def":-180.5,"total":59.0,"bal":-420.0},{"name":"一般/幽灵","atk":201.0,"def":-142.5,"total":58.5,"bal":-343.5},{"name":"毒/幽灵","atk":224.0,"def":-166.25,"total":57.75,"bal":-390.25},{"name":"火/虫","atk":243.5,"def":-187.625,"total":55.875,"bal":-431.125},{"name":"电/冰","atk":250.5,"def":-194.75,"total":55.75,"bal":-445.25},{"name":"一般/钢","atk":207.0,"def":-152.0,"total":55.0,"bal":-359.0},{"name":"火/毒","atk":237.0,"def":-182.875,"total":54.125,"bal":-419.875},{"name":"一般/火","atk":224.5,"def":-171.0,"total":53.5,"bal":-395.5},{"name":"电/虫","atk":224.5,"def":-171.0,"total":53.5,"bal":-395.5},{"name":"超能力/妖精","atk":229.5,"def":-178.125,"total":51.375,"bal":-407.625},{"name":"草/地面","atk":260.25,"def":-209.0,"total":51.25,"bal":-469.25},{"name":"幽灵/恶","atk":197.0,"def":-147.25,"total":49.75,"bal":-344.25},{"name":"水/超能力","atk":239.5,"def":-190.0,"total":49.5,"bal":-429.5},{"name":"一般/妖精","atk":209.5,"def":-161.5,"total":48.0,"bal":-371.0},{"name":"毒/飞行","atk":216.0,"def":-168.625,"total":47.375,"bal":-384.625},{"name":"虫/幽灵","atk":227.5,"def":-180.5,"total":47.0,"bal":-408.0},{"name":"草/幽灵","atk":227.0,"def":-180.5,"total":46.5,"bal":-407.5},{"name":"龙/妖精","atk":212.5,"def":-166.25,"total":46.25,"bal":-378.75},{"name":"电/恶","atk":221.0,"def":-175.75,"total":45.25,"bal":-396.75},{"name":"一般/水","atk":216.0,"def":-171.0,"total":45.0,"bal":-387.0},{"name":"冰/妖精","atk":249.25,"def":-204.25,"total":45.0,"bal":-453.5},{"name":"冰/飞行","atk":254.0,"def":-209.0,"total":45.0,"bal":-463.0},{"name":"幽灵/龙","atk":215.5,"def":-171.0,"total":44.5,"bal":-386.5},{"name":"毒/岩石","atk":241.5,"def":-197.125,"total":44.375,"bal":-438.625},{"name":"超能力/岩石","atk":256.5,"def":-213.75,"total":42.75,"bal":-470.25},{"name":"冰/毒","atk":235.75,"def":-194.75,"total":41.0,"bal":-430.5},{"name":"虫/妖精","atk":223.25,"def":-182.875,"total":40.375,"bal":-406.125},{"name":"电/毒","atk":211.25,"def":-171.0,"total":40.25,"bal":-382.25},{"name":"格斗/龙","atk":244.5,"def":-204.25,"total":40.25,"bal":-448.75},{"name":"岩石/龙","atk":241.5,"def":-201.875,"total":39.625,"bal":-443.375},{"name":"电/岩石","atk":240.5,"def":-201.875,"total":38.625,"bal":-442.375},{"name":"一般/格斗","atk":223.0,"def":-185.25,"total":37.75,"bal":-408.25},{"name":"水/草","atk":220.25,"def":-182.875,"total":37.375,"bal":-403.125},{"name":"毒/超能力","atk":214.75,"def":-178.125,"total":36.625,"bal":-392.875},{"name":"格斗/虫","atk":240.75,"def":-204.25,"total":36.5,"bal":-445.0},{"name":"电/超能力","atk":220.5,"def":-185.25,"total":35.25,"bal":-405.75},{"name":"电/龙","atk":212.0,"def":-178.125,"total":33.875,"bal":-390.125},{"name":"飞行/超能力","atk":226.0,"def":-192.375,"total":33.625,"bal":-418.375},{"name":"草/飞行","atk":245.0,"def":-211.375,"total":33.625,"bal":-456.375},{"name":"岩石/恶","atk":252.0,"def":-218.5,"total":33.5,"bal":-470.5},{"name":"草/毒","atk":216.0,"def":-182.875,"total":33.125,"bal":-398.875},{"name":"一般/飞行","atk":203.75,"def":-171.0,"total":32.75,"bal":-374.75},{"name":"草/妖精","atk":231.75,"def":-199.5,"total":32.25,"bal":-431.25},{"name":"冰/岩石","atk":279.0,"def":-247.0,"total":32.0,"bal":-526.0},{"name":"飞行/龙","atk":224.0,"def":-192.375,"total":31.625,"bal":-416.375},{"name":"毒/龙","atk":204.0,"def":-173.375,"total":30.625,"bal":-377.375},{"name":"冰/超能力","atk":247.0,"def":-218.5,"total":28.5,"bal":-465.5},{"name":"一般/电","atk":193.5,"def":-166.25,"total":27.25,"bal":-359.75},{"name":"冰/恶","atk":250.0,"def":-223.25,"total":26.75,"bal":-473.25},{"name":"超能力/虫","atk":231.5,"def":-206.625,"total":24.875,"bal":-438.125},{"name":"虫/恶","atk":214.25,"def":-190.0,"total":24.25,"bal":-404.25},{"name":"超能力/幽灵","atk":223.5,"def":-199.5,"total":24.0,"bal":-423.0},{"name":"草/格斗","atk":242.25,"def":-218.5,"total":23.75,"bal":-460.75},{"name":"电/草","atk":211.25,"def":-187.625,"total":23.625,"bal":-398.875},{"name":"超能力/恶","atk":223.0,"def":-199.5,"total":23.5,"bal":-422.5},{"name":"飞行/虫","atk":232.5,"def":-209.0,"total":23.5,"bal":-441.5},{"name":"冰/龙","atk":227.5,"def":-204.25,"total":23.25,"bal":-431.75},{"name":"毒/虫","atk":200.25,"def":-180.5,"total":19.75,"bal":-380.75},{"name":"一般/岩石","atk":228.0,"def":-209.0,"total":19.0,"bal":-437.0},{"name":"一般/超能力","atk":191.5,"def":-175.75,"total":15.75,"bal":-367.25},{"name":"虫/龙","atk":204.5,"def":-192.375,"total":12.125,"bal":-396.875},{"name":"一般/毒","atk":173.0,"def":-161.5,"total":11.5,"bal":-334.5},{"name":"草/冰","atk":247.25,"def":-237.5,"total":9.75,"bal":-484.75},{"name":"一般/冰","atk":223.0,"def":-213.75,"total":9.25,"bal":-436.75},{"name":"一般/虫","atk":188.5,"def":-180.5,"total":8.0,"bal":-369.0},{"name":"超能力/龙","atk":207.0,"def":-199.5,"total":7.5,"bal":-406.5},{"name":"冰/虫","atk":240.25,"def":-232.75,"total":7.5,"bal":-473.0},{"name":"龙/恶","atk":206.5,"def":-199.5,"total":7.0,"bal":-406.0},{"name":"一般/恶","atk":199.0,"def":-194.75,"total":4.25,"bal":-393.75},{"name":"草/恶","atk":221.5,"def":-218.5,"total":3.0,"bal":-440.0},{"name":"一般/草","atk":196.5,"def":-199.5,"total":-3.0,"bal":-396.0},{"name":"一般/龙","atk":177.0,"def":-180.5,"total":-3.5,"bal":-357.5},{"name":"草/超能力","atk":223.0,"def":-228.0,"total":-5.0,"bal":-451.0},{"name":"草/龙","atk":213.0,"def":-220.875,"total":-7.875,"bal":-433.875},{"name":"草/虫","atk":211.5,"def":-237.5,"total":-26.0,"bal":-449.0}];
+  var TYPES = {"一般":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==","火":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==","水":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==","电":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==","草":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==","冰":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==","格斗":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==","毒":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==","地面":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==","飞行":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==","超能力":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==","虫":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==","岩石":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==","幽灵":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==","龙":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==","恶":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==","钢":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==","妖精":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg=="};
+  var POKE_MAP = {"钢":{"id":10053,"name":"波士可多拉 - 超级波士可多拉","bst":630},"妖精":{"id":716,"name":"哲尔尼亚斯 - 活跃模式","bst":680},"幽灵":{"id":897,"name":"灵幽马","bst":580},"飞行":{"id":641,"name":"龙卷云 - 化身形态","bst":580},"火":{"id":244,"name":"炎帝","bst":580},"水":{"id":10077,"name":"盖欧卡 - 原始回归的样子","bst":770},"地面":{"id":383,"name":"固拉多 - 固拉多的样子","bst":670},"恶":{"id":10312,"name":"达克莱伊 - 超级达克莱伊","bst":700},"岩石":{"id":377,"name":"雷吉洛克","bst":580},"冰":{"id":378,"name":"雷吉艾斯","bst":580},"龙":{"id":10309,"name":"烈咬陆鲨 - 超级烈咬陆鲨Ｚ","bst":700},"电":{"id":10319,"name":"捷拉奥拉 - 超级捷拉奥拉","bst":700},"一般":{"id":493,"name":"阿尔宙斯","bst":720},"毒":{"id":89,"name":"臭臭泥","bst":500},"格斗":{"id":889,"name":"藏玛然特 - 百战勇者","bst":660},"虫":{"id":127,"name":"凯罗斯","bst":500},"草":{"id":492,"name":"谢米 - 陆上形态","bst":600},"超能力":{"id":10044,"name":"超梦 - 超级超梦Ｙ","bst":780},"幽灵/钢":{"id":1000,"name":"赛富豪","bst":550},"地面/钢":{"id":10072,"name":"大钢蛇 - 超级大钢蛇","bst":610},"飞行/钢":{"id":797,"name":"铁火辉夜","bst":570},"钢/妖精":{"id":10188,"name":"苍响 - 剑之王","bst":700},"地面/幽灵":{"id":10313,"name":"泥偶巨人 - 超级泥偶巨人","bst":583},"恶/钢":{"id":983,"name":"仆刀将军","bst":550},"火/钢":{"id":10311,"name":"席多蓝恩 - 超级席多蓝恩","bst":700},"火/幽灵":{"id":10291,"name":"水晶灯火灵 - 超级水晶灯火灵","bst":620},"格斗/钢":{"id":10189,"name":"藏玛然特 - 盾之王","bst":700},"幽灵/妖精":{"id":987,"name":"振翼发","bst":570},"水/钢":{"id":395,"name":"帝王拿波","bst":530},"电/钢":{"id":462,"name":"自爆磁怪","bst":535},"地面/飞行":{"id":645,"name":"土地云 - 化身形态","bst":600},"地面/妖精":null,"飞行/幽灵":{"id":426,"name":"随风球","bst":498},"毒/钢":{"id":966,"name":"普隆隆姆","bst":500},"一般/钢":null,"格斗/幽灵":{"id":802,"name":"玛夏多","bst":600},"水/幽灵":{"id":902,"name":"幽尾玄鱼","bst":530},"虫/钢":{"id":10316,"name":"具甲武者 - 超级具甲武者","bst":630},"龙/钢":{"id":483,"name":"帝牙卢卡","bst":680},"一般/幽灵":{"id":10239,"name":"索罗亚克 - 洗翠的样子","bst":510},"火/地面":{"id":10078,"name":"固拉多 - 原始回归的样子","bst":770},"火/妖精":null,"岩石/钢":{"id":805,"name":"垒磊石","bst":570},"电/幽灵":{"id":479,"name":"洛托姆 - 洛托姆的样子","bst":440},"毒/幽灵":{"id":1025,"name":"桃歹郎","bst":600},"超能力/钢":{"id":10076,"name":"巨金怪 - 超级巨金怪","bst":700},"草/钢":{"id":798,"name":"纸御剑","bst":570},"毒/地面":{"id":31,"name":"尼多后","bst":505},"地面/恶":{"id":1003,"name":"古鼎鹿","bst":570},"水/妖精":{"id":788,"name":"卡璞・鳍鳍","bst":570},"岩石/幽灵":null,"恶/妖精":{"id":861,"name":"长毛巨魔","bst":510},"飞行/妖精":{"id":10278,"name":"皮可西 - 超级皮可西","bst":583},"幽灵/恶":{"id":10307,"name":"阿勃梭鲁 - 超级阿勃梭鲁Ｚ","bst":565},"格斗/飞行":{"id":10300,"name":"摔角鹰人 - 超级摔角鹰人","bst":600},"火/恶":{"id":10048,"name":"黑鲁加 - 超级黑鲁加","bst":600},"水/飞行":{"id":130,"name":"暴鲤龙","bst":540},"冰/幽灵":{"id":10285,"name":"雪妖女 - 超级雪妖女","bst":580},"草/幽灵":{"id":724,"name":"狙射树枭","bst":530},"电/妖精":{"id":785,"name":"卡璞・鸣鸣","bst":570},"飞行/恶":{"id":717,"name":"伊裴尔塔尔","bst":680},"火/飞行":{"id":250,"name":"凤王","bst":680},"冰/钢":{"id":10102,"name":"穿山王 - 阿罗拉的样子","bst":450},"幽灵/龙":{"id":487,"name":"骑拉帝纳 - 别种形态","bst":680},"格斗/妖精":{"id":1006,"name":"铁武者","bst":590},"一般/地面":{"id":10272,"name":"月月熊 - 赫月","bst":555},"水/地面":{"id":10064,"name":"巨沼怪 - 超级巨沼怪","bst":635},"电/飞行":{"id":145,"name":"闪电鸟","bst":580},"毒/恶":{"id":904,"name":"万针鱼","bst":510},"虫/幽灵":{"id":292,"name":"脱壳忍者","bst":236},"毒/妖精":{"id":1016,"name":"吉雉鸡","bst":555},"地面/岩石":{"id":464,"name":"超甲狂犀","bst":535},"火/格斗":{"id":10050,"name":"火焰鸡 - 超级火焰鸡","bst":630},"地面/虫":{"id":10004,"name":"结草贵妇 - 砂土蓑衣","bst":424},"电/地面":{"id":989,"name":"沙铁皮","bst":570},"格斗/恶":{"id":10289,"name":"头巾混混 - 超级头巾混混","bst":588},"岩石/妖精":{"id":10075,"name":"蒂安希 - 超级蒂安希","bst":700},"火/水":{"id":721,"name":"波尔凯尼恩","bst":600},"火/电":{"id":10008,"name":"洛托姆 - 加热洛托姆","bst":520},"水/毒":{"id":73,"name":"毒刺水母","bst":515},"水/恶":{"id":10041,"name":"暴鲤龙 - 超级暴鲤龙","bst":640},"火/毒":{"id":994,"name":"铁毒蛾","bst":570},"一般/妖精":{"id":10069,"name":"差不多娃娃 - 超级差不多娃娃","bst":545},"毒/飞行":{"id":169,"name":"叉字蝠","bst":535},"冰/地面":{"id":473,"name":"象牙猪","bst":530},"水/格斗":{"id":647,"name":"凯路迪欧 - 平常的样子","bst":580},"电/格斗":{"id":992,"name":"铁臂膀","bst":570},"格斗/地面":{"id":984,"name":"雄伟牙","bst":570},"地面/龙":{"id":10301,"name":"基格尔德 - 超级基格尔德","bst":778},"火/龙":{"id":643,"name":"莱希拉姆","bst":680},"飞行/岩石":{"id":10042,"name":"化石翼龙 - 超级化石翼龙","bst":615},"电/恶":{"id":877,"name":"莫鲁贝可 - 满腹花纹","bst":436},"一般/火":{"id":10295,"name":"火炎狮 - 超级火炎狮","bst":607},"超能力/幽灵":{"id":792,"name":"露奈雅拉","bst":680},"龙/妖精":{"id":10067,"name":"七夕青鸟 - 超级七夕青鸟","bst":590},"火/超能力":{"id":10293,"name":"妖火红狐 - 超级妖火红狐","bst":634},"火/岩石":{"id":10230,"name":"风速狗 - 洗翠的样子","bst":555},"水/虫":{"id":768,"name":"具甲武者","bst":530},"地面/超能力":{"id":344,"name":"念力土偶","bst":500},"火/虫":{"id":637,"name":"火神蛾","bst":550},"格斗/毒":{"id":1014,"name":"够赞狗","bst":555},"一般/水":{"id":400,"name":"大尾狸","bst":410},"电/毒":{"id":849,"name":"颤弦蝾螈 - 高调的样子","bst":502},"飞行/龙":{"id":10079,"name":"烈空坐 - 超级烈空坐","bst":780},"一般/飞行":{"id":10073,"name":"大比鸟 - 超级大比鸟","bst":579},"格斗/岩石":{"id":10298,"name":"龟足巨铠 - 超级龟足巨铠","bst":600},"水/岩石":{"id":689,"name":"龟足巨铠","bst":500},"火/草":{"id":10320,"name":"狠辣椒 - 超级狠辣椒","bst":586},"草/飞行":{"id":10006,"name":"谢米 - 天空形态","bst":600},"草/恶":{"id":893,"name":"萨戮德","bst":600},"电/虫":{"id":738,"name":"锹农炮虫","bst":500},"岩石/恶":{"id":10049,"name":"班基拉斯 - 超级班基拉斯","bst":700},"水/龙":{"id":484,"name":"帕路奇亚","bst":680},"飞行/虫":{"id":10040,"name":"凯罗斯 - 超级凯罗斯","bst":600},"水/电":{"id":10009,"name":"洛托姆 - 清洗洛托姆","bst":520},"草/妖精":{"id":10282,"name":"大竺葵 - 超级大竺葵","bst":625},"超能力/妖精":{"id":10051,"name":"沙奈朵 - 超级沙奈朵","bst":618},"一般/电":{"id":695,"name":"光电伞蜥","bst":481},"一般/恶":{"id":862,"name":"堵拦熊","bst":520},"虫/妖精":{"id":743,"name":"蝶结萌虻","bst":464},"冰/格斗":{"id":10315,"name":"好胜毛蟹 - 超级好胜毛蟹","bst":578},"冰/恶":{"id":1002,"name":"古剑豹","bst":570},"水/超能力":{"id":10280,"name":"宝石海星 - 超级宝石海星","bst":620},"冰/飞行":{"id":144,"name":"急冻鸟","bst":580},"格斗/龙":{"id":1007,"name":"故勒顿","bst":670},"冰/妖精":{"id":10104,"name":"九尾 - 阿罗拉的样子","bst":505},"毒/岩石":{"id":10321,"name":"晶光花 - 超级晶光花","bst":625},"电/龙":{"id":644,"name":"捷克罗姆","bst":680},"飞行/超能力":{"id":249,"name":"洛奇亚","bst":680},"毒/龙":{"id":10190,"name":"无极汰那 - 无极巨化","bst":1125},"龙/恶":{"id":635,"name":"三首恶龙","bst":600},"格斗/超能力":{"id":10043,"name":"超梦 - 超级超梦Ｘ","bst":780},"火/冰":{"id":10178,"name":"达摩狒狒 - 达摩模式","bst":540},"草/地面":{"id":389,"name":"土台龟","bst":525},"电/超能力":{"id":10100,"name":"雷丘 - 阿罗拉的样子","bst":485},"电/岩石":{"id":995,"name":"铁荆棘","bst":570},"一般/岩石":null,"草/毒":{"id":10033,"name":"妙蛙花 - 超级妙蛙花","bst":625},"毒/超能力":{"id":1015,"name":"愿增猿","bst":555},"虫/恶":{"id":920,"name":"烈腿蝗","bst":450},"一般/毒":{"id":945,"name":"涂标客","bst":485},"草/岩石":{"id":10275,"name":"厄诡椪 - 礎石面具","bst":550},"水/冰":{"id":991,"name":"铁包袱","bst":570},"电/冰":{"id":10010,"name":"洛托姆 - 结冰洛托姆","bst":520},"虫/岩石":{"id":213,"name":"壶壶","bst":505},"冰/毒":null,"岩石/龙":{"id":697,"name":"怪颚龙","bst":521},"超能力/恶":{"id":10086,"name":"胡帕 - 解放胡帕","bst":680},"一般/草":{"id":930,"name":"奥利瓦","bst":510},"一般/格斗":{"id":10018,"name":"美洛耶塔 - 舞步形态","bst":600},"一般/超能力":{"id":648,"name":"美洛耶塔 - 歌声形态","bst":600},"一般/虫":null,"毒/虫":{"id":10288,"name":"蜈蚣王 - 超级蜈蚣王","bst":585},"一般/龙":{"id":10302,"name":"老翁龙 - 超级老翁龙","bst":585},"超能力/岩石":{"id":1022,"name":"铁磐岩","bst":590},"草/格斗":{"id":10292,"name":"布里卡隆 - 超级布里卡隆","bst":630},"超能力/虫":{"id":826,"name":"以欧路普","bst":505},"一般/冰":null,"草/龙":{"id":10065,"name":"蜥蜴王 - 超级蜥蜴王","bst":630},"格斗/虫":{"id":10047,"name":"赫拉克罗斯 - 超级赫拉克罗斯","bst":600},"水/草":{"id":10273,"name":"厄诡椪 - 水井面具","bst":550},"草/电":{"id":10012,"name":"洛托姆 - 切割洛托姆","bst":520},"虫/龙":null,"冰/岩石":{"id":699,"name":"冰雪巨龙","bst":521},"草/超能力":{"id":251,"name":"时拉比","bst":600},"超能力/龙":{"id":10157,"name":"奈克洛兹玛 - 究极奈克洛兹玛","bst":754},"冰/超能力":{"id":10193,"name":"蕾冠王 - 骑白马的样子","bst":680},"冰/虫":{"id":873,"name":"雪绒蛾","bst":475},"冰/龙":{"id":10022,"name":"酋雷姆 - 暗黑酋雷姆","bst":700},"草/虫":{"id":542,"name":"保姆虫","bst":500},"草/冰":{"id":10060,"name":"暴雪王 - 超级暴雪王","bst":594}};
+  var POKE_SPRITE = {"31":[0,0],"73":[1,0],"89":[2,0],"127":[3,0],"130":[4,0],"144":[5,0],"145":[6,0],"169":[7,0],"213":[8,0],"244":[9,0],"249":[10,0],"250":[11,0],"251":[0,1],"292":[1,1],"344":[2,1],"377":[3,1],"378":[4,1],"383":[5,1],"389":[6,1],"395":[7,1],"400":[8,1],"426":[9,1],"462":[10,1],"464":[11,1],"473":[0,2],"479":[1,2],"483":[2,2],"484":[3,2],"487":[4,2],"492":[5,2],"493":[6,2],"542":[7,2],"635":[8,2],"637":[9,2],"641":[10,2],"643":[11,2],"644":[0,3],"645":[1,3],"647":[2,3],"648":[3,3],"689":[4,3],"695":[5,3],"697":[6,3],"699":[7,3],"716":[8,3],"717":[9,3],"721":[10,3],"724":[11,3],"738":[0,4],"743":[1,4],"768":[2,4],"785":[3,4],"788":[4,4],"792":[5,4],"797":[6,4],"798":[7,4],"802":[8,4],"805":[9,4],"826":[10,4],"849":[11,4],"861":[0,5],"862":[1,5],"873":[2,5],"877":[3,5],"889":[4,5],"893":[5,5],"897":[6,5],"902":[7,5],"904":[8,5],"920":[9,5],"930":[10,5],"945":[11,5],"966":[0,6],"983":[1,6],"984":[2,6],"987":[3,6],"989":[4,6],"991":[5,6],"992":[6,6],"994":[7,6],"995":[8,6],"1000":[9,6],"1002":[10,6],"1003":[11,6],"1006":[0,7],"1007":[1,7],"1014":[2,7],"1015":[3,7],"1016":[4,7],"1022":[5,7],"1025":[6,7],"10004":[7,7],"10006":[8,7],"10008":[9,7],"10009":[10,7],"10010":[11,7],"10012":[0,8],"10018":[1,8],"10022":[2,8],"10033":[3,8],"10040":[4,8],"10041":[5,8],"10042":[6,8],"10043":[7,8],"10044":[8,8],"10047":[9,8],"10048":[10,8],"10049":[11,8],"10050":[0,9],"10051":[1,9],"10053":[2,9],"10060":[3,9],"10064":[4,9],"10065":[5,9],"10067":[6,9],"10069":[7,9],"10072":[8,9],"10073":[9,9],"10075":[10,9],"10076":[11,9],"10077":[0,10],"10078":[1,10],"10079":[2,10],"10086":[3,10],"10100":[4,10],"10102":[5,10],"10104":[6,10],"10157":[7,10],"10178":[8,10],"10188":[9,10],"10189":[10,10],"10190":[11,10],"10193":[0,11],"10230":[1,11],"10239":[2,11],"10272":[3,11],"10273":[4,11],"10275":[5,11],"10278":[6,11],"10280":[7,11],"10282":[8,11],"10285":[9,11],"10288":[10,11],"10289":[11,11],"10291":[0,12],"10292":[1,12],"10293":[2,12],"10295":[3,12],"10298":[4,12],"10300":[5,12],"10301":[6,12],"10302":[7,12],"10307":[8,12],"10309":[9,12],"10311":[10,12],"10312":[11,12],"10313":[0,13],"10315":[1,13],"10316":[2,13],"10319":[3,13],"10320":[4,13],"10321":[5,13]};
+  var $ = function(id){ return document.getElementById(id); };
+  var esc = function(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+  var WIKI = 'https://wiki.52poke.com/wiki/';
+  var TYPE_WIKI_TITLE = { '一般': '一般属性', '超能力': '超能力属性' };
+  function wikiUrl(title){ return WIKI + encodeURIComponent(title); }
+  function typeWikiTitle(t){ return TYPE_WIKI_TITLE[t] || (t + '属性'); }
+  var POKE_WIKI_TITLE = { '鐵磐岩': '铁磐岩' };
+  function basePokeName(name){ return String(name).split(/\s+-\s+/)[0].trim(); }
+  function pokeWikiTitle(name){ var base = basePokeName(name); return POKE_WIKI_TITLE[base] || base; }
+  function pokeForName(name){
+    if (POKE_MAP[name]) return POKE_MAP[name];
+    var parts = String(name).split('/');
+    if (parts.length === 2) return POKE_MAP[parts[1] + '/' + parts[0]] || null;
+    return null;
+  }
+  function prop(t, padSingle){
+    var shown = window.typeI18n(t); var s = shown;
+    return '<a class="wiki-link" href="' + wikiUrl(typeWikiTitle(t)) + '" target="_blank" rel="noopener noreferrer" title="在 52Poké 百科查看' + esc(typeWikiTitle(t)) + '"><img class="qi" src="' + TYPES[t] + '" alt="' + esc(t) + '"><span class="nm">' + esc(s) + '</span></a>';
+  }
+  function linkStaticProps(){
+    var slots = document.querySelectorAll('.quick-table .a1, .quick-table .a2');
+    for (var i = 0; i < slots.length; i++) {
+      var slot = slots[i];
+      if (slot.querySelector('a.wiki-link')) continue;
+      var img = slot.querySelector('img.qi');
+      if (!img) continue;
+      var t = img.getAttribute('alt');
+      var a = document.createElement('a');
+      a.className = 'wiki-link';
+      a.href = wikiUrl(typeWikiTitle(t));
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.title = '在 52Poké 百科查看' + typeWikiTitle(t);
+      while (slot.firstChild) a.appendChild(slot.firstChild);
+      slot.appendChild(a);
+      var ai = slot.closest('.ai');
+      var entry = slot.closest('.entry');
+      if (ai && entry && !ai.querySelector('.a1 img.qi') && !ai.querySelector('.sep').textContent.trim()) {
+        entry.classList.add('single');
+      }
+    }
+  }
+  linkStaticProps();
+  function badgeCell(name){
+    var parts = String(name).split('/');
+    var inner = parts.length === 2
+      ? '<span class="a1">' + prop(parts[0], true) + '</span><span class="sep">/</span><span class="a2">' + prop(parts[1], true) + '</span>'
+      : '<span class="a1"></span><span class="sep"></span><span class="a2">' + prop(parts[0], true) + '</span>';
+    return '<td class="name"><span class="entry' + (parts.length === 1 ? ' single' : '') + '"><span class="ai">' + inner + '</span></span></td>';
+  }
+  function pokeCell(poke){
+    if (!poke) return '<td class="poke"><span class="nopoke">' + window.uiI18n('无') + '</span></td>';
+    var href = wikiUrl(pokeWikiTitle(poke.name));
+    var pos = POKE_SPRITE[String(poke.id)] || [0, 0];
+    var style = 'background-position:' + (-pos[0] * 40) + 'px ' + (-pos[1] * 40) + 'px';
+    return '<td class="poke"><a class="poke-cell wiki-link" href="' + href + '" target="_blank" rel="noopener noreferrer" title="在 52Poké 百科查看' + esc(pokeWikiTitle(poke.name)) + '"><span class="pokebadge" role="img" aria-label="' + esc(poke.name) + '" style="' + style + '"></span><span class="poke-name">' + esc(window.pokemonI18n(poke.id,poke.name)) + '</span></a></td>';
+  }
+
+  /* ---------- 全量表（Excel 式筛选 + 排序） ---------- */
+  var ALL = DUALS.concat(SINGLES.map(function(r){
+    var p = pokeForName(r.name);
+    return { name: r.name, atk: r.atk, def: r.def, total: r.total, bal: r.bal, kind: '单', poke: p };
+  }));
+  for (var ai = 0; ai < DUALS.length; ai++) {
+    DUALS[ai].kind = '双';
+    DUALS[ai].poke = pokeForName(DUALS[ai].name);
+  }
+  var SORT = { key: 'total', dir: -1 };
+  var TYPE = 'all';
+  var SHOW = 'score';
+  var Q = '';
+  function cmpRows(a, b){
+    var k = SORT.key, d = SORT.dir;
+    if (k === 'name') return window.comboI18n(a.name).localeCompare(window.comboI18n(b.name), window.APP_LANG) * d;
+    if (k === 'kind') return a.kind.localeCompare(b.kind, 'zh') * d;
+    if (k === 'poke') {
+      var na = a.poke ? a.poke.name : '\uFFFF';
+      var nb = b.poke ? b.poke.name : '\uFFFF';
+      return window.pokemonI18n(a.poke&&a.poke.id,na).localeCompare(window.pokemonI18n(b.poke&&b.poke.id,nb),window.APP_LANG) * d;
+    }
+    /* 数值列：主键 + 按 综合、平衡、打击、抗击 依次补次级键 */
+    var r = a[k] - b[k];
+    if (r !== 0) return r * d;
+    var order = ['total', 'bal', 'atk', 'def'];
+    for (var i = 0; i < order.length; i++) {
+      var k2 = order[i];
+      if (k2 === k) continue;
+      r = a[k2] - b[k2];
+      if (r !== 0) return r * d;
+    }
+    return 0;
+  }
+  function updateHead(){
+    var btns = document.querySelectorAll('.thbtn');
+    for (var i = 0; i < btns.length; i++) {
+      var b = btns[i];
+      var arrow = (b.getAttribute('data-key') === SORT.key) ? '<span class="arrow">' + (SORT.dir === -1 ? '&#9660;' : '&#9650;') + '</span>' : '';
+      b.innerHTML = window.uiI18n(b.getAttribute('data-label')) + arrow;
+    }
+  }
+  /* 各数值维度的名次（当前筛选集合内降序，并列同分同名次） */
+  function scoreFmt(v){
+    if (Math.abs(v) < 0.0000005) return '0';
+    return String(Math.round(v * 100) / 100);
+  }
+  function ranksFor(rows, key){
+    var sorted = rows.slice().sort(function(a, b){ return b[key] - a[key]; });
+    var map = {}, prev = null, r = 0;
+    for (var i = 0; i < sorted.length; i++) {
+      var v = sorted[i][key];
+      if (prev !== null && v !== prev) r = i;
+      map[sorted[i].name] = r + 1;
+      prev = v;
+    }
+    return map;
+  }
+  function scoreRange(rows, key){
+    var min = Infinity, max = -Infinity;
+    for (var i = 0; i < rows.length; i++) {
+      if (rows[i][key] < min) min = rows[i][key];
+      if (rows[i][key] > max) max = rows[i][key];
+    }
+    return { min: min, max: max };
+  }
+  var PERCENT_RANGE = {
+    atk: scoreRange(ALL, 'atk'),
+    def: scoreRange(ALL, 'def'),
+    bal: scoreRange(ALL, 'bal'),
+    total: scoreRange(ALL, 'total')
+  };
+  function percentScore(v, key){
+    var range = PERCENT_RANGE[key];
+    if (!range || range.max === range.min) return '100';
+    return scoreFmt((v - range.min) * 100 / (range.max - range.min));
+  }
+  function renderAll(){
+    var rows = ALL.slice();
+    if (TYPE === 'single') rows = rows.filter(function(r){ return r.kind === '单'; });
+    else if (TYPE === 'dual') rows = rows.filter(function(r){ return r.kind === '双'; });
+    if (Q) rows = rows.filter(function(r){ var hay=(r.name+' '+window.comboI18n(r.name)+' '+(r.poke?window.pokemonI18n(r.poke.id,r.poke.name):'')).toLowerCase(); return hay.indexOf(Q.toLowerCase())>=0; });
+    rows.sort(cmpRows);
+    var atkR = null, defR = null, balR = null, totR = null;
+    if (SHOW === 'rank') {
+      /* 名次固定基于全量 171 项计算，不受筛选影响 */
+      atkR = ranksFor(ALL, 'atk');
+      defR = ranksFor(ALL, 'def');
+      balR = ranksFor(ALL, 'bal');
+      totR = ranksFor(ALL, 'total');
+    }
+    var html = '';
+    var rankMode = (SHOW === 'rank');
+    var percentMode = (SHOW === 'percent');
+    var cls = function(v){ return percentMode ? 'pct' : (rankMode ? 'rk' : (Number(v) >= 0 ? 'pos' : 'neg')); };
+    for (var i = 0; i < rows.length; i++) {
+      var r = rows[i];
+      var av = rankMode ? atkR[r.name] : (percentMode ? percentScore(r.atk, 'atk') : scoreFmt(r.atk));
+      var dv = rankMode ? defR[r.name] : (percentMode ? percentScore(r.def, 'def') : scoreFmt(r.def));
+      var bv = rankMode ? balR[r.name] : (percentMode ? percentScore(r.bal, 'bal') : scoreFmt(r.bal));
+      var tv = rankMode ? totR[r.name] : (percentMode ? percentScore(r.total, 'total') : scoreFmt(r.total));
+      html += '<tr>' + badgeCell(r.name) + '<td>' + (r.kind === '双' ? window.uiI18n('双属性') : window.uiI18n('单属性')) + '</td>'
+        + '<td class="' + cls(tv) + '">' + tv + '</td>'
+        + '<td class="' + (percentMode ? 'pct' : (rankMode ? 'rk' : '')) + '">' + bv + '</td>'
+        + '<td class="' + cls(av) + '">' + av + '</td>'
+        + '<td class="' + cls(dv) + '">' + dv + '</td>'
+        + pokeCell(r.poke) + '</tr>';
+    }
+    $('all-tbody').innerHTML = html;
+    $('row-count').textContent = rows.length + ' / ' + ALL.length + (window.APP_LANG==='en'?' rows':window.APP_LANG==='ja'?'件':' 项');
+  }
+  /* 表头排序：同列再点切换升/降 */
+  var thbtns = document.querySelectorAll('.thbtn');
+  for (var ti = 0; ti < thbtns.length; ti++) {
+    (function(btn){
+      btn.addEventListener('click', function(){
+        var key = btn.getAttribute('data-key');
+        if (SORT.key === key) { SORT.dir = -SORT.dir; }
+        else { SORT = { key: key, dir: (key === 'name' || key === 'kind' || key === 'poke') ? 1 : -1 }; }
+        updateHead();
+        renderAll();
+      });
+    })(thbtns[ti]);
+  }
+  /* 单/双筛选 */
+  var seg = document.querySelectorAll('#type-seg .sortbtn');
+  for (var si = 0; si < seg.length; si++) {
+    (function(btn){
+      btn.addEventListener('click', function(){
+        for (var j = 0; j < seg.length; j++) seg[j].className = 'sortbtn';
+        btn.className = 'sortbtn on';
+        TYPE = btn.getAttribute('data-type');
+        renderAll();
+      });
+    })(seg[si]);
+  }
+  /* 关键字筛选 */
+  $('q').addEventListener('input', function(){ Q = this.value.trim(); renderAll(); });
+  /* 原分值/百分制/名次切换 */
+  var seg2 = document.querySelectorAll('#show-seg .sortbtn');
+  for (var s2 = 0; s2 < seg2.length; s2++) {
+    (function(btn){
+      btn.addEventListener('click', function(){
+        for (var j = 0; j < seg2.length; j++) seg2[j].className = 'sortbtn';
+        btn.className = 'sortbtn on';
+        SHOW = btn.getAttribute('data-show');
+        renderAll();
+      });
+    })(seg2[s2]);
+  }
+  updateHead();
+  renderAll();
+
+  /* ---------- ECharts：打击与抗击分布散点 ---------- */
+  if (typeof echarts === 'undefined') {
+    var el = $('scatter');
+    if (el) el.innerHTML = '<div style="padding:14px;color:#5A6472;font-size:13px;"><span id="chart-fallback-text">图表库加载失败，已回退为文字说明。</span></div>';
+    return;
+  }
+  (function(){
+    var el = $('scatter');
+    var chart = echarts.init(el);
+    new ResizeObserver(function(){ chart.resize(); }).observe(el);
+    var singlePts = [], dualPts = [];
+    for (var i = 0; i < ALL.length; i++) {
+      var r = ALL[i];
+      var pt = {
+        value: [r.def, r.atk, r.total],
+        name: r.name,
+        kind: r.kind,
+        symbolSize: 7
+      };
+      if (r.kind === '单') singlePts.push(pt);
+      else dualPts.push(pt);
+    }
+    chart.setOption({
+      backgroundColor: 'transparent',
+      legend: {
+        top: 2, right: 2,
+        itemWidth: (window.innerWidth >= 1024 ? 16 : 12), itemHeight: (window.innerWidth >= 1024 ? 16 : 12), itemGap: (window.innerWidth >= 1024 ? 24 : 16),
+        textStyle: { color: '#5A6472', fontSize: (window.innerWidth >= 1024 ? 15 : 12) },
+        data: [window.uiI18n('单属性'), window.uiI18n('双属性')]
+      },
+      tooltip: {
+        trigger: 'item', triggerOn: 'click', renderMode: 'richText', confine: true,
+        backgroundColor: '#FFFFFF', borderColor: '#E3E7EC', textStyle: { color: '#20242C', fontSize: (window.innerWidth >= 1024 ? 14 : 12) },
+        formatter: function(p){
+          if (!p || !p.data) return '';
+          var kind = (p.data.kind === '单') ? window.uiI18n('单属性') : window.uiI18n('双属性');
+          var poke = pokeForName(p.data.name);
+          var extra = poke ? window.pokemonI18n(poke.id,poke.name) : (window.APP_LANG==='en'?'No matching Pokémon':window.APP_LANG==='ja'?'該当ポケモンなし':'该组合暂无宝可梦');
+          return window.comboI18n(p.data.name) + '（' + kind + '）' + String.fromCharCode(10)
+            + window.uiI18n('抗击') + ' ' + scoreFmt(p.value[0]) + ' · ' + window.uiI18n('打击') + ' ' + scoreFmt(p.value[1]) + ' · ' + window.uiI18n('综合') + ' ' + scoreFmt(p.value[2]) + String.fromCharCode(10)
+            + window.uiI18n('代表宝可梦') + '：' + extra;
+        }
+      },
+      grid: { left: '12%', right: '8%', top: '9%', bottom: '12%', containLabel: false },
+      xAxis: {
+        type: 'value', name: window.uiI18n('抗击得分'), min: -100, max: 250, interval: 50, nameLocation: 'middle', nameGap: 48,
+        nameTextStyle: { color: '#5A6472', fontSize: (window.innerWidth >= 1024 ? 15 : 12) },
+        axisLine: { lineStyle: { color: '#C9D2DD' } },
+        axisLabel: { color: '#5A6472', fontSize: (window.innerWidth >= 1024 ? 13 : 11), margin: 10 },
+        splitLine: { lineStyle: { color: '#EDF1F6', type: 'dashed' } }
+      },
+      yAxis: {
+        type: 'value', name: window.uiI18n('打击得分'), min: -150, max: 200, interval: 50, nameLocation: 'middle', nameGap: 52,
+        nameTextStyle: { color: '#5A6472', fontSize: (window.innerWidth >= 1024 ? 15 : 12) },
+        axisLine: { lineStyle: { color: '#C9D2DD' } },
+        axisLabel: { color: '#5A6472', fontSize: (window.innerWidth >= 1024 ? 13 : 11), margin: 10 },
+        splitLine: { lineStyle: { color: '#EDF1F6', type: 'dashed' } }
+      },
+      series: [
+        {
+          name: window.uiI18n('单属性'), type: 'scatter', data: singlePts, cursor: 'default',
+          itemStyle: { color: '#D63B3B', opacity: 0.82 },
+          emphasis: { itemStyle: { opacity: 1 } },
+          markLine: {
+            silent: true, symbol: 'none',
+            lineStyle: { color: '#B4BECB', type: 'dashed' },
+            label: { show: false },
+            data: [ { xAxis: 0 }, { yAxis: 0 } ]
+          }
+        },
+        {
+          name: window.uiI18n('双属性'), type: 'scatter', data: dualPts, cursor: 'default',
+          itemStyle: { color: '#2F6DB5', opacity: 0.78 },
+          emphasis: { itemStyle: { opacity: 1 } },
+          markArea: {
+            silent: true,
+            data: [
+              [{ name: (window.APP_LANG==='en'?"Strong on both":window.APP_LANG==='ja'?"\u4e21\u9762\u5f37\u533a":"\u53cc\u5f3a\u533a"), coord: [0, 0], itemStyle: { color: 'rgba(63,124,88,0.07)' }, label: { show: true, position: 'insideTopRight', color: '#537965', fontSize: (window.innerWidth >= 1024 ? 13 : 11) } }, { coord: [250, 200] }],
+              [{ name: (window.APP_LANG==='en'?"Offense advantage":window.APP_LANG==='ja'?"\u653b\u6483\u512a\u4f4d\u533a":"\u6253\u51fb\u4f18\u52bf\u533a"), coord: [-100, 0], itemStyle: { color: 'rgba(47,109,181,0.055)' }, label: { show: true, position: 'insideTopLeft', color: '#587596', fontSize: (window.innerWidth >= 1024 ? 13 : 11) } }, { coord: [0, 200] }],
+              [{ name: (window.APP_LANG==='en'?"Defense advantage":window.APP_LANG==='ja'?"\u8010\u6027\u512a\u4f4d\u533a":"\u6297\u51fb\u4f18\u52bf\u533a"), coord: [0, -150], itemStyle: { color: 'rgba(232,163,61,0.06)' }, label: { show: true, position: 'insideBottomRight', color: '#8A6B3E', fontSize: (window.innerWidth >= 1024 ? 13 : 11) } }, { coord: [250, 0] }],
+              [{ name: (window.APP_LANG==='en'?"Weak on both":window.APP_LANG==='ja'?"\u4e21\u9762\u5f31\u533a":"\u53cc\u5f31\u533a"), coord: [-100, -150], itemStyle: { color: 'rgba(194,85,78,0.065)' }, label: { show: true, position: 'insideBottomLeft', color: '#95605C', fontSize: (window.innerWidth >= 1024 ? 13 : 11) } }, { coord: [0, 0] }]
+            ]
+          }
+        }
+      ]
+    });
+  })();
+})();
+</script>
+<script>
+(function(){
+  var lang=window.APP_LANG;
+  var buttons=document.querySelectorAll('.lang-btn');
+  for(var i=0;i<buttons.length;i++){
+    var code=buttons[i].getAttribute('data-lang');
+    buttons[i].className='lang-btn'+(code===lang?' on':'');
+    buttons[i].setAttribute('aria-pressed',code===lang?'true':'false');
+    buttons[i].addEventListener('click',function(){var next=this.getAttribute('data-lang');if(next!==lang){localStorage.setItem('pokemon-type-ranking-language',next);location.reload();}});
+  }
+  document.documentElement.lang=lang==='zh'?'zh-CN':lang;
+  var titleMap={zh:'宝可梦属性相克 · 纯数值理论排名',en:'Pokémon Type Matchups · Pure Numerical Ranking',ja:'ポケモンタイプ相性・純数値ランキング'};
+  document.title=titleMap[lang];
+  var typeNameNodes=document.querySelectorAll('.entry .nm');
+  for(var tn=0;tn<typeNameNodes.length;tn++) typeNameNodes[tn].textContent=typeNameNodes[tn].textContent.replace(/^[\\u3000\\s]+/,'').replace(/[\\u3000\\s]+$/,'');
+  if(lang==='zh') return;
+  var dict=window.TEXT_I18N[lang]||{};
+  var skip={SCRIPT:1,STYLE:1};
+  function translateText(root){
+    var walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+    var nodes=[],n; while(n=walker.nextNode()) nodes.push(n);
+    for(var i=0;i<nodes.length;i++){
+      n=nodes[i]; if(!n.parentNode||skip[n.parentNode.nodeName]) continue;
+      var raw=n.nodeValue,trim=raw.trim(); if(!trim) continue;
+      var val=dict[trim];
+      if(!val && window.TYPE_I18N[trim]) val=window.TYPE_I18N[trim][lang];
+      if(val) n.nodeValue=(n.parentNode&&n.parentNode.classList&&n.parentNode.classList.contains('nm'))?val:raw.replace(trim,val);
+    }
+  }
+  translateText(document.body);
+  var insights={"en":["Across all 17 dual types containing Steel, the mean overall score is <b>232.38</b>, versus 117.78 for other dual types—a gap of <b>114.60</b>. Twelve of the top 20 include Steel, showing a reusable defensive lift rather than a few accidental pairings.","Dual types containing Ground average <b>130.12</b> on offense, the highest of all 18 types; Steel-containing dual types average <b>155.91</b> on defense, also the highest. Ground/Steel combines 140.50 offense with 152.00 defense, ranking second overall while remaining highly balanced.","If a combination is retained only when no other option has both higher offense and higher defense, only <b>Ghost/Steel, Ground/Steel, Ground/Flying, Ground/Rock, and Ice/Ground</b> remain. They form the full efficiency frontier from defensive extreme to offensive extreme.","All 153 dual types score higher overall than the stronger of their two component single types, with an average gain of <b>113.48</b>. Ground/Flying gains the most at 213.50. Offensively, each target uses the better of the two types, creating a coverage union; defensively, weaknesses, resistances, and immunities are recombined.","Across 153 dual types, the correlation between offense and defense is only <b>−0.014</b>, essentially no linear relationship. 127 dual types are non-negative on both axes, and none fall into the double-weak quadrant. Pairing can improve both ends at once.","There are 32 combinations whose offense–defense gap is at most 19, all of them dual types. Normal/Water has a gap of 0 but only 114.00 overall; Ground/Steel has an 11.50 gap and reaches 292.50 overall. Balance measures closeness, not strength."],"ja":["はがねを含む17の複合タイプの総合平均は<b>232.38</b>で、その他の複合タイプ平均117.78を<b>114.60</b>上回ります。総合上位20のうち12がはがねを含み、少数の偶然ではなく再利用可能な耐性向上を示します。","じめんを含む複合タイプの攻撃平均は<b>130.12</b>で18タイプ中最高。はがねを含む複合タイプの耐性平均は<b>155.91</b>で同じく最高です。じめん／はがねは攻撃140.50、耐性152.00で、総合2位かつ高い均衡を持ちます。","他の組み合わせに攻撃と耐性の両方で上回られない条件では、<b>ゴースト／はがね、じめん／はがね、じめん／ひこう、じめん／いわ、こおり／じめん</b>の5つだけが残ります。耐性極振りから攻撃極振りまでの効率境界を構成します。","153の複合タイプはすべて、構成する単タイプのうち強い方より総合点が高く、平均上昇は<b>113.48</b>です。最大はじめん／ひこうの213.50。攻撃側では対象ごとに有利な方を採用して範囲の和集合を作り、耐性側では弱点・耐性・無効を再構成します。","153の複合タイプにおける攻撃と耐性の相関係数は<b>−0.014</b>で、線形関係はほぼありません。127タイプが両軸とも非負で、両方が負の領域には1つもありません。組み合わせにより両面を同時に改善できます。","攻撃と耐性の差が19以内の組み合わせは32あり、すべて複合タイプです。ノーマル／みずは差0でも総合114.00、じめん／はがねは差11.50で総合292.50。バランスは近さを測る指標で、強さそのものではありません。"]}[lang]||[];
+  var copies=document.querySelectorAll('.insight-copy');
+  for(var c=0;c<copies.length&&c<insights.length;c++) copies[c].innerHTML=insights[c];
+  var rules={"en":"<li><b>Multiplier → score</b>: Start with log₂(multiplier), then apply an additional ±0.5 in the same direction for every non-neutral multiplier. This magnifies differences between broader and narrower offensive/defensive coverage.<table class=\"rate\"><thead><tr><th>Multiplier</th><th>Offense</th><th>Defense</th></tr></thead><tbody><tr><td>4×</td><td>+2.5</td><td>−2.5</td></tr><tr><td>2×</td><td>+1.5</td><td>−1.5</td></tr><tr><td>1×</td><td>0</td><td>0</td></tr><tr><td>½×</td><td>−1.5</td><td>+1.5</td></tr><tr><td>¼×</td><td>−2.5</td><td>+2.5</td></tr><tr><td>0×</td><td>−4.5</td><td>+4.5</td></tr></tbody></table></li><li><b>Offense score</b>: Score attacks against all 171 defending type combinations. For a dual attacking combination, use the more favorable of its two types against each target. Use the raw total directly as the offense score on the 171-item scale.</li><li><b>Defense score</b>: Sum scores against attacks from all 18 single types, then multiply by 9.5 (171 ÷ 18) to match the 171-item offensive scale.</li><li><b>Overall</b> = offense + equivalent defense, with equal weight.</li><li><b>Balance</b> = −|offense − equivalent defense|; closer to 0 means more balanced.</li><li><b>0–100 score</b>: Normalize Overall, Balance, Offense, and Defense linearly across all 171 combinations. Filtering does not change the scale; sorting still uses raw scores.</li><li>Ties in the complete table are displayed by comparing Overall → Balance → Offense → Defense in order.</li><li><b>Data source</b>: Types, forms, and base stats use the fixed PokeAPI master-branch snapshot 2fe9553 (2026-10-07, REST API v2, including Pokémon Legends: Z-A data). Matchup multipliers come from the fixed matrix on this page and all values are recalculated by script.</li>","ja":"<li><b>倍率 → スコア</b>：log₂（倍率）を基礎とし、等倍以外は同じ正負方向に±0.5を追加します。これにより、広い／狭い攻撃範囲と耐性範囲の差を強調します。<table class=\"rate\"><thead><tr><th>倍率</th><th>攻撃</th><th>耐性</th></tr></thead><tbody><tr><td>4×</td><td>+2.5</td><td>−2.5</td></tr><tr><td>2×</td><td>+1.5</td><td>−1.5</td></tr><tr><td>1×</td><td>0</td><td>0</td></tr><tr><td>½×</td><td>−1.5</td><td>+1.5</td></tr><tr><td>¼×</td><td>−2.5</td><td>+2.5</td></tr><tr><td>0×</td><td>−4.5</td><td>+4.5</td></tr></tbody></table></li><li><b>攻撃スコア</b>：全171種類の防御側タイプ組み合わせに対して採点します。複合攻撃タイプは、各対象に対して2タイプのうち有利な倍率を採用します。生の合計をそのまま攻撃スコアとし、171項目スケールを維持します。</li><li><b>耐性スコア</b>：18種類の単タイプ攻撃を受けたときのスコアを合計し、9.5（171 ÷ 18）を掛けて171項目の攻撃側スケールに換算します。</li><li><b>総合</b>＝攻撃スコア＋換算耐性スコア。両者は同じ重みです。</li><li><b>バランス</b>＝−|攻撃スコア−換算耐性スコア|。0に近いほど均衡しています。</li><li><b>100点換算</b>：総合・バランス・攻撃・耐性を全171通りで線形正規化し、最低0、最高100とします。フィルターで尺度は変わらず、並べ替えは元スコアを使います。</li><li>全ランキング表で同点の場合、総合 → バランス → 攻撃 → 耐性の順に比較して表示順位を決めます。</li><li><b>データソース</b>：タイプ、フォルム、種族値はPokeAPI master-branch固定スナップショット2fe9553（2026-10-07、REST API v2、『Pokémon LEGENDS Z-A』データを含む）を使用。タイプ相性倍率は本ページの固定行列から計算し、数値はスクリプトで再計算しています。</li>"}[lang]; var ol=document.querySelector('#rules ol'); if(ol&&rules) ol.innerHTML=rules;
+  var src=document.querySelector('#rules .src-note'); if(src) src.textContent={"en":"Type icons are cropped from a public third-party asset collection. Each representative Pokémon is the official form with the highest six-stat base-stat total in the fixed snapshot; existing representatives are retained on ties. Nine combinations have no matching Pokémon and display “None”. Images are shown for reference only.","ja":"タイプアイコンは公開されている第三者素材集から切り出したものです。代表ポケモンは固定スナップショット内の全公式フォルムから種族値合計が最大のものを採用し、同値では既存の代表を維持します。該当ポケモンがいない9組は「なし」と表示します。画像は表示上の参照です。"}[lang];
+  var q=document.getElementById('q'); if(q) q.placeholder=lang==='en'?'Filter types, e.g. Steel / Ghost…':'タイプを検索（例：はがね / ゴースト）…';
+  // Dynamic tables were rendered before this final pass. Translate their type labels too.
+  translateText(document.getElementById('starter-tbody')||document.body);
+  translateText(document.getElementById('all-tbody')||document.body);
+})();
+</script>
+
+<script>
+(function(){
+  var a=document.querySelector('[data-rule-link]'); if(!a)return;
+  var lang=window.APP_LANG||'zh';
+  a.textContent=lang==='en'?'Multiplier scoring':(lang==='ja'?'倍率スコア':'倍率赋分');
+  a.setAttribute('aria-label',lang==='en'?'Switch to multiplier scoring':(lang==='ja'?'倍率スコアへ切り替え':'切换到倍率赋分'));
+})();
+</script>
+
+
+<style>
+  .linear-hero { padding:48px 0 20px; text-align:center; }
+  .linear-hero h1 { margin:12px 0 10px; font-size:clamp(30px,4vw,46px); line-height:1.18; color:var(--ink); }
+  .linear-hero .lead { max-width:780px; margin:0 auto; color:var(--ink-2); }
+  #full-ranking { margin-top:16px; }
+  .page-toc { display:none !important; }
+</style>
+<script>
+(function(){
+  var lang=window.APP_LANG||'zh';
+  var copy={
+    zh:{title:'宝可梦属性排名 · 倍率赋分',eye:'倍率直接赋分 · 纯规则倍率',lead:'打击直接取倍率；抗击取承受倍率的负数，并乘 9.5 对齐 171 项打击尺度。',link:'对数修正赋分',aria:'切换到对数修正赋分'},
+    en:{title:'Pokémon Type Ranking · Multiplier Scoring',eye:'Direct multiplier scoring · Type rules only',lead:'Offense uses the multiplier directly; defense uses the negative incoming multiplier and is multiplied by 9.5 to match the 171-target offense scale.',link:'Log₂ adjusted scoring',aria:'Switch to log₂ adjusted scoring'},
+    ja:{title:'ポケモンタイプランキング・倍率スコア',eye:'倍率を直接スコア化・タイプ相性のみ',lead:'攻撃は倍率をそのまま使用し、耐性は受ける倍率の負数を合計して9.5倍し、171項目の攻撃尺度に揃えます。',link:'log₂補正スコア',aria:'log₂補正スコアへ切り替え'}
+  }[lang];
+  document.title=copy.title;
+  document.getElementById('linear-title').textContent=copy.title;
+  document.getElementById('linear-eyebrow').textContent=copy.eye;
+  document.getElementById('linear-lead').textContent=copy.lead;
+  var a=document.querySelector('[data-rule-link]');a.textContent=copy.link;a.setAttribute('aria-label',copy.aria);
+})();
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
