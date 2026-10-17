@@ -140,7 +140,7 @@
   .starter-table th:first-child { width: 82px; }
   .starter-table td { padding: 7px 10px; border-bottom: 1px solid #EDF0F4; }
   .starter-table tbody tr:last-child td { border-bottom: 0; }
-  .starter>=neration { font-weight: 900; color: var(--ink); background: #F7F9FB; }
+  .starter-generation { font-weight: 900; color: var(--ink); background: #F7F9FB; }
   .starter-card { display: grid; grid-template-columns: 76px minmax(118px, 1fr); gap: 8px; align-items: center; min-height: 86px; text-align: left; }
   .starter-art { width: 76px; height: 76px; background-color: transparent; background-image: url('starter-sprite-2fe9553.webp'); background-repeat: no-repeat; background-size: 684px 228px; display: block; }
   .starter-detail { min-width: 0; }
@@ -838,6 +838,23 @@
   window.metricRankI18n = function(metric, n){ var labels={total:window.uiI18n('综合'),atk:window.uiI18n('打击'),def:window.uiI18n('抗击')}; return lang==='en' ? labels[metric]+' '+n+(n===1?'st':n===2?'nd':n===3?'rd':'th') : (lang==='ja' ? labels[metric]+' '+n+'位' : labels[metric]+'第 '+n+' 名'); };
 })();
 </script>
+
+<style id="mobile-overflow-fix">
+  html, body { max-width: 100%; overflow-x: hidden; }
+  .wrap, .linear-hero, .section, .panel, .quick, .quick-scroll, .starter-scroll, .table-scroll { min-width: 0; max-width: 100%; }
+  .wrap, .linear-hero, .section, .panel { width: 100%; }
+  .langbar { max-width: 100%; flex-wrap: wrap; }
+  .lang-switch { max-width: 100%; min-width: 0; }
+  .linear-hero h1, .linear-hero .lead { max-width: 100%; overflow-wrap: anywhere; }
+  @media (max-width: 768px) {
+    .wrap { padding-left: 18px; padding-right: 18px; }
+    .langbar { align-items: stretch; }
+    .rule-switch { flex: 0 0 auto; }
+    .lang-switch { flex: 1 1 100%; width: 100%; }
+    .quick-scroll, .starter-scroll, .table-scroll { width: 100%; overflow-x: auto; overscroll-behavior-x: contain; touch-action: pan-x pan-y; }
+    .insight-grid { grid-template-columns: 1fr; }
+  }
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -847,6 +864,17 @@
     <span class="eyebrow" id="linear-eyebrow">倍率直接赋分 · 纯规则倍率</span>
     <h1 id="linear-title">宝可梦属性排名 · 倍率赋分</h1>
     <p class="lead" id="linear-lead">打击取面对 171 种组合的平均最优倍率；抗击取面对 18 种来袭属性的平均承伤倍率；综合为二者之比。</p>
+    <nav class="toc" aria-label="页面目录">
+      <div class="toc-title">页面目录</div>
+      <ul class="toc-list">
+        <li><a class="toc-link" href="#quick-overview">打击与抗击速览</a></li>
+        <li><a class="toc-link" href="#scatter-overview">分布全景</a></li>
+        <li><a class="toc-link" href="#insights">关键结论</a></li>
+        <li><a class="toc-link" href="#starter-ranking">御三家排名</a></li>
+        <li><a class="toc-link" href="#full-ranking">全量排名</a></li>
+        <li><a class="toc-link" href="#rules">计算规则</a></li>
+      </ul>
+    </nav>
   </header>
 
   <!-- ===== Multiplier quick overview ===== -->
@@ -858,6 +886,114 @@
   <section class="section multiplier-overview" id="scatter-overview">
     <div class="section-head"><h2>打击与抗击分布全景 · 171 项</h2><span class="note" id="median-note">以全量中位数划分相对区域</span></div>
     <div class="panel"><div id="scatter" class="chart-box"></div></div>
+  </section>
+
+<!-- ===== 关键结论 ===== -->
+<section class="section insights-section" id="insights">
+  <div class="section-head"><h2>关键结论</h2><span class="note">基于 171 种属性组合的直接倍率结果</span></div>
+  <div class="insight-grid">
+    <article class="insight-item">
+      <div class="insight-kicker">属性边际贡献</div>
+      <div class="insight-title">钢依然是最稳定的综合底盘</div>
+      <p class="insight-copy">17 个含钢双属性的平均综合为 <b>1.614</b>，其余双属性为 1.298，平均领先 <b>0.316</b>；综合前 20 名中有 8 个含钢。直接倍率下，钢的价值主要来自持续压低平均承伤。</p>
+    </article>
+    <article class="insight-item">
+      <div class="insight-kicker">打击与抗击分工</div>
+      <div class="insight-title">地面抬高打击，钢压低承伤</div>
+      <p class="insight-copy">含地面双属性的平均打击倍率为 <b>1.642</b>；含钢双属性的平均承伤倍率仅 <b>0.879</b>。地面／钢同时取得打击 1.667、承伤 0.875，综合 1.905，位列第 3。</p>
+    </article>
+    <article class="insight-item">
+      <div class="insight-kicker">帕累托前沿</div>
+      <div class="insight-title">不可同时改进的效率边界有 7 项</div>
+      <p class="insight-copy">若要求不存在另一组合同时拥有更高打击倍率与更低承伤倍率，前沿为 <b>钢／妖精、飞行／钢、格斗／钢、地面／钢、地面／妖精、火／地面、冰／地面</b>。它们从最低承伤逐步过渡到最高打击，构成完整效率边界。</p>
+    </article>
+    <article class="insight-item">
+      <div class="insight-kicker">双属性协同</div>
+      <div class="insight-title">覆盖并集通常能提高倍率效率</div>
+      <p class="insight-copy">153 个双属性中有 <b>150</b> 个综合高于两个组成单属性中的较强者，平均提高 0.208；提升最大的是 钢／妖精，增加 <b>0.609</b>。</p>
+    </article>
+    <article class="insight-item">
+      <div class="insight-kicker">攻守关系</div>
+      <div class="insight-title">更高打击伴随轻微承伤代价</div>
+      <p class="insight-copy">153 个双属性的平均打击倍率与平均承伤倍率相关系数为 <b>0.184</b>，呈弱正相关：覆盖更强时，承伤也略有上升，但关系很弱，优质组合仍可同时维持高打击与低承伤。</p>
+    </article>
+    <article class="insight-item">
+      <div class="insight-kicker">平衡指标解释</div>
+      <div class="insight-title">最平衡不等于综合最强</div>
+      <p class="insight-copy">按当前平衡定义，恶最接近两端数值相等，平衡为 -0.010，但综合仅 0.990、排名第 159。平衡只描述数值接近程度，主判断仍应先看综合。</p>
+    </article>
+  </div>
+</section>
+
+  <!-- ===== 御三家属性排名 ===== -->
+  <section class="section starter-section" id="starter-ranking">
+    <div class="section-head"><h2>每个世代御三家属性排名</h2><span class="note">常规最终进化形态 · 名次基于全量 171 项</span></div>
+    <div class="panel">
+      <div class="starter-top">
+        <div class="starter-metrics" id="starter-metrics" role="group" aria-label="选择御三家排名字段">
+          <button class="starter-metric on" type="button" data-metric="total" aria-pressed="true">综合</button>
+          <button class="starter-metric" type="button" data-metric="atk" aria-pressed="false">打击</button>
+          <button class="starter-metric" type="button" data-metric="def" aria-pressed="false">抗击</button>
+        </div>
+      </div>
+      <div class="starter-scroll">
+        <table class="starter-table">
+          <thead><tr><th>世代</th><th>第 1 名</th><th>第 2 名</th><th>第 3 名</th></tr></thead>
+          <tbody id="starter-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <script type="application/json" id="starter-data">[{"generation":1,"role":"草","pokemon_id":3,"pokemon":"妙蛙花","type":"草/毒","type_html":"<span class=\"entry\"><span class=\"ai\"><span class=\"a1\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E8%8D%89%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看草属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"草\"><span class=\"nm\">　　草<\/span><\/a><\/span><span class=\"sep\">/<\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E6%AF%92%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看毒属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"毒\"><span class=\"nm\">　　毒<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E5%A6%99%E8%9B%99%E8%8A%B1","sprite":[0,0],"ranks":{"total":120,"atk":127,"def":90}},{"generation":1,"role":"火","pokemon_id":6,"pokemon":"喷火龙","type":"火/飞行","type_html":"<span class=\"entry\"><span class=\"ai\"><span class=\"a1\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E7%81%AB%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看火属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"火\"><span class=\"nm\">　　火<\/span><\/a><\/span><span class=\"sep\">/<\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E9%A3%9E%E8%A1%8C%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看飞行属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"飞行\"><span class=\"nm\">　飞行<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E5%96%B7%E7%81%AB%E9%BE%99","sprite":[1,0],"ranks":{"total":52,"atk":60,"def":62}},{"generation":1,"role":"水","pokemon_id":9,"pokemon":"水箭龟","type":"水","type_html":"<span class=\"entry single\"><span class=\"ai\"><span class=\"a1\"><\/span><span class=\"sep\"><\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E6%B0%B4%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看水属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"水\"><span class=\"nm\">　　水<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E6%B0%B4%E7%AE%AD%E9%BE%9F","sprite":[2,0],"ranks":{"total":128,"atk":151,"def":43}},{"generation":2,"role":"草","pokemon_id":154,"pokemon":"大竺葵","type":"草","type_html":"<span class=\"entry single\"><span class=\"ai\"><span class=\"a1\"><\/span><span class=\"sep\"><\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E8%8D%89%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看草属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"草\"><span class=\"nm\">　　草<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E5%A4%A7%E7%AB%BA%E8%91%B5","sprite":[3,0],"ranks":{"total":170,"atk":168,"def":129}},{"generation":2,"role":"火","pokemon_id":157,"pokemon":"火暴兽","type":"火","type_html":"<span class=\"entry single\"><span class=\"ai\"><span class=\"a1\"><\/span><span class=\"sep\"><\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E7%81%AB%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看火属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"火\"><span class=\"nm\">　　火<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E7%81%AB%E6%9A%B4%E5%85%BD","sprite":[4,0],"ranks":{"total":108,"atk":142,"def":43}},{"generation":2,"role":"水","pokemon_id":160,"pokemon":"大力鳄","type":"水","type_html":"<span class=\"entry single\"><span class=\"ai\"><span class=\"a1\"><\/span><span class=\"sep\"><\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E6%B0%B4%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看水属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"水\"><span class=\"nm\">　　水<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E5%A4%A7%E5%8A%9B%E9%B3%84","sprite":[5,0],"ranks":{"total":128,"atk":151,"def":43}},{"generation":3,"role":"草","pokemon_id":254,"pokemon":"蜥蜴王","type":"草","type_html":"<span class=\"entry single\"><span class=\"ai\"><span class=\"a1\"><\/span><span class=\"sep\"><\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E8%8D%89%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看草属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"草\"><span class=\"nm\">　　草<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E8%9C%A5%E8%9C%B4%E7%8E%8B","sprite":[6,0],"ranks":{"total":170,"atk":168,"def":129}},{"generation":3,"role":"火","pokemon_id":257,"pokemon":"火焰鸡","type":"火/格斗","type_html":"<span class=\"entry\"><span class=\"ai\"><span class=\"a1\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E7%81%AB%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看火属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"火\"><span class=\"nm\">　　火<\/span><\/a><\/span><span class=\"sep\">/<\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E6%A0%BC%E6%96%97%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看格斗属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"格斗\"><span class=\"nm\">　格斗<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E7%81%AB%E7%84%B0%E9%B8%A1","sprite":[7,0],"ranks":{"total":21,"atk":14,"def":73}},{"generation":3,"role":"水","pokemon_id":260,"pokemon":"巨沼怪","type":"水/地面","type_html":"<span class=\"entry\"><span class=\"ai\"><span class=\"a1\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E6%B0%B4%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看水属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"水\"><span class=\"nm\">　　水<\/span><\/a><\/span><span class=\"sep\">/<\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E5%9C%B0%E9%9D%A2%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看地面属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"地面\"><span class=\"nm\">　地面<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E5%B7%A8%E6%B2%BC%E6%80%AA","sprite":[8,0],"ranks":{"total":19,"atk":26,"def":43}},{"generation":4,"role":"草","pokemon_id":389,"pokemon":"土台龟","type":"草/地面","type_html":"<span class=\"entry\"><span class=\"ai\"><span class=\"a1\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E8%8D%89%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看草属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"草\"><span class=\"nm\">　　草<\/span><\/a><\/span><span class=\"sep\">/<\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E5%9C%B0%E9%9D%A2%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看地面属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"地面\"><span class=\"nm\">　地面<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E5%9C%9F%E5%8F%B0%E9%BE%9F","sprite":[0,1],"ranks":{"total":101,"atk":38,"def":150}},{"generation":4,"role":"火","pokemon_id":392,"pokemon":"烈焰猴","type":"火/格斗","type_html":"<span class=\"entry\"><span class=\"ai\"><span class=\"a1\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E7%81%AB%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看火属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"火\"><span class=\"nm\">　　火<\/span><\/a><\/span><span class=\"sep\">/<\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E6%A0%BC%E6%96%97%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看格斗属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"格斗\"><span class=\"nm\">　格斗<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E7%83%88%E7%84%B0%E7%8C%B4","sprite":[1,1],"ranks":{"total":21,"atk":14,"def":73}},{"generation":4,"role":"水","pokemon_id":395,"pokemon":"帝王拿波","type":"水/钢","type_html":"<span class=\"entry\"><span class=\"ai\"><span class=\"a1\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E6%B0%B4%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看水属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"水\"><span class=\"nm\">　　水<\/span><\/a><\/span><span class=\"sep\">/<\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E9%92%A2%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看钢属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"钢\"><span class=\"nm\">　　钢<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E5%B8%9D%E7%8E%8B%E6%8B%BF%E6%B3%A2","sprite":[2,1],"ranks":{"total":6,"atk":75,"def":5}},{"generation":5,"role":"草","pokemon_id":497,"pokemon":"君主蛇","type":"草","type_html":"<span class=\"entry single\"><span class=\"ai\"><span class=\"a1\"><\/span><span class=\"sep\"><\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E8%8D%89%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看草属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"草\"><span class=\"nm\">　　草<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E5%90%9B%E4%B8%BB%E8%9B%87","sprite":[3,1],"ranks":{"total":170,"atk":168,"def":129}},{"generation":5,"role":"火","pokemon_id":500,"pokemon":"炎武王","type":"火/格斗","type_html":"<span class=\"entry\"><span class=\"ai\"><span class=\"a1\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E7%81%AB%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看火属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"火\"><span class=\"nm\">　　火<\/span><\/a><\/span><span class=\"sep\">/<\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E6%A0%BC%E6%96%97%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看格斗属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"格斗\"><span class=\"nm\">　格斗<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E7%82%8E%E6%AD%A6%E7%8E%8B","sprite":[4,1],"ranks":{"total":21,"atk":14,"def":73}},{"generation":5,"role":"水","pokemon_id":503,"pokemon":"大剑鬼","type":"水","type_html":"<span class=\"entry single\"><span class=\"ai\"><span class=\"a1\"><\/span><span class=\"sep\"><\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E6%B0%B4%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看水属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"水\"><span class=\"nm\">　　水<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E5%A4%A7%E5%89%91%E9%AC%BC","sprite":[5,1],"ranks":{"total":128,"atk":151,"def":43}},{"generation":6,"role":"草","pokemon_id":652,"pokemon":"布里卡隆","type":"草/格斗","type_html":"<span class=\"entry\"><span class=\"ai\"><span class=\"a1\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E8%8D%89%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看草属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"草\"><span class=\"nm\">　　草<\/span><\/a><\/span><span class=\"sep\">/<\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E6%A0%BC%E6%96%97%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看格斗属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"格斗\"><span class=\"nm\">　格斗<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E5%B8%83%E9%87%8C%E5%8D%A1%E9%9A%86","sprite":[6,1],"ranks":{"total":142,"atk":73,"def":160}},{"generation":6,"role":"火","pokemon_id":655,"pokemon":"妖火红狐","type":"火/超能力","type_html":"<span class=\"entry\"><span class=\"ai\"><span class=\"a1\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E7%81%AB%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看火属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"火\"><span class=\"nm\">　　火<\/span><\/a><\/span><span class=\"sep\">/<\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E8%B6%85%E8%83%BD%E5%8A%9B%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看超能力属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"超能力\"><span class=\"nm\">超能力<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E5%A6%96%E7%81%AB%E7%BA%A2%E7%8B%90","sprite":[7,1],"ranks":{"total":65,"atk":45,"def":94}},{"generation":6,"role":"水","pokemon_id":658,"pokemon":"甲贺忍蛙","type":"水/恶","type_html":"<span class=\"entry\"><span class=\"ai\"><span class=\"a1\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E6%B0%B4%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看水属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"水\"><span class=\"nm\">　　水<\/span><\/a><\/span><span class=\"sep\">/<\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E6%81%B6%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看恶属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"恶\"><span class=\"nm\">　　恶<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E7%94%B2%E8%B4%BA%E5%BF%8D%E8%9B%99","sprite":[8,1],"ranks":{"total":79,"atk":83,"def":79}},{"generation":7,"role":"草","pokemon_id":724,"pokemon":"狙射树枭","type":"草/幽灵","type_html":"<span class=\"entry\"><span class=\"ai\"><span class=\"a1\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E8%8D%89%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看草属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"草\"><span class=\"nm\">　　草<\/span><\/a><\/span><span class=\"sep\">/<\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E5%B9%BD%E7%81%B5%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看幽灵属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"幽灵\"><span class=\"nm\">　幽灵<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E7%8B%99%E5%B0%84%E6%A0%91%E6%9E%AD","sprite":[0,2],"ranks":{"total":98,"atk":103,"def":79}},{"generation":7,"role":"火","pokemon_id":727,"pokemon":"炽焰咆哮虎","type":"火/恶","type_html":"<span class=\"entry\"><span class=\"ai\"><span class=\"a1\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E7%81%AB%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看火属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"火\"><span class=\"nm\">　　火<\/span><\/a><\/span><span class=\"sep\">/<\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E6%81%B6%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看恶属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"恶\"><span class=\"nm\">　　恶<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E7%82%BD%E7%84%B0%E5%92%86%E5%93%AE%E8%99%8E","sprite":[1,2],"ranks":{"total":38,"atk":55,"def":43}},{"generation":7,"role":"水","pokemon_id":730,"pokemon":"西狮海壬","type":"水/妖精","type_html":"<span class=\"entry\"><span class=\"ai\"><span class=\"a1\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E6%B0%B4%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看水属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"水\"><span class=\"nm\">　　水<\/span><\/a><\/span><span class=\"sep\">/<\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E5%A6%96%E7%B2%BE%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看妖精属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"妖精\"><span class=\"nm\">　妖精<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E8%A5%BF%E7%8B%AE%E6%B5%B7%E5%A3%AC","sprite":[2,2],"ranks":{"total":13,"atk":35,"def":24}},{"generation":8,"role":"草","pokemon_id":812,"pokemon":"轰擂金刚猩","type":"草","type_html":"<span class=\"entry single\"><span class=\"ai\"><span class=\"a1\"><\/span><span class=\"sep\"><\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E8%8D%89%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看草属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"草\"><span class=\"nm\">　　草<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E8%BD%B0%E6%93%82%E9%87%91%E5%88%9A%E7%8C%A9","sprite":[3,2],"ranks":{"total":170,"atk":168,"def":129}},{"generation":8,"role":"火","pokemon_id":815,"pokemon":"闪焰王牌","type":"火","type_html":"<span class=\"entry single\"><span class=\"ai\"><span class=\"a1\"><\/span><span class=\"sep\"><\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E7%81%AB%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看火属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"火\"><span class=\"nm\">　　火<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E9%97%AA%E7%84%B0%E7%8E%8B%E7%89%8C","sprite":[4,2],"ranks":{"total":108,"atk":142,"def":43}},{"generation":8,"role":"水","pokemon_id":818,"pokemon":"千面避役","type":"水","type_html":"<span class=\"entry single\"><span class=\"ai\"><span class=\"a1\"><\/span><span class=\"sep\"><\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E6%B0%B4%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看水属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"水\"><span class=\"nm\">　　水<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E5%8D%83%E9%9D%A2%E9%81%BF%E5%BD%B9","sprite":[5,2],"ranks":{"total":128,"atk":151,"def":43}},{"generation":9,"role":"草","pokemon_id":908,"pokemon":"魔幻假面喵","type":"草/恶","type_html":"<span class=\"entry\"><span class=\"ai\"><span class=\"a1\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E8%8D%89%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看草属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"草\"><span class=\"nm\">　　草<\/span><\/a><\/span><span class=\"sep\">/<\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E6%81%B6%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看恶属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"恶\"><span class=\"nm\">　　恶<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E9%AD%94%E5%B9%BB%E5%81%87%E9%9D%A2%E5%96%B5","sprite":[6,2],"ranks":{"total":157,"atk":121,"def":160}},{"generation":9,"role":"火","pokemon_id":911,"pokemon":"骨纹巨声鳄","type":"火/幽灵","type_html":"<span class=\"entry\"><span class=\"ai\"><span class=\"a1\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E7%81%AB%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看火属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"火\"><span class=\"nm\">　　火<\/span><\/a><\/span><span class=\"sep\">/<\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E5%B9%BD%E7%81%B5%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看幽灵属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"幽灵\"><span class=\"nm\">　幽灵<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E9%AA%A8%E7%BA%B9%E5%B7%A8%E5%A3%B0%E9%B3%84","sprite":[7,2],"ranks":{"total":20,"atk":45,"def":31}},{"generation":9,"role":"水","pokemon_id":914,"pokemon":"狂欢浪舞鸭","type":"水/格斗","type_html":"<span class=\"entry\"><span class=\"ai\"><span class=\"a1\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E6%B0%B4%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看水属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"水\"><span class=\"nm\">　　水<\/span><\/a><\/span><span class=\"sep\">/<\/span><span class=\"a2\"><a class=\"wiki-link\" href=\"https://wiki.52poke.com/wiki/%E6%A0%BC%E6%96%97%E5%B1%9E%E6%80%A7\" target=\"_blank\" rel=\"noopener noreferrer\" title=\"在 52Poké 百科查看格斗属性\"><img class=\"qi\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\" alt=\"格斗\"><span class=\"nm\">　格斗<\/span><\/a><\/span><\/span><\/span>","wiki":"https://wiki.52poke.com/wiki/%E7%8B%82%E6%AC%A2%E6%B5%AA%E8%88%9E%E9%B8%AD","sprite":[8,2],"ranks":{"total":48,"atk":31,"def":94}}]</script>
+    <script>
+    (function(){
+      var dataNode = document.getElementById('starter-data');
+      var body = document.getElementById('starter-tbody');
+      var controls = document.querySelectorAll('#starter-metrics .starter-metric');
+      if (!dataNode || !body || !controls.length) return;
+      var rows = JSON.parse(dataNode.textContent);
+      var metric = 'total';
+      var labels = { total: window.uiI18n('综合'), atk: window.uiI18n('打击'), def: window.uiI18n('抗击') };
+      function card(row, place){
+        var pos = row.sprite || [0, 0];
+        var style = 'background-position:' + (-pos[0] * 76) + 'px ' + (-pos[1] * 76) + 'px';
+        return '<div class="starter-card">'
+          + '<span class="starter-art" role="img" aria-label="' + window.pokemonI18n(row.pokemon_id,row.pokemon) + '" style="' + style + '"></span>'
+          + '<div class="starter-detail"><div class="starter-name-line">'
+          + '<a class="starter-name" href="' + row.wiki + '" target="_blank" rel="noopener noreferrer">' + window.pokemonI18n(row.pokemon_id,row.pokemon) + '</a></div>'
+          + '<div class="starter-type-line"><div class="starter-type">' + row.type_html + '</div>'
+          + '<span class="starter-global-rank">#' + row.ranks[metric] + '</span></div></div></div>';
+      }
+      function render(){
+        var out = '';
+        for (var generation = 1; generation <= 9; generation++) {
+          var group = rows.filter(function(row){ return row.generation === generation; });
+          group.sort(function(a, b){
+            var delta = a.ranks[metric] - b.ranks[metric];
+            if (delta !== 0) return delta;
+            return a.ranks.total - b.ranks.total;
+          });
+          out += '<tr><td class="starter-generation">' + window.generationI18n(generation) + '</td>';
+          for (var i = 0; i < group.length; i++) out += '<td>' + card(group[i], i + 1) + '</td>';
+          out += '</tr>';
+        }
+        body.innerHTML = out;
+        var head = document.querySelectorAll('.starter-table thead th');
+        for (var h = 1; h < head.length; h++) head[h].textContent = window.metricRankI18n(metric,h);
+      }
+      for (var i = 0; i < controls.length; i++) {
+        controls[i].addEventListener('click', function(){
+          metric = this.getAttribute('data-metric');
+          for (var j = 0; j < controls.length; j++) {
+            var active = controls[j] === this;
+            controls[j].className = 'starter-metric' + (active ? ' on' : '');
+            controls[j].setAttribute('aria-pressed', active ? 'true' : 'false');
+          }
+          render();
+        });
+      }
+      render();
+    })();
+    </script>
   </section>
 
   <!-- ===== 全量数据 ===== -->
@@ -1253,6 +1389,21 @@
 })();
 </script>
 
+<script>
+(function(){
+  var lang=window.APP_LANG||'zh';
+  if(lang==='zh')return;
+  var data={"en":[["Marginal type value","Steel remains the most reliable overall baseline","The 17 Steel dual types average <b>1.614</b> overall versus 1.298 for other dual types, a lead of <b>0.316</b>. 8 of the top 20 include Steel. Under direct multipliers, Steel's value mainly comes from consistently reducing mean incoming damage."],["Offense–defense roles","Ground raises offense; Steel lowers incoming damage","Ground dual types average <b>1.642</b> on offense, while Steel dual types average only <b>0.879</b> incoming. Ground/Steel reaches 1.667 offense, 0.875 incoming and 1.905 overall, ranking #3."],["Pareto frontier","The efficiency frontier contains 7 combinations","No alternative simultaneously has higher offense and lower incoming damage than <b>钢 / 妖精, 飞行 / 钢, 格斗 / 钢, 地面 / 钢, 地面 / 妖精, 火 / 地面, 冰 / 地面</b>. These form the full boundary from minimum incoming damage to maximum offense."],["Dual-type synergy","Coverage union usually improves multiplier efficiency","<b>150</b> of 153 dual types outperform the stronger component single type overall, with an average gain of 0.208. The largest gain is 钢 / 妖精 at <b>0.609</b>."],["Offense–defense relationship","Higher offense carries only a mild incoming-damage cost","Across 153 dual types, the correlation between mean offense and mean incoming multiplier is <b>0.184</b>, a weak positive relationship. Stronger coverage slightly raises incoming damage on average, but good combinations can still achieve both."],["Reading the balance metric","Most balanced does not mean strongest","Under the current balance definition, 恶 is closest to equal values at -0.010, but its overall is only 0.990, ranked #159. Read overall before balance."]],"ja":[["タイプの限界寄与","はがねは依然として最も安定した総合基盤","はがねを含む17の複合タイプの総合平均は<b>1.614</b>、その他は1.298で、平均差は<b>0.316</b>。上位20のうち8がはがねを含みます。直接倍率では、はがねの価値は平均被ダメージを安定して下げる点にあります。"],["攻撃と耐性の役割","じめんが攻撃を高め、はがねが被ダメージを抑える","じめん複合の平均攻撃倍率は<b>1.642</b>、はがね複合の平均被ダメージ倍率は<b>0.879</b>。じめん／はがねは攻撃1.667、被ダメージ0.875、総合1.905で第3位です。"],["パレートフロンティア","同時改善できない効率境界は7通り","より高い攻撃倍率とより低い被ダメージ倍率を同時に持つ別案が存在しないのは<b>钢／妖精、飞行／钢、格斗／钢、地面／钢、地面／妖精、火／地面、冰／地面</b>です。"],["複合タイプの相乗効果","範囲の和集合は通常、倍率効率を高める","153の複合タイプ中<b>150</b>が構成単タイプの強い方を総合で上回り、平均上昇は0.208。最大は钢／妖精の<b>0.609</b>です。"],["攻撃と耐性の関係","高い攻撃には軽い被ダメージ増加が伴う","153の複合タイプで平均攻撃倍率と平均被ダメージ倍率の相関は<b>0.184</b>。弱い正相関で、攻撃範囲が強いほど被ダメージも少し高い傾向ですが、両立は十分可能です。"],["バランス指標の読み方","最も均衡していても最強とは限らない","現在の定義では恶が最も均衡し、バランス-0.010ですが、総合は0.990で第159位です。まず総合、次にバランスを見ます。"]]}[lang]||[];
+  var cards=document.querySelectorAll('#insights .insight-item');
+  for(var i=0;i<cards.length&&i<data.length;i++){
+    cards[i].querySelector('.insight-kicker').textContent=data[i][0];
+    cards[i].querySelector('.insight-title').textContent=data[i][1];
+    cards[i].querySelector('.insight-copy').innerHTML=data[i][2];
+  }
+  var note=document.querySelector('#insights .section-head .note');
+  if(note)note.textContent=lang==='en'?'Based on direct multipliers across 171 type combinations':'171タイプ組み合わせの直接倍率結果';
+})();
+</script>
 </body>
 </html>
 
